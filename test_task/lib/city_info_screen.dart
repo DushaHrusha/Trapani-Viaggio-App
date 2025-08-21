@@ -81,9 +81,14 @@ class CityInfoScreen extends StatelessWidget {
               ),
             ),
             GridView.count(
-              crossAxisCount: 2, // Количество кнопок в строке
-              crossAxisSpacing: 16.0, // Отступ между кнопками по горизонтали
-              mainAxisSpacing: 16.0, // Отступ между кнопками по вертикали
+              shrinkWrap: true, // Ключевой параметр
+              physics:
+                  const NeverScrollableScrollPhysics(), // Отключаем внутренний скролл
+              crossAxisCount: 2,
+              crossAxisSpacing: 16.0,
+              mainAxisSpacing: 16.0,
+              padding: const EdgeInsets.all(16), // Добавляем отступы
+              childAspectRatio: 2.5, // Оптимальное соотношение сторон кнопок
               children: List.generate(4, (index) {
                 return _buildGridButton(
                   context,

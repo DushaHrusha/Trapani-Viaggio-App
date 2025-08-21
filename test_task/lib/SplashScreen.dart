@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:test_task/HexagonLayout.dart';
+import 'package:test_task/city_info_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -25,12 +27,15 @@ class _SplashScreenState extends State<SplashScreen>
     _controller = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
-    );
-
+    )..addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        _navigateToNextScreen();
+      }
+    });
     // Animation setup
     _lightSpread = CurvedAnimation(
       parent: _controller,
-      curve: Interval(0.0, 0.4, curve: Curves.easeOut),
+      curve: Interval(0.0, 0.6, curve: Curves.easeOut),
     );
 
     _iconScale = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -72,8 +77,18 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
+    _controller.removeStatusListener((status) {});
     _controller.dispose();
     super.dispose();
+  }
+
+  void _navigateToNextScreen() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => HexagonLayout()),
+      );
+    });
   }
 
   @override
@@ -90,85 +105,88 @@ class _SplashScreenState extends State<SplashScreen>
                 CustomPaint(
                   painter: _LightPainter(
                     radius:
-                        MediaQuery.of(context).size.width * _lightSpread.value,
+                        MediaQuery.of(context).size.height * _lightSpread.value,
                     color: _blueLight,
                   ),
                   size: Size.infinite,
                 ),
 
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      children: [
-                        FadeTransition(
-                          opacity: _subtitleFade1,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 0,
-                            ),
-                            child: Text(
-                              'trpani',
-                              style: TextStyle(
-                                fontSize: 36,
-                                fontFamily: 'Berlin Sans FB',
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromARGB(255, 255, 127, 80),
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment:
+                            CrossAxisAlignment
+                                .baseline, // Выравнивание по базовой линии
+                        textBaseline:
+                            TextBaseline.alphabetic, // Тип базовой линии
+                        children: [
+                          FadeTransition(
+                            opacity: _subtitleFade1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 9),
+                              child: Baseline(
+                                baseline:
+                                    36 *
+                                    1.35, // 80% от высоты шрифта (типичное положение базовой линии)
+                                baselineType: TextBaseline.alphabetic,
+                                child: Text(
+                                  'trpani',
+                                  style: TextStyle(
+                                    fontSize: 36,
+                                    fontFamily: 'Berlin Sans FB',
+                                    fontWeight: FontWeight.w400,
+                                    color: Color.fromARGB(255, 255, 127, 80),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                        FadeTransition(
-                          opacity: _subtitleFade2,
-                          child: SvgPicture.asset(
-                            'assets/file/Logo.svg', // Используйте ваше SVG-изображение
-                            height: 50, // Установите высоту
-                          ),
-                        ),
-
-                        // Subtitle
-
-                        // Right text
-                        FadeTransition(
-                          opacity: _subtitleFade1,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 0,
+                          FadeTransition(
+                            opacity: _subtitleFade2,
+                            child: SvgPicture.asset(
+                              'assets/file/Logo.svg',
+                              height: 50,
                             ),
-                            child: Text(
-                              'viaggio',
-                              style: TextStyle(
-                                fontFamily: 'Berlin Sans FB',
-                                fontSize: 36,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromARGB(255, 255, 127, 80),
+                          ),
+                          FadeTransition(
+                            opacity: _subtitleFade1,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 6),
+                              child: Baseline(
+                                baseline: 36 * 0.8,
+                                baselineType: TextBaseline.alphabetic,
+                                child: Text(
+                                  'viaggio',
+                                  style: TextStyle(
+                                    fontFamily: 'Berlin Sans FB',
+                                    fontSize: 36,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color.fromARGB(255, 255, 127, 80),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-
-                    // Icon with subtitle
-                    Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: FadeTransition(
+                        ],
+                      ),
+                      FadeTransition(
                         opacity: _subtitleFade,
                         child: Text(
                           'tourists assistance',
                           style: TextStyle(
-                            fontFamily: 'Berlin Sans FB',
+                            fontFamily: 'San Francisco Pro Display',
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
                             color: Colors.white,
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             );
