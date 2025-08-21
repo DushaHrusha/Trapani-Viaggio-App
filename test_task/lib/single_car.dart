@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:test_task/sign_up_screen.dart';
 
 class AutomobileApp extends StatelessWidget {
   @override
@@ -149,38 +150,31 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
                     width: 90, // Увеличенный размер
                     height: 90,
                     decoration: BoxDecoration(
-                      color:
-                          _selectedIndex == index
-                              ? Colors.blue.withOpacity(0.2)
-                              : Colors.grey[200],
+                      color: Color.fromARGB(255, 235, 241, 244),
                       shape: BoxShape.circle,
-                      border: Border.all(
-                        color:
-                            _selectedIndex == index
-                                ? Colors.blue
-                                : Colors.transparent,
-                        width: 2,
-                      ),
                     ),
-                    child: Icon(
-                      _icons[index]['icon'],
-                      size: 40, // Увеличенный размер иконки
-                      color:
-                          _selectedIndex == index
-                              ? Colors.blue
-                              : Colors.grey[600],
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    _icons[index]['label'],
-                    style: TextStyle(
-                      color:
-                          _selectedIndex == index
-                              ? Colors.blue
-                              : Colors.grey[600],
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                    child: Column(
+                      children: [
+                        Icon(
+                          _icons[index]['icon'],
+                          size: 40, // Увеличенный размер иконки
+                          color:
+                              _selectedIndex == index
+                                  ? Colors.blue
+                                  : Colors.grey[600],
+                        ),
+                        SizedBox(height: 10),
+
+                        Text(
+                          _icons[index]['label'],
+                          style: TextStyle(
+                            fontFamily: 'San Francisco Pro Display',
+                            fontSize: 14,
+                            color: Color.fromARGB(255, 85, 97, 178),
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -226,36 +220,52 @@ class _CarDetailsScreenState extends State<CarDetailsScreen> {
             child: Material(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
+
                 side: BorderSide(color: Colors.grey),
               ),
-              child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('\$120', style: TextStyle(fontSize: 18)),
-                    Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.blue, Colors.green],
-                        ),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: Text(
-                              'Book now',
-                              style: TextStyle(color: Colors.white),
+              child: Stack(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('\$120', style: TextStyle(fontSize: 18)),
+                      GestureDetector(
+                        onTap: () {
+                          // 2. Убрать лишние стрелочные функции
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SignUpScreen(),
                             ),
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color.fromARGB(255, 255, 127, 80),
+                                Color.fromARGB(255, 85, 97, 178),
+                              ],
+                            ),
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          Icon(Icons.arrow_forward, color: Colors.white),
-                        ],
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 50),
+                                child: Text(
+                                  'Book now',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                              Icon(Icons.arrow_forward, color: Colors.white),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),

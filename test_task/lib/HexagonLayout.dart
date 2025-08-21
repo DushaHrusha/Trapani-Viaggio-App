@@ -170,7 +170,6 @@ class _HexagonLayoutState extends State<HexagonLayout>
       ),
       child: GestureDetector(
         onTap: () {
-          // Переход на следующий экран
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AutomobileApp()),
