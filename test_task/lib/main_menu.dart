@@ -1,17 +1,17 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-import 'package:test_task/single_car.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:test_task/bottom_bar.dart';
+import 'package:test_task/car_catalog.dart';
 
-class HexagonLayout extends StatefulWidget {
-  const HexagonLayout({super.key});
+class MainMenu extends StatefulWidget {
+  const MainMenu({super.key});
 
   @override
-  _HexagonLayoutState createState() => _HexagonLayoutState();
+  _MainMenuState createState() => _MainMenuState();
 }
 
-class _HexagonLayoutState extends State<HexagonLayout>
-    with TickerProviderStateMixin {
+class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
   late AnimationController _controller;
   final List<String> _labels = [
     'Apartment',
@@ -22,16 +22,14 @@ class _HexagonLayoutState extends State<HexagonLayout>
     'Excursion',
     'What are you looking for?',
   ];
-  final List<IconData> _icons = [
-    Icons.apartment,
-    Icons.directions_car,
-    Icons.motorcycle,
-    Icons.pedal_bike,
-    Icons.moped,
-    Icons.tour,
-    Icons.search,
+  final List<String> _svgIcons = [
+    'assets/file/keys.svg',
+    'assets/file/auto.svg',
+    'assets/file/Moto.svg',
+    'assets/file/Bicycle.svg',
+    'assets/file/Vespa.svg',
+    'assets/file/Excursion.svg',
   ];
-  final Color paleBlue = Color.fromARGB(255, 31, 149, 207);
 
   @override
   void initState() {
@@ -53,7 +51,6 @@ class _HexagonLayoutState extends State<HexagonLayout>
     final size = MediaQuery.of(context).size.shortestSide * 0.25;
     final center = Offset(size * 2, size * 2);
     final radius = size * 1.2;
-
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 251, 252, 253),
       appBar: AppBar(
@@ -65,8 +62,9 @@ class _HexagonLayoutState extends State<HexagonLayout>
         title: const Text(
           'Trapani Viaggio',
           style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
+            fontSize: 24,
+            fontFamily: 'Berlin Sans FB',
+            fontWeight: FontWeight.w400,
             color: Color.fromARGB(255, 109, 109, 109),
           ),
         ),
@@ -88,14 +86,15 @@ class _HexagonLayoutState extends State<HexagonLayout>
             padding: const EdgeInsets.only(top: 48.0, left: 30, right: 30),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Color.fromARGB(255, 251, 252, 253),
                 borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Colors.grey[400]!, width: 1.0),
               ),
               child: TextField(
                 decoration: InputDecoration(
                   prefixIcon: Padding(
                     padding: const EdgeInsets.only(left: 28.0),
-                    child: const Icon(Icons.search, color: Colors.grey),
+                    child: Icon(Icons.search, color: Colors.grey[600]),
                   ),
                   hintText: 'What do you want to find in Trapani?',
                   hintStyle: TextStyle(
@@ -103,12 +102,13 @@ class _HexagonLayoutState extends State<HexagonLayout>
                     fontStyle: FontStyle.italic,
                   ),
                   border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     vertical: 15,
                     horizontal: 20,
                   ),
                 ),
-                style: const TextStyle(fontSize: 16, color: Colors.black),
               ),
             ),
           ),
@@ -129,7 +129,6 @@ class _HexagonLayoutState extends State<HexagonLayout>
                               center.dx + radius * cos(angle),
                               center.dy + radius * sin(angle),
                             );
-
                     return Positioned(
                       left: offset.dx - size / 2,
                       top: offset.dy - size / 2,
@@ -157,6 +156,7 @@ class _HexagonLayoutState extends State<HexagonLayout>
           ),
         ],
       ),
+      bottomNavigationBar: BottomBar(),
     );
   }
 
@@ -172,16 +172,15 @@ class _HexagonLayoutState extends State<HexagonLayout>
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => AutomobileApp()),
+            MaterialPageRoute(builder: (context) => CarCatalog()),
           );
         },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              _icons[index],
+            SvgPicture.asset(
+              _svgIcons[index],
               color: Color.fromARGB(255, 85, 97, 178),
-              size: size * 0.3,
             ),
             SizedBox(height: size * 0.05),
             Text(
@@ -238,10 +237,8 @@ class DashedCirclePainter extends CustomPainter {
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0.5
           ..strokeCap = StrokeCap.round;
-
     double dashWidth = 5, dashSpace = 5, radius = size.width / 2;
     double startAngle = 0;
-
     while (startAngle < 2 * pi) {
       canvas.drawArc(
         Rect.fromCircle(

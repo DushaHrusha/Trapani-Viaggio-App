@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:test_task/HexagonLayout.dart';
-import 'package:test_task/city_info_screen.dart';
+import 'package:test_task/main_menu.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -14,8 +13,6 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _lightSpread;
-  late Animation<double> _iconScale;
-  late Animation<Offset> _textSlide;
   late Animation<double> _subtitleFade;
   late Animation<double> _subtitleFade1;
   late Animation<double> _subtitleFade2;
@@ -38,22 +35,6 @@ class _SplashScreenState extends State<SplashScreen>
       curve: Interval(0.0, 0.6, curve: Curves.easeOut),
     );
 
-    _iconScale = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Interval(0.3, 0.7, curve: Curves.elasticOut),
-      ),
-    );
-
-    _textSlide = Tween<Offset>(
-      begin: Offset(-0.5, 0.0),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Interval(0.5, 0.8, curve: Curves.easeOutBack),
-      ),
-    );
     _subtitleFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
@@ -86,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => HexagonLayout()),
+        MaterialPageRoute(builder: (context) => MainMenu()),
       );
     });
   }
@@ -110,7 +91,6 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                   size: Size.infinite,
                 ),
-
                 Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -118,20 +98,15 @@ class _SplashScreenState extends State<SplashScreen>
                     children: [
                       Row(
                         mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment:
-                            CrossAxisAlignment
-                                .baseline, // Выравнивание по базовой линии
-                        textBaseline:
-                            TextBaseline.alphabetic, // Тип базовой линии
+                        crossAxisAlignment: CrossAxisAlignment.baseline,
+                        textBaseline: TextBaseline.alphabetic,
                         children: [
                           FadeTransition(
                             opacity: _subtitleFade1,
                             child: Padding(
                               padding: const EdgeInsets.only(right: 9),
                               child: Baseline(
-                                baseline:
-                                    36 *
-                                    1.35, // 80% от высоты шрифта (типичное положение базовой линии)
+                                baseline: 36 * 1.35,
                                 baselineType: TextBaseline.alphabetic,
                                 child: Text(
                                   'trpani',

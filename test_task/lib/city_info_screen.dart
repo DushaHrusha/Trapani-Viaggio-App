@@ -16,7 +16,7 @@ class CityInfoScreen extends StatelessWidget {
         child: Column(
           children: [
             Image.asset(
-              'assets/file/city_header.jpg', // Replace with your image
+              'assets/file/city_header.jpg',
               height: 300,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -34,7 +34,6 @@ class CityInfoScreen extends StatelessWidget {
                     ),
                     'Hello. Welcome to Trapani!',
                   ),
-
                   Text(
                     'A lively city with rich maritime heritage and vibrant economic activities.',
                     style: TextStyle(
@@ -64,7 +63,7 @@ class CityInfoScreen extends StatelessWidget {
                     print('Service button pressed');
                   },
                   style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero, // Убирает внутренние отступы
+                    padding: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -81,14 +80,13 @@ class CityInfoScreen extends StatelessWidget {
               ),
             ),
             GridView.count(
-              shrinkWrap: true, // Ключевой параметр
-              physics:
-                  const NeverScrollableScrollPhysics(), // Отключаем внутренний скролл
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
               crossAxisCount: 2,
               crossAxisSpacing: 16.0,
               mainAxisSpacing: 16.0,
-              padding: const EdgeInsets.all(16), // Добавляем отступы
-              childAspectRatio: 2.5, // Оптимальное соотношение сторон кнопок
+              padding: const EdgeInsets.all(16),
+              childAspectRatio: 2.5,
               children: List.generate(4, (index) {
                 return _buildGridButton(
                   context,
@@ -135,17 +133,6 @@ class CityInfoScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildServiceCard(String title, IconData icon) {
-    return TextButton(
-      onPressed: () {},
-      style: TextButton.styleFrom(
-        padding: EdgeInsets.zero, // Убирает внутренние отступы
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-      ),
-      child: Text(title),
     );
   }
 }
