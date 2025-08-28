@@ -29,31 +29,62 @@ class _SplashScreenState extends State<SplashScreen>
         _navigateToNextScreen();
       }
     });
-    // Animation setup
+
+    // Корректируем интервалы
     _lightSpread = CurvedAnimation(
       parent: _controller,
-      curve: Interval(0.0, 0.6, curve: Curves.easeOut),
+      curve: Interval(0.0, 0.5, curve: Curves.easeOut),
     );
 
     _subtitleFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Interval(0.7, 1, curve: Curves.easeIn),
+        curve: Interval(0.7, 1.0, curve: Curves.easeIn), // Было 1.8-2.0
       ),
     );
+
     _subtitleFade1 = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Interval(0.4, 0.7, curve: Curves.easeIn),
+        curve: Interval(0.4, 0.7, curve: Curves.easeIn), // Было 1.0-1.8
       ),
     );
+
     _subtitleFade2 = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Interval(0.1, 0.4, curve: Curves.easeIn),
+        curve: Interval(
+          0.1,
+          0.4,
+          curve: Curves.easeIn,
+        ), // Оставлено без изменений
       ),
     );
+
     _controller.forward();
+  }
+
+  // 2. Модифицированный метод перехода с анимацией
+  void _navigateToNextScreen() {
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 1000),
+        pageBuilder: (_, __, ___) => MainMenu(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: FadeTransition(
+              opacity: Tween<double>(
+                begin: 1.0,
+                end: 0.0,
+              ).animate(secondaryAnimation),
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -61,15 +92,6 @@ class _SplashScreenState extends State<SplashScreen>
     _controller.removeStatusListener((status) {});
     _controller.dispose();
     super.dispose();
-  }
-
-  void _navigateToNextScreen() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => MainMenu()),
-      );
-    });
   }
 
   @override

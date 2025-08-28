@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:test_task/base_colors.dart';
 import 'package:test_task/bottom_bar.dart';
 import 'package:test_task/car_catalog.dart';
 
@@ -13,6 +14,7 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
   late AnimationController _controller;
+
   final List<String> _labels = [
     'Apartment',
     'Auto',
@@ -30,19 +32,76 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
     'assets/file/Vespa.svg',
     'assets/file/Excursion.svg',
   ];
+  late Animation<double> _opacityAnimation;
+  late AnimationController _stageController;
+  late AnimationController _appBarController;
+  late AnimationController _searchController;
+  late AnimationController _circlesController;
+  late AnimationController _bottomBarController;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    )..forward();
+      duration: const Duration(milliseconds: 500),
+    ); // Общий контроллер этапов
+    _stageController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2500),
+    );
+    _opacityAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    _appBarController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _searchController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _circlesController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _bottomBarController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    // Запуск последовательности
+    _stageController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        Future.delayed(const Duration(milliseconds: 23), () {
+          _appBarController.forward().then((_) {
+            _searchController.forward().then((_) {
+              _circlesController.forward().then((_) {
+                _controller.forward().then((_) {
+                  _bottomBarController.forward();
+                });
+              });
+            });
+          });
+        });
+      }
+    });
+
+    _stageController.forward();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _stageController.dispose();
+    _appBarController.dispose();
+    _searchController.dispose();
+    _circlesController.dispose();
+    _bottomBarController.dispose();
     super.dispose();
   }
 
@@ -52,111 +111,155 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
     final center = Offset(size * 2, size * 2);
     final radius = size * 1.2;
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 251, 252, 253),
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-          color: Color.fromARGB(255, 109, 109, 109),
+      backgroundColor: Color.fromRGBO(251, 252, 253, 1),
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: AnimatedBuilder(
+          animation: _appBarController,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _appBarController.value,
+              child: AppBar(
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.pop(context),
+                  color: BaseColors.text,
+                ),
+                title: Text(
+                  'Trapani Viaggio',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontFamily: 'Berlin Sans FB',
+                    fontWeight: FontWeight.w400,
+                    color: BaseColors.text,
+                  ),
+                ),
+                centerTitle: true,
+                actions: [
+                  IconButton(
+                    icon: SvgPicture.asset("assets/file/menu.svg"),
+                    onPressed: () {},
+                    color: BaseColors.text,
+                  ),
+                ],
+                elevation: 0,
+                backgroundColor: Colors.white,
+                shape: Border(
+                  bottom: BorderSide(width: 0.5, color: BaseColors.line),
+                ),
+              ),
+            );
+          },
         ),
-        title: const Text(
-          'Trapani Viaggio',
-          style: TextStyle(
-            fontSize: 24,
-            fontFamily: 'Berlin Sans FB',
-            fontWeight: FontWeight.w400,
-            color: Color.fromARGB(255, 109, 109, 109),
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () {},
-            color: Color.fromARGB(255, 109, 109, 109),
-          ),
-        ],
-        elevation: 0,
-        backgroundColor: Colors.white,
       ),
       body: Column(
         children: [
-          const Divider(height: 1, thickness: 1, color: Colors.grey),
-          Padding(
-            padding: const EdgeInsets.only(top: 48.0, left: 30, right: 30),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 251, 252, 253),
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: Colors.grey[400]!, width: 1.0),
-              ),
-              child: TextField(
-                decoration: InputDecoration(
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.only(left: 28.0),
-                    child: Icon(Icons.search, color: Colors.grey[600]),
+          AnimatedBuilder(
+            animation: _searchController,
+            builder: (context, child) {
+              return Opacity(
+                opacity: _searchController.value,
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                    top: 48.0,
+                    left: 30,
+                    right: 30,
                   ),
-                  hintText: 'What do you want to find in Trapani?',
-                  hintStyle: TextStyle(
-                    color: Colors.grey[600],
-                    fontStyle: FontStyle.italic,
-                  ),
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    vertical: 15,
-                    horizontal: 20,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Center(
-            child: SizedBox(
-              width: size * 4,
-              height: size * 5,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 85.0),
-                child: Stack(
-                  children: List.generate(7, (index) {
-                    final angle =
-                        index == 6 ? 0.0 : (index * 60 - 90) * (pi / 180);
-                    final offset =
-                        index == 6
-                            ? center
-                            : Offset(
-                              center.dx + radius * cos(angle),
-                              center.dy + radius * sin(angle),
-                            );
-                    return Positioned(
-                      left: offset.dx - size / 2,
-                      top: offset.dy - size / 2,
-                      child: ScaleTransition(
-                        scale: Tween<double>(begin: 0, end: 1).animate(
-                          CurvedAnimation(
-                            parent: _controller,
-                            curve: Interval(
-                              index * 0.1,
-                              1.0,
-                              curve: Curves.easeOut,
-                            ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: BaseColors.background,
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: BaseColors.primary, width: 1.0),
+                    ),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(left: 28.0),
+                          child: SvgPicture.asset(
+                            "assets/file/search.svg",
+                            color: BaseColors.primary,
                           ),
                         ),
-                        child:
-                            index == 6
-                                ? _buildCenterCircle(size)
-                                : _buildRegularCircle(size, index),
+                        hintText: 'What do you want to find in Trapani?',
+                        hintStyle: TextStyle(
+                          color: BaseColors.primary,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 15,
+                          horizontal: 20,
+                        ),
                       ),
-                    );
-                  }),
+                    ),
+                  ),
                 ),
-              ),
-            ),
+              );
+            },
+          ),
+          AnimatedBuilder(
+            animation: _circlesController,
+            builder: (context, child) {
+              return Opacity(
+                opacity: _circlesController.value,
+                child: Center(
+                  child: SizedBox(
+                    width: size * 4,
+                    height: size * 5,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 85.0),
+                      child: Stack(
+                        children: List.generate(7, (index) {
+                          final angle =
+                              index == 6 ? 0.0 : (index * 60 - 90) * (pi / 180);
+                          final offset =
+                              index == 6
+                                  ? center
+                                  : Offset(
+                                    center.dx + radius * cos(angle),
+                                    center.dy + radius * sin(angle),
+                                  );
+                          return Positioned(
+                            left: offset.dx - size / 2,
+                            top: offset.dy - size / 2,
+                            child: ScaleTransition(
+                              scale: Tween<double>(begin: 0, end: 1).animate(
+                                CurvedAnimation(
+                                  parent: _controller,
+                                  curve: Interval(
+                                    index * 0.1,
+                                    1.0,
+                                    curve: Curves.easeOut,
+                                  ),
+                                ),
+                              ),
+                              child:
+                                  index == 6
+                                      ? _buildCenterCircle(size)
+                                      : _buildRegularCircle(size, index),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: AnimatedBuilder(
+        animation: _bottomBarController,
+        builder: (context, child) {
+          return Opacity(
+            opacity: _bottomBarController.value,
+            child: const BottomBar(),
+          );
+        },
+      ),
     );
   }
 
@@ -165,7 +268,7 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: Color.fromARGB(255, 235, 241, 244),
+        color: BaseColors.backgroundCircles,
         shape: BoxShape.circle,
       ),
       child: GestureDetector(
@@ -178,10 +281,7 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              _svgIcons[index],
-              color: Color.fromARGB(255, 85, 97, 178),
-            ),
+            SvgPicture.asset(_svgIcons[index], color: BaseColors.secondary),
             SizedBox(height: size * 0.05),
             Text(
               _labels[index],
@@ -189,7 +289,7 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
               style: TextStyle(
                 fontFamily: 'San Francisco Pro Display',
                 fontSize: size * 0.15,
-                color: Color.fromARGB(255, 85, 97, 178),
+                color: BaseColors.secondary,
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -217,7 +317,8 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: size * 0.14,
-                color: Color.fromARGB(255, 255, 127, 80),
+                fontFamily: 'San Francisco Pro Display',
+                color: BaseColors.accent,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -233,9 +334,9 @@ class DashedCirclePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint =
         Paint()
-          ..color = Colors.orange
+          ..color = BaseColors.accent
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 0.5
+          ..strokeWidth = 1
           ..strokeCap = StrokeCap.round;
     double dashWidth = 5, dashSpace = 5, radius = size.width / 2;
     double startAngle = 0;
