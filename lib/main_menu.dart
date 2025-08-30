@@ -38,10 +38,26 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
   late AnimationController _searchController;
   late AnimationController _circlesController;
   late AnimationController _bottomBarController;
+  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
     super.initState();
+    _bottomBarController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _bottomBarController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+
+    _fadeAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _bottomBarController,
+        curve: const Interval(0.3, 1.0),
+      ),
+    );
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -66,11 +82,6 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
     );
 
     _circlesController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    _bottomBarController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
@@ -109,153 +120,248 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size.shortestSide * 0.25;
     final center = Offset(size * 2, size * 2);
-    final radius = size * 1.2;
+    final radius = size * 1.1;
     return Scaffold(
-      backgroundColor: Color.fromRGBO(251, 252, 253, 1),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AnimatedBuilder(
-          animation: _appBarController,
-          builder: (context, child) {
-            return Opacity(
-              opacity: _appBarController.value,
-              child: AppBar(
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.pop(context),
-                  color: BaseColors.text,
-                ),
-                title: Text(
-                  'Trapani Viaggio',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'Berlin Sans FB',
-                    fontWeight: FontWeight.w400,
-                    color: BaseColors.text,
-                  ),
-                ),
-                centerTitle: true,
-                actions: [
-                  IconButton(
-                    icon: SvgPicture.asset("assets/file/menu.svg"),
-                    onPressed: () {},
-                    color: BaseColors.text,
-                  ),
-                ],
-                elevation: 0,
-                backgroundColor: Colors.white,
-                shape: Border(
-                  bottom: BorderSide(width: 0.5, color: BaseColors.line),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-      body: Column(
-        children: [
-          AnimatedBuilder(
-            animation: _searchController,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _searchController.value,
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 48.0,
-                    left: 30,
-                    right: 30,
-                  ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: BaseColors.background,
-                      borderRadius: BorderRadius.circular(30),
-                      border: Border.all(color: BaseColors.primary, width: 1.0),
-                    ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        prefixIcon: Padding(
-                          padding: const EdgeInsets.only(left: 28.0),
-                          child: SvgPicture.asset(
-                            "assets/file/search.svg",
-                            color: BaseColors.primary,
-                          ),
-                        ),
-                        hintText: 'What do you want to find in Trapani?',
-                        hintStyle: TextStyle(
-                          color: BaseColors.primary,
-                          fontStyle: FontStyle.italic,
-                        ),
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                        focusedBorder: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 15,
-                          horizontal: 20,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            },
+      backgroundColor: BaseColors.background,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Color.fromRGBO(255, 127, 80, 1),
+              Color.fromRGBO(85, 97, 178, 1),
+            ],
           ),
-          AnimatedBuilder(
-            animation: _circlesController,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _circlesController.value,
-                child: Center(
-                  child: SizedBox(
-                    width: size * 4,
-                    height: size * 5,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 85.0),
-                      child: Stack(
-                        children: List.generate(7, (index) {
-                          final angle =
-                              index == 6 ? 0.0 : (index * 60 - 90) * (pi / 180);
-                          final offset =
-                              index == 6
-                                  ? center
-                                  : Offset(
-                                    center.dx + radius * cos(angle),
-                                    center.dy + radius * sin(angle),
-                                  );
-                          return Positioned(
-                            left: offset.dx - size / 2,
-                            top: offset.dy - size / 2,
-                            child: ScaleTransition(
-                              scale: Tween<double>(begin: 0, end: 1).animate(
-                                CurvedAnimation(
-                                  parent: _controller,
-                                  curve: Interval(
-                                    index * 0.1,
-                                    1.0,
-                                    curve: Curves.easeOut,
+        ),
+        child: Padding(
+          padding: EdgeInsets.only(top: 58),
+          child: Container(
+            decoration: BoxDecoration(
+              color: BaseColors.background,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(32), // Увеличено до 32px
+                topRight: Radius.circular(32),
+              ),
+            ),
+            constraints: BoxConstraints.expand(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+            ),
+            child: Column(
+              children: [
+                AnimatedBuilder(
+                  animation: _appBarController,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: _appBarController.value,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: 25.0,
+                          right: 20,
+                          left: 20,
+                          bottom: 23,
+                        ),
+                        child: SizedBox(
+                          height: 27,
+
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.arrow_back, size: 24),
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(
+                                  minWidth: 24,
+                                  maxHeight: 24,
+                                ),
+                                onPressed:
+                                    () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CarCatalog(),
+                                      ),
+                                    ),
+                              ),
+                              Align(
+                                // Добавлен выравнивающий виджет
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'trapani viaggio',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontFamily: 'Berlin Sans FB',
+                                    height: 1.0, // Ключевой параметр
+                                    color: Color.fromARGB(255, 109, 109, 109),
                                   ),
                                 ),
                               ),
-                              child:
-                                  index == 6
-                                      ? _buildCenterCircle(size)
-                                      : _buildRegularCircle(size, index),
-                            ),
-                          );
-                        }),
+                              IconButton(
+                                icon: Icon(Icons.menu, size: 24),
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(
+                                  minWidth: 24,
+                                  maxHeight: 24,
+                                ),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
+                Divider(thickness: 1.5, color: BaseColors.line, height: 0),
+                AnimatedBuilder(
+                  animation: _searchController,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: _searchController.value,
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 48.0,
+                          left: 30,
+                          right: 28,
+                        ),
+                        child: Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: BaseColors.background,
+                            borderRadius: BorderRadius.circular(30),
+                            border: Border.all(
+                              color: BaseColors.primary,
+                              width: 1.0,
+                            ),
+                          ),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              focusedErrorBorder: InputBorder.none,
+                              prefixIcon: Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 28,
+                                  right: 6,
+                                ),
+                                child: Align(
+                                  // Добавлено выравнивание для иконки
+                                  widthFactor: 1.0,
+                                  heightFactor: 1.0,
+                                  child: SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: SvgPicture.asset(
+                                      "assets/file/search.svg",
+                                      color: BaseColors.primary,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              hintText: 'What do you want to find in Trapani?',
+                              hintStyle: TextStyle(
+                                fontSize: 14,
+                                height: 1.0, // Ключевой параметр
+                                fontFamily: 'San Francisco Pro Display',
+                                color: BaseColors.primary,
+                                fontStyle: FontStyle.italic,
+                              ),
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 12, // Оптимизировано для высоты 40
+                                horizontal: 0,
+                              ),
+                              isDense: true,
+                              isCollapsed: true, // Убирает внутренние отступы
+                            ),
+                            style: TextStyle(
+                              fontSize: 14,
+                              height: 1.0, // Единичная высота строки
+                            ),
+                            maxLines: 1,
+                            textAlignVertical:
+                                TextAlignVertical
+                                    .center, // Центровка по вертикали
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                AnimatedBuilder(
+                  animation: _circlesController,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: _circlesController.value,
+                      child: SizedBox(
+                        width: size * 4,
+                        height: size * 5,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 45.0),
+                          child: Stack(
+                            children: List.generate(7, (index) {
+                              final angle =
+                                  index == 6
+                                      ? 0.0
+                                      : (index * 60 - 90) * (pi / 180);
+                              final offset =
+                                  index == 6
+                                      ? Offset(size * 2 - 4, size * 2 - 4)
+                                      : Offset(
+                                        center.dx + radius * cos(angle),
+                                        center.dy + radius * sin(angle),
+                                      );
+                              return Positioned(
+                                left: offset.dx - size / 2,
+                                top: offset.dy - size / 2,
+                                child: ScaleTransition(
+                                  scale: Tween<double>(
+                                    begin: 0,
+                                    end: 1,
+                                  ).animate(
+                                    CurvedAnimation(
+                                      parent: _controller,
+                                      curve: Interval(
+                                        index * 0.1,
+                                        1.0,
+                                        curve: Curves.easeOut,
+                                      ),
+                                    ),
+                                  ),
+                                  child:
+                                      index == 6
+                                          ? _buildCenterCircle(size + 8)
+                                          : _buildRegularCircle(size, index),
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
-        ],
+        ),
       ),
       bottomNavigationBar: AnimatedBuilder(
         animation: _bottomBarController,
         builder: (context, child) {
-          return Opacity(
-            opacity: _bottomBarController.value,
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(
+                parent: _bottomBarController,
+                curve: Curves.easeOut,
+              ),
+            ),
             child: const BottomBar(),
           );
         },
@@ -282,13 +388,13 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset(_svgIcons[index], color: BaseColors.secondary),
-            SizedBox(height: size * 0.05),
+            SizedBox(height: size * 0.01),
             Text(
               _labels[index],
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: 'San Francisco Pro Display',
-                fontSize: size * 0.15,
+                fontSize: size * 0.13,
                 color: BaseColors.secondary,
                 fontWeight: FontWeight.w400,
               ),
