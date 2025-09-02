@@ -14,7 +14,14 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
   late AnimationController _controller;
-
+  final List<StatefulWidget> _pages = [
+    CarDetailsScreen(),
+    CarDetailsScreen(),
+    CarDetailsScreen(),
+    CarDetailsScreen(),
+    CarDetailsScreen(),
+    CarDetailsScreen(),
+  ];
   final List<String> _labels = [
     'Apartment',
     'Auto',
@@ -37,19 +44,24 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
   late AnimationController _searchController;
   late AnimationController _circlesController;
   late AnimationController _bottomBarController;
+  late AnimationController _animationTextController;
+  late AnimationController _centerCirclesController;
 
   @override
   void initState() {
     super.initState();
-    _bottomBarController = AnimationController(
+    _centerCirclesController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 800),
+    );
+    _animationTextController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
     );
     _bottomBarController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 400),
     );
-
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -66,7 +78,6 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-
     _circlesController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 20),
@@ -80,6 +91,8 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
               _circlesController.forward().then((_) {
                 _controller.forward();
                 _bottomBarController.forward();
+                _animationTextController.forward();
+                _centerCirclesController.forward();
               });
             });
           });
@@ -139,74 +152,78 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
                   builder: (context, child) {
                     return Opacity(
                       opacity: _appBarController.value,
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(
-                              top: 25.0,
-                              right: 20,
-                              left: 20,
-                              bottom: 23,
-                            ),
-                            child: SizedBox(
-                              height: 27,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.arrow_back, size: 24),
-                                    padding: EdgeInsets.zero,
-                                    constraints: BoxConstraints(
-                                      minWidth: 24,
-                                      maxHeight: 24,
-                                    ),
-                                    onPressed:
-                                        () => Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => CarCatalog(),
-                                          ),
-                                        ),
-                                  ),
-                                  Align(
-                                    // Добавлен выравнивающий виджет
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      'trapani viaggio',
-                                      style: TextStyle(
-                                        fontSize: 24,
-                                        fontFamily: 'Berlin Sans FB',
-                                        height: 1.0, // Ключевой параметр
-                                        color: Color.fromARGB(
-                                          255,
-                                          109,
-                                          109,
-                                          109,
-                                        ),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          top: 25.0,
+                          right: 20,
+                          left: 20,
+                          bottom: 23,
+                        ),
+                        child: SizedBox(
+                          height: 27,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              IconButton(
+                                icon: SvgPicture.asset(
+                                  'assets/file/left.svg',
+                                  height: 24,
+                                ),
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(
+                                  minWidth: 24,
+                                  maxHeight: 24,
+                                ),
+                                onPressed:
+                                    () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => CarCatalog(),
                                       ),
                                     ),
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.menu, size: 24),
-                                    padding: EdgeInsets.zero,
-                                    constraints: BoxConstraints(
-                                      minWidth: 24,
-                                      maxHeight: 24,
-                                    ),
-                                    onPressed: () {},
-                                  ),
-                                ],
                               ),
-                            ),
+                              Align(
+                                // Добавлен выравнивающий виджет
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'trapani viaggio',
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontFamily: 'Berlin Sans FB',
+                                    height: 1.0, // Ключевой параметр
+                                    color: Color.fromARGB(255, 109, 109, 109),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: SvgPicture.asset(
+                                  'assets/file/menu.svg',
+                                  height: 24,
+                                ),
+                                padding: EdgeInsets.zero,
+                                constraints: BoxConstraints(
+                                  minWidth: 24,
+                                  maxHeight: 24,
+                                ),
+                                onPressed: () {},
+                              ),
+                            ],
                           ),
-                          Divider(
-                            thickness: 1.5,
-                            color: BaseColors.line,
-                            height: 0,
-                          ),
-                        ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                AnimatedBuilder(
+                  animation: _searchController,
+                  builder: (context, child) {
+                    return Opacity(
+                      opacity: _searchController.value,
+                      child: Divider(
+                        thickness: 1,
+                        color: BaseColors.line,
+                        height: 0,
                       ),
                     );
                   },
@@ -246,7 +263,6 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
                                   right: 6,
                                 ),
                                 child: Align(
-                                  // Добавлено выравнивание для иконки
                                   widthFactor: 1.0,
                                   heightFactor: 1.0,
                                   child: SizedBox(
@@ -262,84 +278,69 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
                               hintText: 'What do you want to find in Trapani?',
                               hintStyle: TextStyle(
                                 fontSize: 14,
-                                height: 1.0, // Ключевой параметр
+                                height: 1.0,
                                 fontFamily: 'San Francisco Pro Display',
                                 color: BaseColors.primary,
                                 fontStyle: FontStyle.italic,
                               ),
                               contentPadding: const EdgeInsets.symmetric(
-                                vertical: 12, // Оптимизировано для высоты 40
+                                vertical: 12,
                                 horizontal: 0,
                               ),
                               isDense: true,
-                              isCollapsed: true, // Убирает внутренние отступы
+                              isCollapsed: true,
                             ),
-                            style: TextStyle(
-                              fontSize: 14,
-                              height: 1.0, // Единичная высота строки
-                            ),
+                            style: TextStyle(fontSize: 14, height: 1.0),
                             maxLines: 1,
-                            textAlignVertical:
-                                TextAlignVertical
-                                    .center, // Центровка по вертикали
+                            textAlignVertical: TextAlignVertical.center,
                           ),
                         ),
                       ),
                     );
                   },
                 ),
-                AnimatedBuilder(
-                  animation: _circlesController,
-                  builder: (context, child) {
-                    return Opacity(
-                      opacity: _circlesController.value,
-                      child: SizedBox(
-                        width: size * 4,
-                        height: size * 5,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 45.0),
-                          child: Stack(
-                            children: List.generate(7, (index) {
-                              final angle =
-                                  index == 6
-                                      ? 0.0
-                                      : (index * 60 - 90) * (pi / 180);
-                              final offset =
-                                  index == 6
-                                      ? Offset(size * 2 - 4, size * 2 - 4)
-                                      : Offset(
-                                        center.dx + radius * cos(angle),
-                                        center.dy + radius * sin(angle),
-                                      );
-                              return Positioned(
-                                left: offset.dx - size / 2,
-                                top: offset.dy - size / 2,
-                                child: ScaleTransition(
-                                  scale: Tween<double>(
-                                    begin: 0,
-                                    end: 1,
-                                  ).animate(
-                                    CurvedAnimation(
-                                      parent: _controller,
-                                      curve: Interval(
-                                        index * 0.1,
-                                        1.0,
-                                        curve: Curves.easeOut,
+                SizedBox(
+                  width: size * 4,
+                  height: size * 5,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 45.0),
+                    child: Stack(
+                      children: List.generate(7, (index) {
+                        final angle =
+                            index == 6 ? 0.0 : (index * 60 - 90) * (pi / 180);
+                        final offset =
+                            index == 6
+                                ? Offset(size * 2 - 4, size * 2 - 4)
+                                : Offset(
+                                  center.dx + radius * cos(angle),
+                                  center.dy + radius * sin(angle),
+                                );
+                        return Positioned(
+                          left: offset.dx - size / 2,
+                          top: offset.dy - size / 2,
+                          child:
+                              index == 6
+                                  ? _buildCenterCircle(size + 8)
+                                  : ScaleTransition(
+                                    scale: Tween<double>(
+                                      begin: 0,
+                                      end: 1,
+                                    ).animate(
+                                      CurvedAnimation(
+                                        parent: _controller,
+                                        curve: Interval(
+                                          index * 0.1,
+                                          1.0,
+                                          curve: Curves.easeOut,
+                                        ),
                                       ),
                                     ),
+                                    child: _buildRegularCircle(size, index),
                                   ),
-                                  child:
-                                      index == 6
-                                          ? _buildCenterCircle(size + 8)
-                                          : _buildRegularCircle(size, index),
-                                ),
-                              );
-                            }),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
+                        );
+                      }),
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -378,56 +379,92 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => CarCatalog()),
+            MaterialPageRoute(builder: (context) => _pages[index]),
           );
         },
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SvgPicture.asset(_svgIcons[index], color: BaseColors.secondary),
-            SizedBox(height: size * 0.01),
-            Text(
-              _labels[index],
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'San Francisco Pro Display',
-                fontSize: size * 0.13,
-                color: BaseColors.secondary,
-                fontWeight: FontWeight.w400,
+        child: AnimatedBuilder(
+          animation: _animationTextController,
+          builder: (context, child) {
+            final textOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+              CurvedAnimation(
+                parent: _animationTextController,
+                curve: Interval(
+                  0.05 * index,
+                  0.2 * (index),
+                  curve: Curves.easeInOut,
+                ),
               ),
-            ),
-          ],
+            );
+            return Opacity(
+              opacity: textOpacity.value,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset(
+                    _svgIcons[index],
+                    color: BaseColors.secondary,
+                  ),
+                  SizedBox(height: size * 0.01),
+                  Text(
+                    _labels[index],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'San Francisco Pro Display',
+                      fontSize: size * 0.13,
+                      color: BaseColors.secondary,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
   }
 
   Widget _buildCenterCircle(double size) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        shape: BoxShape.circle,
-      ),
-      child: CustomPaint(
-        painter: DashedCirclePainter(),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              _labels[6],
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: size * 0.14,
-                fontFamily: 'San Francisco Pro Display',
-                color: BaseColors.accent,
-                fontWeight: FontWeight.w500,
+    return AnimatedBuilder(
+      animation: _centerCirclesController,
+      builder: (context, child) {
+        final textOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+          CurvedAnimation(
+            parent: _centerCirclesController,
+            curve: Interval(0.7, 1, curve: Curves.linear),
+          ),
+        );
+        return Opacity(
+          opacity: textOpacity.value,
+          child: Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
+              shape: BoxShape.circle,
+            ),
+            child: CustomPaint(
+              painter: DashedCirclePainter(),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    _labels[6],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: size * 0.14,
+                      fontFamily: 'San Francisco Pro Display',
+                      color: BaseColors.accent,
+                      fontWeight: FontWeight.w500,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

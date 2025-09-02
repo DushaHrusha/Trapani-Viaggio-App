@@ -1,5 +1,6 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:test_task/sign_up_screen.dart';
 import 'splash_screen.dart';
 
 void main() {
