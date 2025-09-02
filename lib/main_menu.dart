@@ -32,13 +32,11 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
     'assets/file/Vespa.svg',
     'assets/file/Excursion.svg',
   ];
-  late Animation<double> _opacityAnimation;
   late AnimationController _stageController;
   late AnimationController _appBarController;
   late AnimationController _searchController;
   late AnimationController _circlesController;
   late AnimationController _bottomBarController;
-  late Animation<double> _fadeAnimation;
 
   @override
   void initState() {
@@ -52,30 +50,18 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
       duration: const Duration(milliseconds: 500),
     );
 
-    _fadeAnimation = Tween(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _bottomBarController,
-        curve: const Interval(0.3, 1.0),
-      ),
-    );
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     ); // Общий контроллер этапов
     _stageController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2500),
+      duration: const Duration(milliseconds: 700),
     );
-    _opacityAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
-
     _appBarController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-
     _searchController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -83,19 +69,17 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
 
     _circlesController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 20),
     );
 
-    // Запуск последовательности
     _stageController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
-        Future.delayed(const Duration(milliseconds: 23), () {
+        Future.delayed(const Duration(milliseconds: 0), () {
           _appBarController.forward().then((_) {
             _searchController.forward().then((_) {
               _circlesController.forward().then((_) {
-                _controller.forward().then((_) {
-                  _bottomBarController.forward();
-                });
+                _controller.forward();
+                _bottomBarController.forward();
               });
             });
           });
@@ -155,65 +139,78 @@ class _MainMenuState extends State<MainMenu> with TickerProviderStateMixin {
                   builder: (context, child) {
                     return Opacity(
                       opacity: _appBarController.value,
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: 25.0,
-                          right: 20,
-                          left: 20,
-                          bottom: 23,
-                        ),
-                        child: SizedBox(
-                          height: 27,
-
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.arrow_back, size: 24),
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(
-                                  minWidth: 24,
-                                  maxHeight: 24,
-                                ),
-                                onPressed:
-                                    () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => CarCatalog(),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              top: 25.0,
+                              right: 20,
+                              left: 20,
+                              bottom: 23,
+                            ),
+                            child: SizedBox(
+                              height: 27,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.arrow_back, size: 24),
+                                    padding: EdgeInsets.zero,
+                                    constraints: BoxConstraints(
+                                      minWidth: 24,
+                                      maxHeight: 24,
+                                    ),
+                                    onPressed:
+                                        () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => CarCatalog(),
+                                          ),
+                                        ),
+                                  ),
+                                  Align(
+                                    // Добавлен выравнивающий виджет
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'trapani viaggio',
+                                      style: TextStyle(
+                                        fontSize: 24,
+                                        fontFamily: 'Berlin Sans FB',
+                                        height: 1.0, // Ключевой параметр
+                                        color: Color.fromARGB(
+                                          255,
+                                          109,
+                                          109,
+                                          109,
+                                        ),
                                       ),
                                     ),
-                              ),
-                              Align(
-                                // Добавлен выравнивающий виджет
-                                alignment: Alignment.center,
-                                child: Text(
-                                  'trapani viaggio',
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontFamily: 'Berlin Sans FB',
-                                    height: 1.0, // Ключевой параметр
-                                    color: Color.fromARGB(255, 109, 109, 109),
                                   ),
-                                ),
+                                  IconButton(
+                                    icon: Icon(Icons.menu, size: 24),
+                                    padding: EdgeInsets.zero,
+                                    constraints: BoxConstraints(
+                                      minWidth: 24,
+                                      maxHeight: 24,
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                                ],
                               ),
-                              IconButton(
-                                icon: Icon(Icons.menu, size: 24),
-                                padding: EdgeInsets.zero,
-                                constraints: BoxConstraints(
-                                  minWidth: 24,
-                                  maxHeight: 24,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ],
+                            ),
                           ),
-                        ),
+                          Divider(
+                            thickness: 1.5,
+                            color: BaseColors.line,
+                            height: 0,
+                          ),
+                        ],
                       ),
                     );
                   },
                 ),
-                Divider(thickness: 1.5, color: BaseColors.line, height: 0),
                 AnimatedBuilder(
                   animation: _searchController,
                   builder: (context, child) {

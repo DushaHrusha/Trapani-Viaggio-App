@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:test_task/base_colors.dart';
 import 'package:test_task/main_menu.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -12,64 +13,59 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _lightSpread;
-  late Animation<double> _subtitleFade;
-  late Animation<double> _subtitleFade1;
-  late Animation<double> _subtitleFade2;
-  final Color _blueLight = Color.fromARGB(255, 85, 97, 178);
+  late Animation<double> _backgroundAnimation;
+  late Animation<double> _subTextAnimation;
+  late Animation<double> _textAnimation;
+  late Animation<double> _logoAnimation;
+  final Color _blueLight = BaseColors.secondary;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 3000),
       vsync: this,
     )..addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         _navigateToNextScreen();
       }
     });
-
-    // Корректируем интервалы
-    _lightSpread = CurvedAnimation(
+    _backgroundAnimation = CurvedAnimation(
       parent: _controller,
-      curve: Interval(0.0, 0.5, curve: Curves.easeOut),
+      curve: Interval(0.2, 0.5, curve: Curves.linear),
     );
 
-    _subtitleFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _subTextAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Interval(0.7, 1.0, curve: Curves.easeIn), // Было 1.8-2.0
+        curve: Interval(0.7, 0.9, curve: Curves.easeIn),
       ),
     );
-
-    _subtitleFade1 = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _textAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _controller,
-        curve: Interval(0.4, 0.7, curve: Curves.easeIn), // Было 1.0-1.8
+        curve: Interval(0.55, 0.8, curve: Curves.easeIn),
       ),
     );
-
-    _subtitleFade2 = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Interval(
-          0.1,
-          0.4,
-          curve: Curves.easeIn,
-        ), // Оставлено без изменений
-      ),
-    );
-
+    _logoAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Interval(0.45, 0.7)));
     _controller.forward();
   }
 
-  // 2. Модифицированный метод перехода с анимацией
+  @override
+  void dispose() {
+    _controller.removeStatusListener((status) {});
+    _controller.dispose();
+    super.dispose();
+  }
+
   void _navigateToNextScreen() {
     Navigator.pushReplacement(
       context,
       PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 1000),
+        transitionDuration: const Duration(milliseconds: 800),
         pageBuilder: (_, __, ___) => MainMenu(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
           return FadeTransition(
@@ -88,13 +84,6 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   @override
-  void dispose() {
-    _controller.removeStatusListener((status) {});
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
@@ -104,11 +93,11 @@ class _SplashScreenState extends State<SplashScreen>
             return Stack(
               alignment: Alignment.center,
               children: [
-                // Blue light spread effect
                 CustomPaint(
                   painter: _LightPainter(
                     radius:
-                        MediaQuery.of(context).size.height * _lightSpread.value,
+                        MediaQuery.of(context).size.height *
+                        _backgroundAnimation.value,
                     color: _blueLight,
                   ),
                   size: Size.infinite,
@@ -124,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen>
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           FadeTransition(
-                            opacity: _subtitleFade1,
+                            opacity: _textAnimation,
                             child: Padding(
                               padding: const EdgeInsets.only(right: 9),
                               child: Baseline(
@@ -136,21 +125,21 @@ class _SplashScreenState extends State<SplashScreen>
                                     fontSize: 36,
                                     fontFamily: 'Berlin Sans FB',
                                     fontWeight: FontWeight.w400,
-                                    color: Color.fromARGB(255, 255, 127, 80),
+                                    color: BaseColors.accent,
                                   ),
                                 ),
                               ),
                             ),
                           ),
                           FadeTransition(
-                            opacity: _subtitleFade2,
+                            opacity: _logoAnimation,
                             child: SvgPicture.asset(
                               'assets/file/Logo.svg',
                               height: 50,
                             ),
                           ),
                           FadeTransition(
-                            opacity: _subtitleFade1,
+                            opacity: _textAnimation,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 6),
                               child: Baseline(
@@ -162,7 +151,7 @@ class _SplashScreenState extends State<SplashScreen>
                                     fontFamily: 'Berlin Sans FB',
                                     fontSize: 36,
                                     fontWeight: FontWeight.w400,
-                                    color: Color.fromARGB(255, 255, 127, 80),
+                                    color: BaseColors.accent,
                                   ),
                                 ),
                               ),
@@ -171,7 +160,7 @@ class _SplashScreenState extends State<SplashScreen>
                         ],
                       ),
                       FadeTransition(
-                        opacity: _subtitleFade,
+                        opacity: _subTextAnimation,
                         child: Text(
                           'tourists assistance',
                           style: TextStyle(
