@@ -19,6 +19,8 @@ class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      // убрать это
+      height: 64,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
@@ -60,6 +62,13 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   BottomNavigationBarItem _buildNavItem(String icon) {
-    return BottomNavigationBarItem(icon: SvgPicture.asset(icon), label: '');
+    return BottomNavigationBarItem(
+      icon: Padding(
+        // Убрать это
+        padding: const EdgeInsets.only(top: 20),
+        child: SvgPicture.asset(icon),
+      ),
+      label: '',
+    );
   }
 }

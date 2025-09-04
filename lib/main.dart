@@ -4,6 +4,8 @@ import 'package:test_task/sign_up_screen.dart';
 import 'splash_screen.dart';
 
 void main() {
+  // убрать это
+  //ErrorWidget.builder = (FlutterErrorDetails details) => Container();
   runApp(
     DevicePreview(
       enabled: true,
@@ -18,6 +20,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Scaffold(body: SplashScreen()));
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(body: SplashScreen()),
+    );
   }
 }
