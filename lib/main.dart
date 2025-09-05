@@ -1,7 +1,6 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:test_task/sign_up_screen.dart';
-import 'splash_screen.dart';
+import 'package:test_task/excursions_list.dart';
 
 void main() {
   // убрать это
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(body: SplashScreen()),
+      home: Scaffold(body: ExcursionsList()),
     );
   }
 }

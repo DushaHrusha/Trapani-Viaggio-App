@@ -26,6 +26,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen>
   late AnimationController _stageController;
   String _selectedDateRange = '--/--/----'; // Инициализация плейсхолдера
   late AnimationController _stageController1;
+  late AnimationController _bottomBarController;
 
   late AnimationController _appBarController;
   late AnimationController _appBarController2;
@@ -52,11 +53,16 @@ class _CarDetailsScreenState extends State<CarDetailsScreen>
       vsync: this,
       duration: const Duration(milliseconds: 700),
     );
+    _bottomBarController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
     _stageController.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Future.delayed(const Duration(milliseconds: 0), () {
           _appBarController.forward();
           _stageController1.forward();
+          _bottomBarController.forward();
         });
       }
     });
@@ -174,7 +180,23 @@ class _CarDetailsScreenState extends State<CarDetailsScreen>
           ),
         ),
       ),
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: AnimatedBuilder(
+        animation: _bottomBarController,
+        builder: (context, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(0, 1),
+              end: Offset.zero,
+            ).animate(
+              CurvedAnimation(
+                parent: _bottomBarController,
+                curve: Curves.easeOut,
+              ),
+            ),
+            child: BottomBar(),
+          );
+        },
+      ),
     );
   }
 

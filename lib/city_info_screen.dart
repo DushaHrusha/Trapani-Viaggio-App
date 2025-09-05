@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:test_task/base_colors.dart';
+import 'package:test_task/bottom_bar.dart';
+import 'package:test_task/car_catalog.dart';
+import 'package:test_task/custom_background_with_image.dart';
+import 'package:test_task/custom_gradient_button.dart';
 
 class CityInfoScreen extends StatelessWidget {
   const CityInfoScreen({super.key});
@@ -6,129 +12,130 @@ class CityInfoScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Trapani'),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      ),
-      extendBodyBehindAppBar: true,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Image.asset(
-              'assets/file/city_header.jpg',
-              height: 300,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-            Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontFamily: 'Berlin Sans FB',
-                      fontWeight: FontWeight.w400,
-                      color: Color.fromARGB(255, 137, 137, 137),
-                    ),
-                    'Hello. Welcome to Trapani!',
-                  ),
-                  Text(
-                    'A lively city with rich maritime heritage and vibrant economic activities.',
-                    style: TextStyle(
-                      fontFamily: 'Berlin Sans FB',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Color.fromARGB(255, 137, 137, 137),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Center(
-              child: Container(
-                width: 300,
-                height: 50,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.blue, Colors.purple],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                child: TextButton(
-                  onPressed: () {
-                    print('Service button pressed');
-                  },
-                  style: TextButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                  ),
-                  child: Text(
-                    'Service',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            GridView.count(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisCount: 2,
-              crossAxisSpacing: 16.0,
-              mainAxisSpacing: 16.0,
-              padding: const EdgeInsets.all(16),
-              childAspectRatio: 2.5,
-              children: List.generate(4, (index) {
-                return _buildGridButton(
-                  context,
-                  icon: Icons.email,
-                  label: 'Почта',
-                  color: Colors.blue,
-                );
-              }),
-            ),
-          ],
+      backgroundColor: Colors.white,
+      body: CustomBackgroundWithImage(
+        image: Image.asset(
+          'assets/file/city_header.jpg',
+          height: 350,
+          width: double.infinity,
+          fit: BoxFit.cover,
         ),
+        children: [
+          SizedBox(height: 38),
+          Text(
+            'Hello. Welcome to Trapani!',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 22,
+              fontFamily: 'Berlin Sans FB',
+              fontWeight: FontWeight.w400,
+              color: BaseColors.text,
+            ),
+          ),
+          SizedBox(height: 16),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 30),
+            child: Text(
+              'Place with a lively atmosphere due to its position as the capital and its economic activities as a port.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'San Francisco Pro Display',
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+                color: BaseColors.text,
+              ),
+            ),
+          ),
+          SizedBox(height: 40),
+          CustomGradientButton(),
+          SizedBox(height: 32),
+          Divider(height: 1, color: Colors.grey[300], thickness: 1),
+          SizedBox(height: 32),
+          GridView.count(
+            shrinkWrap: true,
+            crossAxisCount: 2,
+            mainAxisSpacing: 23,
+            crossAxisSpacing: 23,
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            childAspectRatio: 2.6,
+            children: [
+              _buildGridButton(
+                context,
+                icon: SvgPicture.asset(
+                  'assets/file/home.svg',
+                  color: BaseColors.secondary,
+                ),
+                label: 'City info',
+                path: CarCatalog(),
+              ),
+              _buildGridButton(
+                context,
+                icon: SvgPicture.asset(
+                  'assets/file/home.svg',
+                  color: BaseColors.secondary,
+                ),
+                label: 'Places',
+                path: CarCatalog(),
+              ),
+              _buildGridButton(
+                context,
+                icon: SvgPicture.asset(
+                  'assets/file/home.svg',
+                  color: BaseColors.secondary,
+                ),
+                label: 'Events',
+                path: CarCatalog(),
+              ),
+              _buildGridButton(
+                context,
+                icon: SvgPicture.asset(
+                  'assets/file/home.svg',
+                  color: BaseColors.secondary,
+                ),
+                label: 'Gallery',
+                path: CarCatalog(),
+              ),
+            ],
+          ),
+        ],
       ),
+      bottomNavigationBar: BottomBar(),
     );
   }
 
   Widget _buildGridButton(
     BuildContext context, {
-    required IconData icon,
+    required SvgPicture icon,
     required String label,
-    required Color color,
+    required Widget path,
   }) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        backgroundColor: color.withOpacity(0.1),
-        foregroundColor: color,
-        padding: const EdgeInsets.all(20),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-          side: BorderSide(color: color, width: 1),
-        ),
+        shadowColor: Color.fromARGB(0, 1, 1, 1),
+        backgroundColor: BaseColors.backgroundCircles,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
       ),
-      onPressed: () {},
+      onPressed:
+          () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => path),
+          ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 28),
-          const SizedBox(width: 12),
+          SvgPicture.asset(
+            'assets/file/home.svg',
+            color: BaseColors.secondary,
+            height: 24,
+          ),
+          const SizedBox(width: 13),
           Text(
             label,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: color,
+            style: TextStyle(
+              fontFamily: 'San Francisco Pro Display',
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: BaseColors.secondary,
             ),
           ),
         ],
