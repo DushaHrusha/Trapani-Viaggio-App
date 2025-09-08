@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:test_task/sign_up_screen.dart';
 import 'package:intl/intl.dart';
 
 class DatePickerWidget extends StatefulWidget {
+  const DatePickerWidget({super.key});
+
   @override
   _DatePickerWidgetState createState() => _DatePickerWidgetState();
 }

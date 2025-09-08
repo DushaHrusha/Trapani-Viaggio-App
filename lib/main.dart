@@ -1,6 +1,6 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:test_task/excursions_list.dart';
+import 'package:test_task/apartmens_screen.dart';
 
 void main() {
   // убрать это
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(body: ExcursionsList()),
+      home: Scaffold(body: ApartmensScreen()),
     );
   }
 }

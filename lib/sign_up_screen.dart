@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:test_task/base_colors.dart';
-import 'package:test_task/car_catalog.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -432,6 +431,8 @@ class _PhoneNumberState extends State<PhoneNumber> {
 }
 
 class PhoneNumber extends StatefulWidget {
+  const PhoneNumber({super.key});
+
   @override
   _PhoneNumberState createState() => _PhoneNumberState();
 }

@@ -1,23 +1,21 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_task/apartmens_detail_screen.dart';
+import 'package:test_task/app_cubit.dart';
 import 'package:test_task/base_colors.dart';
 import 'package:test_task/custom_app_bar.dart';
 import 'package:test_task/custom_background_with_gradient.dart';
-import 'package:test_task/excursion_cubit.dart';
-import 'package:test_task/excursion_detail_screen.dart';
-import 'package:test_task/excursion_state.dart';
-import 'package:test_task/first_card.dart';
 import 'package:test_task/second_card.dart';
 
-class ExcursionsList extends StatefulWidget {
-  const ExcursionsList({super.key});
+class ApartmensScreen extends StatefulWidget {
+  const ApartmensScreen({super.key});
 
   @override
-  createState() => _ExcursionsListState();
+  createState() => _ApartmensListState();
 }
 
-class _ExcursionsListState extends State<ExcursionsList> {
+class _ApartmensListState extends State<ApartmensScreen> {
   final Map<int, int> ratings = {};
 
   final PageController _pageController = PageController();
@@ -39,24 +37,24 @@ class _ExcursionsListState extends State<ExcursionsList> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ExcursionCubit()..loadExcursions(),
+      create: (context) => ApartmentsCubit()..loadExcursions(),
       child: Scaffold(
         backgroundColor: BaseColors.background,
-        body: BlocBuilder<ExcursionCubit, ExcursionState>(
+        body: BlocBuilder<ApartmentsCubit, ApartmentsState>(
           builder: (context, state) {
-            if (state is ExcursionInitial) {
+            if (state is ApartmentsInitial) {
               return Center(child: CircularProgressIndicator());
-            } else if (state is ExcursionLoaded) {
+            } else if (state is ApartmentsLoaded) {
               return CustomBackgroundWithGradient(
                 child: Column(
                   children: [
-                    CustomAppBar(lable: "Excursion"),
+                    CustomAppBar(lable: "Apartmens"),
                     Divider(height: 1, color: Colors.grey[300], thickness: 1),
                     Expanded(
                       child: ListView.builder(
-                        itemCount: state.excursions.length,
+                        itemCount: state.apartments.length,
                         itemBuilder: (context, index) {
-                          final excursion = state.excursions[index];
+                          final apartments = state.apartments[index];
                           final rating = ratings[index] ?? 0;
                           return GestureDetector(
                             onTap: () {
@@ -64,26 +62,18 @@ class _ExcursionsListState extends State<ExcursionsList> {
                                 context,
                                 MaterialPageRoute(
                                   builder:
-                                      (context) => ExcursionDetailScreen(
-                                        excursion: excursion,
+                                      (context) => ApartmensDetailScreen(
+                                        apartments: apartments,
                                       ),
                                 ),
                               );
                             },
-                            child:
-                                (index == 0)
-                                    ? FirstCard(
-                                      excursion: excursion,
-                                      rating: rating,
-                                      index: index,
-                                      context: context,
-                                    )
-                                    : SecondCard(
-                                      excursion: excursion,
-                                      rating: rating,
-                                      index: index,
-                                      context: context,
-                                    ),
+                            child: SecondCard(
+                              excursion: apartments,
+                              rating: rating,
+                              index: index,
+                              context: context,
+                            ),
                           );
                         },
                       ),

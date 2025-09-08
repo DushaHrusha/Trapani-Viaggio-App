@@ -37,6 +37,10 @@ dependencies:
   flutter_svg: ^2.2.0
   device_preview: ^1.2.0
   flutter_bloc: ^9.1.1
+  google_maps_flutter: ^2.13.1
+  flutter_map: ^8.2.1
+  latlong2: ^0.9.1
+  location: ^8.0.1
 
 dev_dependencies:
   flutter_test:

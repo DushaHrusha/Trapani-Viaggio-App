@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:test_task/car_catalog.dart';
 
 class BottomBarScreen extends StatefulWidget {
+  const BottomBarScreen({super.key});
+
   @override
   _BottomBarScreenState createState() => _BottomBarScreenState();
 }
@@ -37,7 +39,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
         shape: CircularNotchedRectangle(),
         notchMargin: 0.01,
         clipBehavior: Clip.antiAlias,
-        child: Container(
+        child: SizedBox(
           height: kBottomNavigationBarHeight * 0.98,
           child: Container(
             decoration: BoxDecoration(

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:test_task/base_colors.dart';
-import 'package:test_task/bloc/car_catalog_cubit.dart';
 import 'package:test_task/date_picker.dart';
-import 'package:test_task/main_menu.dart';
 import 'package:test_task/bottom_bar.dart';
 import 'package:test_task/sign_up_screen.dart';
 import 'package:intl/intl.dart';
 
 class CarCatalog extends StatelessWidget {
+  const CarCatalog({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(title: 'Automobiles', home: CarDetailsScreen());
@@ -17,6 +16,8 @@ class CarCatalog extends StatelessWidget {
 }
 
 class CarDetailsScreen extends StatefulWidget {
+  const CarDetailsScreen({super.key});
+
   @override
   _CarDetailsScreenState createState() => _CarDetailsScreenState();
 }
@@ -203,7 +204,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen>
   Widget _buildHeader() {
     return Padding(
       padding: EdgeInsets.only(top: 22, left: 22, right: 22),
-      child: Container(
+      child: SizedBox(
         height: 24,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -270,7 +271,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen>
   }
 
   Widget _buildSpecsCarousel() {
-    return Container(
+    return SizedBox(
       height: 80,
       child: ListView.builder(
         controller: _scrollController,
@@ -326,7 +327,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen>
     );
   }
 
-  String _selectedDateRange1 =
+  final String _selectedDateRange1 =
       '${DateTime.now().day} ${DateTime.now().month}  ${DateTime.now().year} ';
   late int sumDay = 0;
 
@@ -388,7 +389,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen>
                   width: 1,
                   color: const Color.fromARGB(255, 224, 224, 224),
                 ),
-                Container(
+                SizedBox(
                   width: 170,
                   child: GestureDetector(
                     onTap: () {
@@ -479,7 +480,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen>
                 Padding(
                   padding: const EdgeInsets.only(left: 21),
                   child: Text(
-                    ' ${49 * sumDay} € / ${sumDay} days',
+                    ' ${49 * sumDay} € / $sumDay days',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
@@ -555,7 +556,7 @@ class _CarDetailsScreenState extends State<CarDetailsScreen>
                           color: const Color.fromARGB(255, 138, 120, 178),
                         ),
 
-                        Container(
+                        SizedBox(
                           width: 60,
                           child: Icon(Icons.arrow_forward, color: Colors.white),
                         ),
@@ -573,6 +574,8 @@ class _CarDetailsScreenState extends State<CarDetailsScreen>
 }
 
 class CarPage extends StatefulWidget {
+  const CarPage({super.key});
+
   @override
   State<StatefulWidget> createState() {
     return _CarPageState();
@@ -664,7 +667,7 @@ class _CarPageState extends State<CarPage> with TickerProviderStateMixin {
   late AnimationController _controller;
   //final ScrollController _scrollController = ScrollController();
   late AnimationController _stageController;
-  String _selectedDateRange = '--/--/----'; // Инициализация плейсхолдера
+  final String _selectedDateRange = '--/--/----'; // Инициализация плейсхолдера
 
   late AnimationController _appBarController;
 
@@ -741,7 +744,7 @@ class _CarPageState extends State<CarPage> with TickerProviderStateMixin {
       children: [
         Padding(
           padding: EdgeInsets.only(top: 22, left: 22, right: 22),
-          child: Container(
+          child: SizedBox(
             height: 24,
             child: AnimatedBuilder(
               animation: _stageController1,
@@ -1033,7 +1036,7 @@ class _CarPageState extends State<CarPage> with TickerProviderStateMixin {
           ],
         ),
         SizedBox(height: 7),
-        Container(
+        SizedBox(
           height: 80,
           child: ListView(
             controller: _scrollController,
@@ -1067,7 +1070,7 @@ class _CarPageState extends State<CarPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildCharacteristicCircle(String car_ch, String icon_path) {
+  Widget _buildCharacteristicCircle(String carCh, String iconPath) {
     return AnimatedSwitcher(
       duration: Duration(milliseconds: 1000), // Общая длительность
       transitionBuilder: (Widget child, Animation<double> animation) {
@@ -1100,13 +1103,10 @@ class _CarPageState extends State<CarPage> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              icon_path,
-              color: Color.fromARGB(255, 85, 97, 178),
-            ),
+            SvgPicture.asset(iconPath, color: Color.fromARGB(255, 85, 97, 178)),
             SizedBox(height: 6),
             Text(
-              car_ch,
+              carCh,
               style: TextStyle(
                 fontFamily: 'San Francisco Pro Display',
                 fontSize: 10,
