@@ -1,20 +1,22 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:test_task/bookmarks.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/data/models/card_data.dart';
 import 'package:test_task/presentation/apartmens_detail_screen.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/custom_text_field_with_gradient_button.dart';
+import 'package:provider/provider.dart';
 
 class FirstCard extends StatefulWidget {
   final CardData data;
-  final int rating;
+
   final int index;
   final BuildContext context;
   final TextStyle style;
   const FirstCard({
     super.key,
     required this.data,
-    required this.rating,
     required this.index,
     required this.context,
     required this.style,
@@ -27,13 +29,14 @@ class FirstCard extends StatefulWidget {
 class _FirstCardState extends State<FirstCard> {
   final PageController _pageController = PageController();
   late CardData _data;
-
+  late List<IconData> icons;
   int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
     _data = widget.data;
+    icons = _data.iconServices;
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page!.round();
@@ -41,15 +44,6 @@ class _FirstCardState extends State<FirstCard> {
     });
   }
 
-  final List<IconData> icons = [
-    Icons.wifi,
-    Icons.map,
-    Icons.luggage,
-    Icons.edit,
-    Icons.wb_sunny,
-    Icons.pets,
-    Icons.smoke_free,
-  ];
   bool showAllIcons = false;
   @override
   void dispose() {
@@ -109,15 +103,25 @@ class _FirstCardState extends State<FirstCard> {
     );
   }
 
+  String _getFirstSentence(String text) {
+    // Регулярное выражение для поиска первого предложения
+    final sentenceRegex = RegExp(r'^(.*?[.!?])');
+    final match = sentenceRegex.firstMatch(text);
+
+    return match != null ? match.group(1)!.trim() : text.trim();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 44),
+      margin: EdgeInsets.only(bottom: context.adaptiveSize(44)),
       child: Column(
         children: [
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(32)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(context.adaptiveSize(32)),
+              ),
               border: Border.all(color: Color.fromARGB(255, 224, 224, 224)),
             ),
             child: Column(
@@ -126,12 +130,12 @@ class _FirstCardState extends State<FirstCard> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
+                        topLeft: Radius.circular(context.adaptiveSize(32)),
+                        topRight: Radius.circular(context.adaptiveSize(32)),
                       ),
                       child: SizedBox(
-                        height: 375,
-                        width: MediaQuery.maybeWidthOf(context),
+                        height: context.adaptiveSize(375),
+                        width: MediaQuery.of(context).size.width,
                         child: PageView.builder(
                           controller: _pageController,
                           scrollDirection: Axis.horizontal,
@@ -146,97 +150,145 @@ class _FirstCardState extends State<FirstCard> {
                       ),
                     ),
                     Positioned(
-                      right: 24,
-                      top: 24,
-                      child: Container(
-                        height: 56,
-                        width: 56,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(16)),
-                          shape: BoxShape.rectangle,
-                          color: Color.fromARGB(87, 255, 255, 255),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(16)),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                            child: Icon(
-                              Icons.bookmark_outline,
-                              color: Color.fromARGB(255, 251, 251, 253),
-                              size: 25,
+                      right: context.adaptiveSize(24),
+                      top: context.adaptiveSize(24),
+                      child: Consumer<BookmarksProvider>(
+                        builder: (context, bookmarksProvider, child) {
+                          final isBookmarked = bookmarksProvider.isBookmarked(
+                            _data,
+                          );
+                          return GestureDetector(
+                            onTap: () {
+                              bookmarksProvider.toggleBookmark(_data);
+                            },
+                            child: Container(
+                              height: context.adaptiveSize(56),
+                              width: context.adaptiveSize(56),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(context.adaptiveSize(16)),
+                                ),
+                                shape: BoxShape.rectangle,
+                                color: Color.fromARGB(87, 255, 255, 255),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(context.adaptiveSize(16)),
+                                ),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(
+                                    sigmaX: 5.0,
+                                    sigmaY: 5.0,
+                                  ),
+                                  child: Icon(
+                                    isBookmarked
+                                        ? Icons.bookmark
+                                        : Icons.bookmark_outline,
+                                    color:
+                                        isBookmarked
+                                            ? BaseColors.accent
+                                            : Color.fromARGB(
+                                              255,
+                                              251,
+                                              251,
+                                              253,
+                                            ),
+                                    size: context.adaptiveSize(25),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
                     ),
+
                     Positioned(
-                      bottom: 16,
+                      bottom: context.adaptiveSize(16),
                       left: 0,
                       right: 0,
                       child: _buildIndicator(_data.imageUrl.length),
                     ),
-                    SizedBox(height: 12),
                   ],
                 ),
-                SizedBox(height: 12),
+                SizedBox(height: context.adaptiveSize(12)),
                 Padding(
-                  padding: const EdgeInsets.only(left: 23, right: 23),
+                  padding: EdgeInsets.only(
+                    left: context.adaptiveSize(23),
+                    right: context.adaptiveSize(23),
+                  ),
                   child: Row(
                     children: [
-                      Wrap(
-                        alignment: WrapAlignment.start,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          Text(
-                            _data.title,
-                            softWrap: true,
-                            style: TextStyle(
-                              fontSize: 19,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: "SF Pro Display",
-                              color: BaseColors.text,
+                      Expanded(
+                        child: Wrap(
+                          alignment: WrapAlignment.start,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Text(
+                              _data.title,
+                              softWrap: true,
+                              style: context.adaptiveTextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'SF Pro Display',
+                                color: BaseColors.text,
+                              ),
                             ),
-                          ),
-                          StarRating(rating: 8.6),
-                        ],
+                            StarRating(rating: _data.rating),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 12),
+                SizedBox(height: context.adaptiveSize(12)),
                 Padding(
-                  padding: const EdgeInsets.only(left: 23, right: 23),
+                  padding: EdgeInsets.only(
+                    left: context.adaptiveSize(23),
+                    right: context.adaptiveSize(23),
+                  ),
                   child: Text(
-                    _data.description,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    _getFirstSentence(_data.description),
+                    style: context.adaptiveTextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SF Pro Display',
+                      color: BaseColors.text,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
-                SizedBox(height: 21),
+
+                SizedBox(height: context.adaptiveSize(21)),
               ],
             ),
           ),
-          SizedBox(height: 24),
+          SizedBox(height: context.adaptiveSize(24)),
           Row(
             children: [
               if (_currentPage1 > 0)
                 IconButton(
-                  icon: Icon(Icons.arrow_back_ios),
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    size: context.adaptiveSize(16),
+                  ),
                   onPressed: _scrollLeft,
                 ),
               Expanded(
                 child: SizedBox(
-                  height: 48,
+                  height: context.adaptiveSize(48),
                   child: ListView.builder(
                     controller: _scrollController,
                     scrollDirection: Axis.horizontal,
                     itemCount: icons.length,
                     itemBuilder: (context, index) {
                       return Container(
-                        margin: EdgeInsets.only(right: 12),
-                        height: 48,
-                        width: 46,
+                        margin: EdgeInsets.only(
+                          right: context.adaptiveSize(12),
+                        ),
+                        height: context.adaptiveSize(48),
+                        width: context.adaptiveSize(46),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
@@ -246,7 +298,11 @@ class _FirstCardState extends State<FirstCard> {
                         ),
                         child: CircleAvatar(
                           backgroundColor: Color.fromARGB(0, 1, 1, 1),
-                          child: Icon(icons[index], color: BaseColors.text),
+                          child: Icon(
+                            icons[index],
+                            color: BaseColors.text,
+                            size: context.adaptiveSize(20),
+                          ),
                         ),
                       );
                     },
@@ -257,16 +313,16 @@ class _FirstCardState extends State<FirstCard> {
                 IconButton(
                   icon: Icon(
                     Icons.arrow_forward_ios,
-                    size: 12,
+                    size: context.adaptiveSize(12),
                     color: Color.fromARGB(255, 189, 189, 189),
                   ),
                   onPressed: _scrollRight,
                 ),
             ],
           ),
-          SizedBox(height: 24),
+          SizedBox(height: context.adaptiveSize(24)),
           CustomTextFieldWithGradientButton(
-            text: "${_data.price} €",
+            text: "${_data.price.toStringAsFixed(0)} €",
             style: widget.style,
           ),
         ],

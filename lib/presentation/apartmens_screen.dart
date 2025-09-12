@@ -1,13 +1,20 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:test_task/bloc/cubits/apartments_cubit.dart';
 import 'package:test_task/bloc/state/apartments_state.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
+import 'package:test_task/core/constants/bottom_bar.dart';
+import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/presentation/apartmens_detail_screen.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/core/constants/second_card.dart';
+import 'package:test_task/presentation/main_menu_screen.dart';
+import 'package:test_task/presentation/profile_screen.dart';
+import 'package:test_task/presentation/splash_screen.dart';
 
 class ApartmensScreen extends StatefulWidget {
   const ApartmensScreen({super.key});
@@ -16,22 +23,53 @@ class ApartmensScreen extends StatefulWidget {
   createState() => _ApartmensListState();
 }
 
-class _ApartmensListState extends State<ApartmensScreen> {
+class _ApartmensListState extends State<ApartmensScreen>
+    with SingleTickerProviderStateMixin {
   final Map<int, int> ratings = {};
 
-  final PageController _pageController = PageController();
+  // Контроллеры анимации
+  late AnimationController _animationController;
+  late Animation<double> _appBarOpacityAnimation;
+  late Animation<Offset> _bottomBarSlideAnimation;
+  late Animation<double> _cardsOpacityAnimation;
 
   @override
   void initState() {
     super.initState();
-    _pageController.addListener(() {
-      setState(() {});
-    });
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 3000),
+      vsync: this,
+    );
+
+    _appBarOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0.2, 0.5, curve: Curves.easeInOut),
+      ),
+    );
+    _cardsOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0.5, 1, curve: Curves.easeInOut),
+      ),
+    );
+    _bottomBarSlideAnimation = Tween<Offset>(
+      begin: Offset(0, 1),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Interval(0.5, 0.7, curve: Curves.easeOutQuad),
+      ),
+    );
+
+    _animationController.forward();
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
@@ -49,8 +87,14 @@ class _ApartmensListState extends State<ApartmensScreen> {
               return CustomBackgroundWithGradient(
                 child: Column(
                   children: [
-                    CustomAppBar(label: "apartments"),
-                    Divider(height: 1, color: Colors.grey[300], thickness: 1),
+                    FadeTransition(
+                      opacity: _appBarOpacityAnimation,
+                      child: CustomAppBar(label: "apartments"),
+                    ),
+                    FadeTransition(
+                      opacity: _appBarOpacityAnimation,
+                      child: GreyLine(),
+                    ),
                     Expanded(
                       child: ListView.builder(
                         padding: EdgeInsets.symmetric(
@@ -60,27 +104,30 @@ class _ApartmensListState extends State<ApartmensScreen> {
                         itemCount: state.apartments.length,
                         itemBuilder: (context, index) {
                           final apartment = state.apartments[index];
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) =>
-                                          ApartmentsDetailScreenDetailScreen(
-                                            apartments: apartment,
-                                          ),
+                          return FadeTransition(
+                            opacity: _cardsOpacityAnimation,
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => ApartmentsDetailScreen(
+                                          apartments: apartment,
+                                        ),
+                                  ),
+                                );
+                              },
+                              child: SecondCard(
+                                index: index,
+                                data: apartment,
+                                context: context,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: "SF Pro Display",
+                                  color: BaseColors.accent,
+                                  fontSize: 21,
                                 ),
-                              );
-                            },
-                            child: SecondCard(
-                              data: apartment,
-                              context: context,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                fontFamily: "SF Pro Display",
-                                color: BaseColors.accent,
-                                fontSize: 21,
                               ),
                             ),
                           );
@@ -94,88 +141,108 @@ class _ApartmensListState extends State<ApartmensScreen> {
             return Center(child: Text('Error loading excursions'));
           },
         ),
-        bottomNavigationBar: Container(
-          height: 64,
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
+        // Анимированный BottomBar со slide
+        bottomNavigationBar: SlideTransition(
+          position: _bottomBarSlideAnimation,
+          child: BottomBar(currentScreen: widget),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: SlideTransition(
+          position: _bottomBarSlideAnimation,
+          child: Container(
+            margin: EdgeInsets.only(bottom: 30),
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 1),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black,
-                spreadRadius: 5,
-                blurRadius: 20,
-                offset: const Offset(0, -4),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(32),
-              topRight: Radius.circular(32),
-            ),
-            child: BottomAppBar(
-              shape: const CircularNotchedRectangle(),
-              notchMargin: 5.0,
-              clipBehavior: Clip.antiAlias,
-              child: SizedBox(
-                height: kBottomNavigationBarHeight,
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.home),
-                      onPressed: () {
-                        setState(() {});
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.search),
-                      onPressed: () {
-                        setState(() {});
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.favorite_border_outlined),
-                      onPressed: () {
-                        setState(() {});
-                      },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.account_circle_outlined),
-                      onPressed: () {
-                        setState(() {});
-                      },
-                    ),
-                  ],
+            child: ClipOval(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 13, sigmaY: 13),
+                child: FloatingActionButton(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  child: SvgPicture.asset(
+                    "assets/file/sliders.svg",
+                    color: BaseColors.accent,
+                    height: 24,
+                  ),
+                  onPressed: () => setState(() {}),
                 ),
               ),
             ),
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: Container(
-          //  margin: EdgeInsets.only(bottom: 30),
-          width: 72,
-          height: 72,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 1),
-          ),
-          child: ClipOval(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 13, sigmaY: 13),
-              child: FloatingActionButton(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                child: Icon(Icons.search, color: BaseColors.accent, size: 24),
-                onPressed: () => setState(() {}),
-              ),
+      ),
+    );
+  }
+
+  // Оставляем существующие вспомогательные методы без изменений
+  Widget _buildSvgIconButton(String assetPath, VoidCallback onPressed) {
+    return IconButton(icon: _buildSafeSvg(assetPath), onPressed: onPressed);
+  }
+
+  Widget _buildSafeSvg(String assetPath) {
+    try {
+      return SvgPicture.asset(
+        assetPath,
+        width: context.adaptiveSize(24),
+        height: context.adaptiveSize(24),
+        colorFilter: ColorFilter.mode(BaseColors.text, BlendMode.srcIn),
+        placeholderBuilder:
+            (BuildContext context) => Icon(
+              Icons.error_outline,
+              color: Colors.red,
+              size: context.adaptiveSize(24),
             ),
-          ),
-        ),
+      );
+    } catch (e) {
+      print('SVG Loading Error for $assetPath: $e');
+      return Icon(
+        Icons.error_outline,
+        color: Colors.red,
+        size: context.adaptiveSize(24),
+      );
+    }
+  }
+
+  void _navigateToScreen(int index) {
+    Widget targetScreen;
+    switch (index) {
+      case 0:
+        targetScreen = MainMenuScreen();
+        break;
+      case 1:
+        targetScreen = SplashScreen();
+        break;
+      case 2:
+        targetScreen = SplashScreen();
+        break;
+      case 3:
+        targetScreen = ProfileScreen();
+        break;
+      default:
+        targetScreen = SplashScreen();
+    }
+
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 800),
+        pageBuilder: (_, __, ___) => targetScreen,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: FadeTransition(
+              opacity: Tween<double>(
+                begin: 1.0,
+                end: 0.0,
+              ).animate(secondaryAnimation),
+              child: child,
+            ),
+          );
+        },
       ),
     );
   }

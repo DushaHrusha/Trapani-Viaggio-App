@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 
 class CustomBackgroundWithImage extends StatelessWidget {
   final Image image;
   final List<Widget> children;
+
   const CustomBackgroundWithImage({
     super.key,
     required this.image,
@@ -16,7 +18,12 @@ class CustomBackgroundWithImage extends StatelessWidget {
       children: [
         image,
         Padding(
-          padding: const EdgeInsets.only(top: 298),
+          // Используйте adaptivePadding для отступа
+          padding: context.adaptivePadding(
+            EdgeInsets.only(
+              top: context.adaptiveSize(298), // Адаптивный размер отступа
+            ),
+          ),
           child: Container(
             decoration: BoxDecoration(
               color: BaseColors.background,
@@ -27,10 +34,16 @@ class CustomBackgroundWithImage extends StatelessWidget {
             ),
             constraints: BoxConstraints.expand(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height - 298,
+              height:
+                  MediaQuery.of(context).size.height -
+                  context.adaptiveSize(298),
             ),
-            child: Column(
-              children: children, // Используйте переданные виджеты
+            child: SingleChildScrollView(
+              // Добавлена прокрутка для контента
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: children,
+              ),
             ),
           ),
         ),

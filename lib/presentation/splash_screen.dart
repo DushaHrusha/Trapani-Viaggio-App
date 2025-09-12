@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/presentation/main_menu_screen.dart';
+import 'package:test_task/presentation/profile_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -115,13 +117,15 @@ class _SplashScreenState extends State<SplashScreen>
                           FadeTransition(
                             opacity: _textAnimation,
                             child: Padding(
-                              padding: const EdgeInsets.only(right: 9),
+                              padding: context.adaptivePadding(
+                                const EdgeInsets.only(right: 9),
+                              ),
                               child: Baseline(
-                                baseline: 36 * 1.35,
+                                baseline: context.adaptiveSize(36 * 1.35),
                                 baselineType: TextBaseline.alphabetic,
                                 child: Text(
                                   'trpani',
-                                  style: TextStyle(
+                                  style: context.adaptiveTextStyle(
                                     fontSize: 36,
                                     fontFamily: 'Berlin Sans FB',
                                     fontWeight: FontWeight.w400,
@@ -135,21 +139,23 @@ class _SplashScreenState extends State<SplashScreen>
                             opacity: _logoAnimation,
                             child: SvgPicture.asset(
                               'assets/file/Logo.svg',
-                              height: 50,
+                              height: context.adaptiveSize(50),
                             ),
                           ),
                           FadeTransition(
                             opacity: _textAnimation,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 6),
+                              padding: context.adaptivePadding(
+                                const EdgeInsets.only(left: 6),
+                              ),
                               child: Baseline(
-                                baseline: 36 * 0.8,
+                                baseline: context.adaptiveSize(36 * 0.8),
                                 baselineType: TextBaseline.alphabetic,
                                 child: Text(
                                   'viaggio',
-                                  style: TextStyle(
-                                    fontFamily: 'Berlin Sans FB',
+                                  style: context.adaptiveTextStyle(
                                     fontSize: 36,
+                                    fontFamily: 'Berlin Sans FB',
                                     fontWeight: FontWeight.w400,
                                     color: BaseColors.accent,
                                   ),
@@ -163,9 +169,9 @@ class _SplashScreenState extends State<SplashScreen>
                         opacity: _subTextAnimation,
                         child: Text(
                           'tourists assistance',
-                          style: TextStyle(
-                            fontFamily: 'San Francisco Pro Display',
+                          style: context.adaptiveTextStyle(
                             fontSize: 16,
+                            fontFamily: 'San Francisco Pro Display',
                             fontWeight: FontWeight.w400,
                             color: Colors.white,
                           ),

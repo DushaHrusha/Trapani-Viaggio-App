@@ -1,7 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/presentation/car_catalog.dart';
+import 'package:test_task/presentation/main_menu_screen.dart';
+import 'package:test_task/presentation/profile_screen.dart'
+    show ProfileScreen, AdaptiveSizeExtension;
+import 'package:test_task/presentation/splash_screen.dart';
 
 class BottomBarScreen extends StatefulWidget {
   const BottomBarScreen({super.key});
@@ -17,11 +22,11 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
   @override
   void initState() {
     _pages = [
-      {'page': CarCatalog()},
-      {'page': CarCatalog()},
-      {'page': CarCatalog()},
-      {'page': CarCatalog()},
-      {'page': CarCatalog()},
+      {'page': CarDetailsScreen()},
+      {'page': CarDetailsScreen()},
+      {'page': CarDetailsScreen()},
+      {'page': CarDetailsScreen()},
+      {'page': CarDetailsScreen()},
     ];
     super.initState();
   }
@@ -30,6 +35,46 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
     setState(() {
       _selectedPageIndex = index;
     });
+  }
+
+  void _navigateToScreen(int index) {
+    Widget targetScreen;
+    switch (index) {
+      case 0:
+        targetScreen = MainMenuScreen();
+        break;
+      case 1:
+        targetScreen = SplashScreen();
+        break;
+      case 2:
+        targetScreen = SplashScreen();
+        break;
+      case 3:
+        targetScreen = ProfileScreen();
+        break;
+      default:
+        targetScreen = SplashScreen();
+    }
+
+    Navigator.pushReplacement(
+      context,
+      PageRouteBuilder(
+        transitionDuration: const Duration(milliseconds: 800),
+        pageBuilder: (_, __, ___) => targetScreen,
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(
+            opacity: animation,
+            child: FadeTransition(
+              opacity: Tween<double>(
+                begin: 1.0,
+                end: 0.0,
+              ).animate(secondaryAnimation),
+              child: child,
+            ),
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -43,6 +88,14 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
           height: kBottomNavigationBarHeight * 0.98,
           child: Container(
             decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Color.fromRGBO(227, 228, 233, 0.6),
+                  spreadRadius: context.adaptiveSize(5),
+                  blurRadius: context.adaptiveSize(100),
+                  offset: Offset(0, context.adaptiveSize(-10)),
+                ),
+              ],
               color: Colors.white,
               border: Border(top: BorderSide(color: Colors.grey, width: 0.5)),
             ),
@@ -80,7 +133,12 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 2),
             boxShadow: [
-              BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10),
+              BoxShadow(
+                color: Color.fromRGBO(227, 228, 233, 0.6),
+                spreadRadius: context.adaptiveSize(5),
+                blurRadius: context.adaptiveSize(100),
+                offset: Offset(0, context.adaptiveSize(-10)),
+              ),
             ],
           ),
           child: ClipOval(

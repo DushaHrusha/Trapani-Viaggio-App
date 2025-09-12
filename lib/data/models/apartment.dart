@@ -10,8 +10,10 @@ class Apartment implements CardData {
   final double rating;
   final int numberReviews;
   final String address;
+  final int id;
 
   Apartment({
+    required this.id,
     required this.title,
     required this.imageUrl,
     required this.description,

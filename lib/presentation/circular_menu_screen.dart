@@ -1,6 +1,11 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:test_task/VespaBike.dart';
+import 'package:test_task/bookmarks.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
+import 'package:test_task/core/constants/grey_line.dart';
+import 'package:test_task/moto.dart';
 import 'package:test_task/presentation/apartmens_screen.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/bottom_bar.dart';
@@ -8,7 +13,7 @@ import 'package:test_task/presentation/car_catalog.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/presentation/excursions_list.dart';
-import 'package:test_task/presentation/profile_screen.dart';
+import 'package:provider/provider.dart';
 
 class CircularMenuScreen extends StatefulWidget {
   const CircularMenuScreen({super.key});
@@ -25,9 +30,9 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
   final List<StatefulWidget> _pages = [
     ApartmensScreen(),
     CarDetailsScreen(),
+    MotorcycleDetailsScreen(),
     CarDetailsScreen(),
-    CarDetailsScreen(),
-    CarDetailsScreen(),
+    VespaDetailsScreen(),
     ExcursionsList(),
   ];
 
@@ -77,7 +82,7 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
-    ); // Общий контроллер этапов
+    );
     _stageController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 700),
@@ -122,11 +127,17 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
     _searchController.dispose();
     _circlesController.dispose();
     _bottomBarController.dispose();
+    _controller.dispose();
+    _animationTextController.dispose();
+    _centerCirclesController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size.shortestSide * 0.25;
+    final center = Offset(size * 2, size * 2);
+    final radius = size * 1.1;
     return Scaffold(
       backgroundColor: BaseColors.background,
       body: CustomBackgroundWithGradient(
@@ -146,11 +157,7 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
               builder: (context, child) {
                 return Opacity(
                   opacity: _searchController.value,
-                  child: Divider(
-                    thickness: 1,
-                    color: BaseColors.line,
-                    height: 0,
-                  ),
+                  child: GreyLine(),
                 );
               },
             ),
@@ -160,18 +167,16 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
                 return Opacity(
                   opacity: _searchController.value,
                   child: Padding(
-                    padding: const EdgeInsets.only(
-                      top: 48.0,
-                      left: 30,
-                      right: 28,
+                    padding: context.adaptivePadding(
+                      EdgeInsets.only(top: 48, left: 30, right: 30),
                     ),
                     child: Container(
-                      height: 40,
+                      height: context.adaptiveSize(40),
                       decoration: BoxDecoration(
                         color: BaseColors.background,
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(32),
                         border: Border.all(
-                          color: BaseColors.primary,
+                          color: Color.fromRGBO(224, 224, 224, 1),
                           width: 1.0,
                         ),
                       ),
@@ -184,13 +189,15 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
                           errorBorder: InputBorder.none,
                           focusedErrorBorder: InputBorder.none,
                           prefixIcon: Padding(
-                            padding: const EdgeInsets.only(left: 28, right: 6),
+                            padding: context.adaptivePadding(
+                              const EdgeInsets.only(left: 28, right: 6),
+                            ),
                             child: Align(
                               widthFactor: 1.0,
                               heightFactor: 1.0,
                               child: SizedBox(
-                                width: 20,
-                                height: 20,
+                                width: context.adaptiveSize(20),
+                                height: context.adaptiveSize(20),
                                 child: SvgPicture.asset(
                                   "assets/file/search.svg",
                                   color: BaseColors.primary,
@@ -200,9 +207,9 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
                           ),
                           hintText: 'What do you want to find in Trapani?',
                           hintStyle: TextStyle(
-                            fontSize: 14,
+                            fontSize: context.adaptiveSize(14),
                             height: 1.0,
-                            fontFamily: 'San Francisco Pro Display',
+                            fontFamily: 'SF Pro Display',
                             color: BaseColors.primary,
                             fontStyle: FontStyle.italic,
                           ),
@@ -223,33 +230,17 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
               },
             ),
             SizedBox(
-              width: context.adaptiveSize(
-                MediaQuery.of(context).size.shortestSide * 0.25 * 4,
-              ),
-              height: context.adaptiveSize(
-                MediaQuery.of(context).size.shortestSide * 0.25 * 5,
-              ),
+              width: size * 4,
+              height: size * 5,
               child: Padding(
-                padding: const EdgeInsets.only(top: 45.0),
+                padding: context.adaptivePadding(EdgeInsets.only(top: 45.0)),
                 child: Stack(
                   children: List.generate(7, (index) {
-                    final shortestSide =
-                        MediaQuery.of(context).size.shortestSide;
-                    final size = context.adaptiveSize(shortestSide * 0.25);
-                    final center = Offset(
-                      context.adaptiveSize(size * 2),
-                      context.adaptiveSize(size * 2),
-                    );
-                    final radius = context.adaptiveSize(size * 1.1);
-
                     final angle =
                         index == 6 ? 0.0 : (index * 60 - 90) * (pi / 180);
                     final offset =
                         index == 6
-                            ? Offset(
-                              context.adaptiveSize(size * 2 - 4),
-                              context.adaptiveSize(size * 2 - 4),
-                            )
+                            ? Offset(size * 2 - 4, size * 2 - 4)
                             : Offset(
                               center.dx + radius * cos(angle),
                               center.dy + radius * sin(angle),
@@ -302,70 +293,78 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
   }
 
   Widget _buildRegularCircle(double size, int index) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        color: BaseColors.backgroundCircles,
-        shape: BoxShape.circle,
-      ),
-      child: GestureDetector(
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        splashFactory: InkRipple.splashFactory,
+        borderRadius: BorderRadius.circular(size / 2),
         onTap: () {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder:
-                  (context, animation, secondaryAnimation) =>
-                      _cachedPages[index],
-              transitionsBuilder: (
-                context,
-                animation,
-                secondaryAnimation,
-                child,
-              ) {
-                return FadeTransition(opacity: animation, child: child);
-              },
-              transitionDuration: const Duration(milliseconds: 300),
-            ),
-          );
+          // Небольшая задержка перед навигацией
+          Future.delayed(const Duration(milliseconds: 200), () {
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder:
+                    (context, animation, secondaryAnimation) =>
+                        _cachedPages[index],
+                transitionsBuilder: (
+                  context,
+                  animation,
+                  secondaryAnimation,
+                  child,
+                ) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                transitionDuration: const Duration(milliseconds: 300),
+              ),
+            );
+          });
         },
-        child: AnimatedBuilder(
-          animation: _animationTextController,
-          builder: (context, child) {
-            final textOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-              CurvedAnimation(
-                parent: _animationTextController,
-                curve: Interval(
-                  0.05 * index,
-                  0.2 * (index),
-                  curve: Curves.easeInOut,
+        child: Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            color: BaseColors.backgroundCircles,
+            shape: BoxShape.circle,
+          ),
+          child: AnimatedBuilder(
+            animation: _animationTextController,
+            builder: (context, child) {
+              final textOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+                CurvedAnimation(
+                  parent: _animationTextController,
+                  curve: Interval(
+                    0.05 * index,
+                    0.2 * (index),
+                    curve: Curves.easeInOut,
+                  ),
                 ),
-              ),
-            );
-            return Opacity(
-              opacity: textOpacity.value,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SvgPicture.asset(
-                    _svgIcons[index],
-                    color: BaseColors.secondary,
-                  ),
-                  SizedBox(height: size * 0.01),
-                  Text(
-                    _labels[index],
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontFamily: 'San Francisco Pro Display',
-                      fontSize: size * 0.13,
+              );
+              return Opacity(
+                opacity: textOpacity.value,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      _svgIcons[index],
                       color: BaseColors.secondary,
-                      fontWeight: FontWeight.w400,
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
+                    SizedBox(height: size * 0.03),
+                    Text(
+                      _labels[index],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'San Francisco Pro Display',
+                        fontSize: size * 0.13,
+                        color: BaseColors.secondary,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

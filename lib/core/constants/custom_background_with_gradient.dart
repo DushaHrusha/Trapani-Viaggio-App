@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 
 class CustomBackgroundWithGradient extends StatelessWidget {
@@ -20,7 +21,7 @@ class CustomBackgroundWithGradient extends StatelessWidget {
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.only(top: 58),
+        padding: context.adaptivePadding(EdgeInsets.only(top: 58)),
         child: Container(
           decoration: BoxDecoration(
             color: BaseColors.background,

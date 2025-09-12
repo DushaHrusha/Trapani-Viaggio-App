@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/presentation/sign_up_screen.dart';
 
 class CustomTextFieldWithGradientButton extends StatelessWidget {
@@ -14,31 +15,53 @@ class CustomTextFieldWithGradientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 56,
+      height: context.adaptiveSize(56),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(30),
+        borderRadius: BorderRadius.circular(context.adaptiveSize(30)),
         color: Color.fromARGB(0, 177, 11, 11),
         border: Border.all(
           color: const Color.fromARGB(255, 224, 224, 224),
-          width: 1,
+          width: context.adaptiveSize(1),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: Text(text, style: style, textAlign: TextAlign.center),
+            child: Text(
+              text,
+              style: context.adaptiveTextStyle(
+                fontSize: style.fontSize ?? 14,
+                fontWeight: style.fontWeight,
+                color: style.color,
+                fontFamily: style.fontFamily,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => SignUpScreen()),
+                PageRouteBuilder(
+                  pageBuilder:
+                      (context, animation, secondaryAnimation) =>
+                          SignUpScreen(),
+                  transitionsBuilder: (
+                    context,
+                    animation,
+                    secondaryAnimation,
+                    child,
+                  ) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                  transitionDuration: Duration(milliseconds: 500),
+                ),
               );
             },
             child: Container(
-              height: 56,
-              width: 190,
+              height: context.adaptiveSize(56),
+              width: context.adaptiveSize(190),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
@@ -47,24 +70,25 @@ class CustomTextFieldWithGradientButton extends StatelessWidget {
                   ],
                   begin: AlignmentGeometry.directional(-2, -3),
                 ),
-                borderRadius: BorderRadius.circular(30),
+                borderRadius: BorderRadius.circular(context.adaptiveSize(30)),
                 boxShadow: [
                   BoxShadow(
-                    color: Color.fromARGB(
-                      127,
-                      255,
-                      175,
-                      175,
-                    ), // Начальный цвет градиента
+                    color: Color.fromARGB(127, 255, 175, 175),
                     spreadRadius: 0,
-                    blurRadius: 20,
-                    offset: Offset(-5, -5),
+                    blurRadius: context.adaptiveSize(20),
+                    offset: Offset(
+                      context.adaptiveSize(-5),
+                      context.adaptiveSize(-5),
+                    ),
                   ),
                   BoxShadow(
                     color: Color.fromARGB(127, 132, 147, 197),
                     spreadRadius: 0,
-                    blurRadius: 20,
-                    offset: Offset(3, 3),
+                    blurRadius: context.adaptiveSize(20),
+                    offset: Offset(
+                      context.adaptiveSize(3),
+                      context.adaptiveSize(3),
+                    ),
                   ),
                 ],
               ),
@@ -76,22 +100,22 @@ class CustomTextFieldWithGradientButton extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Text(
                         'Book now',
-                        style: TextStyle(
-                          color: Colors.white,
+                        style: context.adaptiveTextStyle(
                           fontSize: 16,
+                          color: Colors.white,
                           fontWeight: FontWeight.w700,
-                          fontFamily: "SF Pro Display",
+                          fontFamily: "San Francisco Pro Display",
                         ),
                       ),
                     ),
                   ),
                   Container(
-                    height: 56,
-                    width: 1,
+                    height: context.adaptiveSize(56),
+                    width: context.adaptiveSize(1),
                     color: const Color.fromARGB(255, 138, 120, 178),
                   ),
                   SizedBox(
-                    width: 60,
+                    width: context.adaptiveSize(60),
                     child: Icon(Icons.arrow_forward, color: Colors.white),
                   ),
                 ],

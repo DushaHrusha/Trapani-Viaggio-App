@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:test_task/bookmarks.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/presentation/main_menu_screen.dart';
 import 'package:test_task/presentation/profile_screen.dart';
@@ -26,7 +28,7 @@ class _BottomBarState extends State<BottomBar> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Color.fromRGBO(227, 228, 233, 0.6),
+            color: Color.fromRGBO(190, 190, 190, 0.3),
             spreadRadius: context.adaptiveSize(5),
             blurRadius: context.adaptiveSize(100),
             offset: Offset(0, context.adaptiveSize(-10)),
@@ -60,7 +62,7 @@ class _BottomBarState extends State<BottomBar> {
             _buildNavItem(
               'assets/file/bookmark.svg',
               ProfileScreen(),
-              widget.currentScreen is SplashScreen,
+              widget.currentScreen is BookmarksPage,
             ),
             _buildNavItem(
               'assets/file/user.svg',
@@ -86,7 +88,7 @@ class _BottomBarState extends State<BottomBar> {
         targetScreen = SplashScreen();
         break;
       case 2:
-        targetScreen = SplashScreen();
+        targetScreen = BookmarksPage();
         break;
       case 3:
         targetScreen = ProfileScreen();

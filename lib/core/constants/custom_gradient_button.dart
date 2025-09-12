@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
 
 class CustomGradientButton extends StatelessWidget {
   final String text;
@@ -11,68 +12,72 @@ class CustomGradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => path,
-            transitionsBuilder: (
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(context.adaptiveSize(30)),
+        splashColor: Colors.white.withOpacity(0.3),
+        highlightColor: Colors.white.withOpacity(0.1),
+        onTap: () {
+          Future.delayed(const Duration(milliseconds: 500), () {
+            Navigator.push(
               context,
-              animation,
-              secondaryAnimation,
-              child,
-            ) {
-              return FadeTransition(opacity: animation, child: child);
-            },
-            transitionDuration: const Duration(milliseconds: 300),
-          ),
-        );
-      },
-      child: Container(
-        height: 56,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 255, 127, 80),
-              Color.fromARGB(255, 85, 97, 178),
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => path,
+                transitionsBuilder: (
+                  context,
+                  animation,
+                  secondaryAnimation,
+                  child,
+                ) {
+                  return FadeTransition(opacity: animation, child: child);
+                },
+                transitionDuration: const Duration(milliseconds: 300),
+              ),
+            );
+          });
+        },
+        child: Container(
+          height: context.adaptiveSize(56),
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 255, 127, 80),
+                Color.fromARGB(255, 85, 97, 178),
+              ],
+              begin: AlignmentGeometry.directional(-2, -3),
+            ),
+            borderRadius: BorderRadius.circular(context.adaptiveSize(30)),
+            boxShadow: [
+              BoxShadow(
+                color: Color.fromARGB(127, 255, 175, 175),
+                spreadRadius: 0,
+                blurRadius: context.adaptiveSize(20),
+                offset: Offset(
+                  context.adaptiveSize(-5),
+                  context.adaptiveSize(-5),
+                ),
+              ),
+              BoxShadow(
+                color: Color.fromARGB(127, 132, 147, 197),
+                spreadRadius: 0,
+                blurRadius: context.adaptiveSize(20),
+                offset: Offset(
+                  context.adaptiveSize(3),
+                  context.adaptiveSize(3),
+                ),
+              ),
             ],
-            begin: AlignmentGeometry.directional(-2, -3),
           ),
-          borderRadius: BorderRadius.circular(30),
-          boxShadow: [
-            BoxShadow(
-              color: Color.fromARGB(
-                127,
-                255,
-                175,
-                175,
-              ), // Начальный цвет градиента
-              spreadRadius: 0,
-              blurRadius: 20,
-              offset: Offset(-5, -5),
+          child: Text(
+            text,
+            style: context.adaptiveTextStyle(
+              fontSize: 16,
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'San Francisco Pro Display',
             ),
-            BoxShadow(
-              color: Color.fromARGB(
-                127,
-                132,
-                147,
-                197,
-              ), // Конечный цвет градиента
-              spreadRadius: 0,
-              blurRadius: 20,
-              offset: Offset(3, 3),
-            ),
-          ],
-        ),
-        child: Text(
-          text,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            fontFamily: "SF Pro Display",
           ),
         ),
       ),

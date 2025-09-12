@@ -326,7 +326,7 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                 ),
               ),
               const SizedBox(height: 46),
-              CustomGradientButton(text: "Go", path: CarCatalog()),
+              CustomGradientButton(text: "Go", path: CarDetailsScreen()),
               const SizedBox(height: 41),
             ],
           ),

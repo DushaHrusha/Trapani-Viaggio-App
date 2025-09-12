@@ -1,29 +1,44 @@
 import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:test_task/bookmarks.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
+import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/data/models/card_data.dart';
 import 'package:test_task/presentation/apartmens_detail_screen.dart';
 import 'package:test_task/core/constants/custom_text_field_with_gradient_button.dart';
+import 'package:provider/provider.dart';
 
 class SecondCard extends StatelessWidget {
   final CardData data;
   final BuildContext context;
   final TextStyle style;
+  final int index;
   const SecondCard({
     super.key,
+    required this.index,
     required this.context,
     required this.style,
     required this.data,
   });
 
+  String _getFirstSentence(String text) {
+    final sentenceRegex = RegExp(r'^(.*?[.!?])');
+    final match = sentenceRegex.firstMatch(text);
+    return match != null ? match.group(1)!.trim() : text.trim();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(bottom: 44),
+      margin: EdgeInsets.only(bottom: context.adaptiveSize(44)),
       child: Column(
         children: [
           Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(32)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(context.adaptiveSize(32)),
+              ),
               border: Border.all(color: Color.fromARGB(255, 224, 224, 224)),
             ),
             child: Column(
@@ -32,82 +47,129 @@ class SecondCard extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(32),
-                        topRight: Radius.circular(32),
+                        topLeft: Radius.circular(context.adaptiveSize(32)),
+                        topRight: Radius.circular(context.adaptiveSize(32)),
                       ),
                       child: Image.asset(
                         data.imageUrl[0],
-                        width: MediaQuery.maybeWidthOf(context),
+                        height: context.adaptiveSize(177),
+                        width: MediaQuery.of(context).size.width,
                         fit: BoxFit.cover,
                       ),
                     ),
                     Positioned(
-                      right: 24,
-                      top: 24,
-                      child: Container(
-                        height: 56,
-                        width: 56,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(16)),
-                          shape: BoxShape.rectangle,
-                          color: Color.fromARGB(87, 255, 255, 255),
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(16)),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
-                            child: Icon(
-                              Icons.bookmark_outline,
-                              color: Color.fromARGB(255, 251, 251, 253),
-                              size: 25,
+                      right: context.adaptiveSize(24),
+                      top: context.adaptiveSize(24),
+                      child: Consumer<BookmarksProvider>(
+                        builder: (context, bookmarksProvider, child) {
+                          final isBookmarked = bookmarksProvider.isBookmarked(
+                            data,
+                          );
+                          return GestureDetector(
+                            onTap: () {
+                              bookmarksProvider.toggleBookmark(data);
+                            },
+                            child: Container(
+                              height: context.adaptiveSize(56),
+                              width: context.adaptiveSize(56),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(context.adaptiveSize(16)),
+                                ),
+                                shape: BoxShape.rectangle,
+                                color: Color.fromARGB(87, 255, 255, 255),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(context.adaptiveSize(16)),
+                                ),
+                                child: BackdropFilter(
+                                  filter: ImageFilter.blur(
+                                    sigmaX: 5.0,
+                                    sigmaY: 5.0,
+                                  ),
+                                  child: Icon(
+                                    isBookmarked
+                                        ? Icons.bookmark
+                                        : Icons.bookmark_outline,
+                                    color:
+                                        isBookmarked
+                                            ? BaseColors.accent
+                                            : Color.fromARGB(
+                                              255,
+                                              251,
+                                              251,
+                                              253,
+                                            ),
+                                    size: context.adaptiveSize(25),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 16),
+                SizedBox(height: context.adaptiveSize(16)),
                 Padding(
-                  padding: const EdgeInsets.only(left: 23, right: 23),
+                  padding: EdgeInsets.only(
+                    left: context.adaptiveSize(23),
+                    right: context.adaptiveSize(23),
+                  ),
                   child: Row(
                     children: [
-                      Wrap(
-                        alignment: WrapAlignment.start,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: [
-                          Text(
-                            data.title,
-                            softWrap: true,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Wrap(
+                          alignment: WrapAlignment.start,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: context.adaptiveSize(8),
+                          runSpacing: context.adaptiveSize(8),
+                          children: [
+                            Text(
+                              data.title,
+                              softWrap: true,
+                              style: context.adaptiveTextStyle(
+                                fontSize: 19,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'San Francisco Pro Display',
+                                color: BaseColors.text,
+                              ),
                             ),
-                          ),
-                          StarRating(rating: data.rating),
-                        ],
+                            StarRating(rating: data.rating),
+                          ],
+                        ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 12),
+                SizedBox(height: context.adaptiveSize(12)),
                 Padding(
-                  padding: const EdgeInsets.only(left: 23, right: 23),
+                  padding: EdgeInsets.only(
+                    left: context.adaptiveSize(23),
+                    right: context.adaptiveSize(23),
+                  ),
                   child: Text(
-                    data.description,
-                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    _getFirstSentence(data.description),
+                    style: context.adaptiveTextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'SF Pro Display',
+                      color: BaseColors.text,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
-                SizedBox(height: 21),
+
+                SizedBox(height: context.adaptiveSize(21)),
               ],
             ),
           ),
-          SizedBox(height: 21),
+          SizedBox(height: context.adaptiveSize(21)),
           CustomTextFieldWithGradientButton(
-            text: "${data.price} €",
+            text: "${data.price.toStringAsFixed(0)} €",
             style: style,
           ),
         ],

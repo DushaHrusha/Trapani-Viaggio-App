@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/bottom_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_image.dart';
 import 'package:test_task/core/constants/custom_gradient_button.dart';
+import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/presentation/circular_menu_screen.dart';
-import 'package:test_task/presentation/profile_screen.dart';
 
 class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({super.key});
@@ -75,7 +76,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
       body: CustomBackgroundWithImage(
         image: Image.asset(
           'assets/file/city_header.jpg',
-          height: context.adaptiveSize(350),
+          height: context.adaptiveSize(400),
           width: double.infinity,
           fit: BoxFit.cover,
         ),
@@ -114,7 +115,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     textAlign: TextAlign.center,
                     style: context.adaptiveTextStyle(
                       fontSize: 14,
-                      fontFamily: 'San Francisco Pro Display',
+                      fontFamily: 'SF Pro Display',
                       fontWeight: FontWeight.w400,
                       color: BaseColors.text,
                     ),
@@ -134,7 +135,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                     EdgeInsets.symmetric(horizontal: 30),
                   ),
                   child: const CustomGradientButton(
-                    text: 'Go',
+                    text: 'Services',
                     path: CircularMenuScreen(),
                   ),
                 ),
@@ -147,12 +148,11 @@ class _MainMenuScreenState extends State<MainMenuScreen>
             builder: (context, child) {
               return Opacity(
                 opacity: _textAnimation.value,
-                child: Divider(
-                  height: context.adaptiveSize(1),
-                  color: Colors.grey[300],
-                  thickness: context.adaptiveSize(1),
-                  endIndent: context.adaptiveSize(30),
-                  indent: context.adaptiveSize(30),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: context.adaptiveSize(30.0),
+                  ),
+                  child: GreyLine(),
                 ),
               );
             },
@@ -165,6 +165,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
                 opacity: _textAnimation.value,
                 child: GridView.count(
                   shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
                   crossAxisCount: 2,
                   mainAxisSpacing: context.adaptiveSize(23),
                   crossAxisSpacing: context.adaptiveSize(23),
@@ -218,6 +219,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
               );
             },
           ),
+          SizedBox(height: context.adaptiveSize(30)),
         ],
       ),
       bottomNavigationBar: AnimatedBuilder(

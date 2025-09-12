@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:test_task/data/models/card_data.dart';
 
 class Excursion implements CardData {
+  final int id;
   final String title;
   final List<String> imageUrl;
   final String description;
@@ -17,6 +18,7 @@ class Excursion implements CardData {
   final String transfer;
   final String takeWithYou;
   Excursion({
+    required this.id,
     required this.title,
     required this.imageUrl,
     required this.description,
