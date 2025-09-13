@@ -1,8 +1,6 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
-import 'package:test_task/presentation/car_catalog.dart';
 import 'package:test_task/presentation/main_menu_screen.dart';
 import 'package:test_task/presentation/profile_screen.dart'
     show ProfileScreen, AdaptiveSizeExtension;
@@ -16,18 +14,10 @@ class BottomBarScreen extends StatefulWidget {
 }
 
 class _BottomBarScreenState extends State<BottomBarScreen> {
-  late List<Map<String, Object>> _pages;
   int _selectedPageIndex = 0;
 
   @override
   void initState() {
-    _pages = [
-      {'page': CarDetailsScreen()},
-      {'page': CarDetailsScreen()},
-      {'page': CarDetailsScreen()},
-      {'page': CarDetailsScreen()},
-      {'page': CarDetailsScreen()},
-    ];
     super.initState();
   }
 

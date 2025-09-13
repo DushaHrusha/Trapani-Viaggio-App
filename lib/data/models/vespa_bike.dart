@@ -1,27 +1,29 @@
 import 'package:test_task/data/models/vehicle.dart';
 
-class Car extends Vehicle {
+class VespaBike extends Vehicle {
+  final int id;
   final String brand;
-  final int pricePerHour;
-  final int maxSpeed;
-  final String image;
+  final String model;
   final int year;
+  final int maxSpeed;
+  final int pricePerHour;
+  final String image;
   final String type_transmission;
   final int number_seats;
   final String type_fuel;
   final String insurance;
-  Car({
+
+  VespaBike({
+    required this.id,
     required this.brand,
-    required this.pricePerHour,
-    required this.maxSpeed,
-    required this.image,
+    required this.model,
     required this.year,
+    required this.maxSpeed,
+    required this.pricePerHour,
+    required this.image,
     required this.type_transmission,
     required this.number_seats,
     required this.type_fuel,
     required this.insurance,
-    required int price,
-    required String model,
-    required String speed,
   });
 }

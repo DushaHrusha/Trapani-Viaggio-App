@@ -1,11 +1,10 @@
 import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:test_task/bookmarks.dart';
-
+import 'package:test_task/presentation/bookmarks.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/grey_line.dart';
-import 'package:test_task/presentation/apartmens_detail_screen.dart';
+import 'package:test_task/presentation/apartment_detail_screen.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/bottom_bar.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
@@ -17,26 +16,20 @@ import 'package:provider/provider.dart';
 class ExcursionDetailScreen extends StatefulWidget {
   final Excursion excursion;
 
-  ExcursionDetailScreen({super.key, required this.excursion});
+  const ExcursionDetailScreen({super.key, required this.excursion});
 
   @override
-  State<ExcursionDetailScreen> createState() => _ExcursionDetailScreenState();
+  createState() => _ExcursionDetailScreenState();
 }
 
 class _ExcursionDetailScreenState extends State<ExcursionDetailScreen>
     with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController();
-
   late int displayedIconsCount;
-
   int _currentPage = 0;
-
   late List<IconData> icons;
-
   bool showAllIcons = false;
-
   late final Excursion _excursion;
-
   final ScrollController _scrollController = ScrollController();
   late AnimationController _animationController;
   late Animation<double> _appBarOpacityAnimation;
@@ -48,20 +41,14 @@ class _ExcursionDetailScreenState extends State<ExcursionDetailScreen>
   void initState() {
     super.initState();
     _excursion = widget.excursion;
-
     icons = _excursion.iconServices;
     displayedIconsCount = showAllIcons ? icons.length : 5;
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page!.round();
+      });
+    });
 
-    _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page!.round();
-      });
-    });
-    _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page!.round();
-      });
-    });
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 3000),
       vsync: this,
@@ -572,7 +559,6 @@ class _ExcursionDetailScreenState extends State<ExcursionDetailScreen>
                     SizedBox(height: context.adaptiveSize(27)),
                     GreyLine(),
                     SizedBox(height: context.adaptiveSize(40)),
-
                     CustomTextFieldWithGradientButton(
                       text: "${_excursion.price.cleanFormat()} € / person",
                       style: TextStyle(

@@ -3,13 +3,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/presentation/main_menu_screen.dart';
-import 'package:test_task/presentation/profile_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
-
   @override
-  _SplashScreenState createState() => _SplashScreenState();
+  createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen>
@@ -53,12 +51,12 @@ class _SplashScreenState extends State<SplashScreen>
       begin: 0.0,
       end: 1.0,
     ).animate(CurvedAnimation(parent: _controller, curve: Interval(0.45, 0.7)));
+
     _controller.forward();
   }
 
   @override
   void dispose() {
-    _controller.removeStatusListener((status) {});
     _controller.dispose();
     super.dispose();
   }

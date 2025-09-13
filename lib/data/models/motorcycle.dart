@@ -1,10 +1,12 @@
-class Motorcycle {
+import 'package:test_task/data/models/vehicle.dart';
+
+class Motorcycle extends Vehicle {
   final int id;
   final String brand;
   final String model;
   final int year;
   final int maxSpeed;
-  final double pricePerHour;
+  final int pricePerHour;
   final String image;
   final String type_transmission;
   final int number_seats;

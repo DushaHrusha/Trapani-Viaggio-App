@@ -7,6 +7,7 @@ import 'package:test_task/core/constants/bottom_bar.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/bloc/cubits/excursion_cubit.dart';
+import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/presentation/excursion_detail_screen.dart';
 import 'package:test_task/bloc/state/excursion_state.dart';
 import 'package:test_task/core/constants/first_card.dart';
@@ -21,10 +22,6 @@ class ExcursionsList extends StatefulWidget {
 
 class _ExcursionsListState extends State<ExcursionsList>
     with SingleTickerProviderStateMixin {
-  final Map<int, int> ratings = {};
-  final PageController _pageController = PageController();
-
-  // Контроллеры анимации
   late AnimationController _animationController;
   late Animation<double> _appBarOpacityAnimation;
   late Animation<Offset> _bottomBarSlideAnimation;
@@ -32,31 +29,26 @@ class _ExcursionsListState extends State<ExcursionsList>
   @override
   void initState() {
     super.initState();
-
-    // Инициализация контроллера анимации
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 3000),
       vsync: this,
     );
 
-    // Анимация opacity для AppBar
     _appBarOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
         curve: Interval(0.2, 0.5, curve: Curves.easeInOut),
       ),
     );
-    // Анимация opacity для AppBar
     _cardsOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: Interval(0.5, 1, curve: Curves.easeInOut),
+        curve: Interval(0.5, 0.8, curve: Curves.easeInOut),
       ),
     );
-    // Анимация slide для BottomBar
     _bottomBarSlideAnimation = Tween<Offset>(
-      begin: Offset(0, 1), // Начальная позиция за пределами экрана
-      end: Offset.zero, // Конечная позиция
+      begin: Offset(0, 1),
+      end: Offset.zero,
     ).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -64,17 +56,11 @@ class _ExcursionsListState extends State<ExcursionsList>
       ),
     );
 
-    // Запуск анимации
     _animationController.forward();
-
-    _pageController.addListener(() {
-      setState(() {});
-    });
   }
 
   @override
   void dispose() {
-    _pageController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -97,7 +83,10 @@ class _ExcursionsListState extends State<ExcursionsList>
                       opacity: _appBarOpacityAnimation,
                       child: CustomAppBar(label: "excursions list"),
                     ),
-                    Divider(height: 1, color: Colors.grey[300], thickness: 1),
+                    FadeTransition(
+                      opacity: _appBarOpacityAnimation,
+                      child: GreyLine(),
+                    ),
                     Expanded(
                       child: ListView.builder(
                         padding: EdgeInsets.symmetric(
@@ -107,7 +96,6 @@ class _ExcursionsListState extends State<ExcursionsList>
                         itemCount: state.excursions.length,
                         itemBuilder: (context, index) {
                           final excursion = state.excursions[index];
-                          final rating = ratings[index] ?? 0;
                           return FadeTransition(
                             opacity: _cardsOpacityAnimation,
                             child: GestureDetector(

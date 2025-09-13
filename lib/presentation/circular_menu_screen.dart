@@ -1,19 +1,19 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:test_task/VespaBike.dart';
-import 'package:test_task/bookmarks.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/grey_line.dart';
-import 'package:test_task/moto.dart';
-import 'package:test_task/presentation/apartmens_screen.dart';
+import 'package:test_task/data/repositories/cars_repository.dart';
+import 'package:test_task/data/repositories/motorcycle_repository.dart';
+import 'package:test_task/data/repositories/vespa_repository.dart';
+
+import 'package:test_task/presentation/apartments_list_screen.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/bottom_bar.dart';
-import 'package:test_task/presentation/car_catalog.dart';
+import 'package:test_task/presentation/vehicle_details_screen.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/presentation/excursions_list.dart';
-import 'package:provider/provider.dart';
 
 class CircularMenuScreen extends StatefulWidget {
   const CircularMenuScreen({super.key});
@@ -28,11 +28,23 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
 
   late final List<Widget> _cachedPages;
   final List<StatefulWidget> _pages = [
-    ApartmensScreen(),
-    CarDetailsScreen(),
-    MotorcycleDetailsScreen(),
-    CarDetailsScreen(),
-    VespaDetailsScreen(),
+    ApartmentsListScreen(),
+    VehicleDetailsScreen(
+      vehicleRepository: CarsRepository(),
+      label: "automobiles",
+    ),
+    VehicleDetailsScreen(
+      vehicleRepository: MotorcycleRepository(),
+      label: "motorcycles",
+    ),
+    VehicleDetailsScreen(
+      vehicleRepository: VespaRepository(),
+      label: "vespa bikes",
+    ),
+    VehicleDetailsScreen(
+      vehicleRepository: VespaRepository(),
+      label: "vespa bikes",
+    ),
     ExcursionsList(),
   ];
 
@@ -299,7 +311,6 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
         splashFactory: InkRipple.splashFactory,
         borderRadius: BorderRadius.circular(size / 2),
         onTap: () {
-          // Небольшая задержка перед навигацией
           Future.delayed(const Duration(milliseconds: 200), () {
             Navigator.push(
               context,

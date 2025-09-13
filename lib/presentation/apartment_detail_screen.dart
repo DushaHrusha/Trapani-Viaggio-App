@@ -1,7 +1,6 @@
 import 'dart:ui';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:test_task/bookmarks.dart';
+import 'package:test_task/presentation/bookmarks.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/bottom_bar.dart';
@@ -13,14 +12,14 @@ import 'package:test_task/data/models/apartment.dart';
 import 'package:test_task/presentation/dates_guests_screen.dart';
 import 'package:provider/provider.dart';
 
-class ApartmentsDetailScreen extends StatefulWidget {
-  final Apartment apartments;
-  const ApartmentsDetailScreen({super.key, required this.apartments});
+class ApartmentDetailScreen extends StatefulWidget {
+  final Apartment apartment;
+  const ApartmentDetailScreen({super.key, required this.apartment});
   @override
-  State<ApartmentsDetailScreen> createState() => _ApartmentsDetailScreenState();
+  State<ApartmentDetailScreen> createState() => _ApartmentDetailScreenState();
 }
 
-class _ApartmentsDetailScreenState extends State<ApartmentsDetailScreen>
+class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
     with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController();
   late int displayedIconsCount;
@@ -40,7 +39,7 @@ class _ApartmentsDetailScreenState extends State<ApartmentsDetailScreen>
   void initState() {
     super.initState();
     displayedIconsCount = showAllIcons ? icons.length : 5;
-    _apartment = widget.apartments;
+    _apartment = widget.apartment;
     icons = _apartment.iconServices;
     _pageController.addListener(() {
       setState(() {
@@ -318,7 +317,7 @@ class _ApartmentsDetailScreenState extends State<ApartmentsDetailScreen>
                               left: 0,
                               right: 0,
                               child: _buildIndicator(
-                                widget.apartments.imageUrl.length,
+                                widget.apartment.imageUrl.length,
                               ),
                             ),
                           ],

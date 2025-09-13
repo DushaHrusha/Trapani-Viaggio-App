@@ -40,8 +40,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
     }
   }
 
-  void _showDatePickerDialog() {}
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

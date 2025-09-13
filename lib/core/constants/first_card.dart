@@ -1,9 +1,9 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:test_task/bookmarks.dart';
+import 'package:test_task/presentation/bookmarks.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/data/models/card_data.dart';
-import 'package:test_task/presentation/apartmens_detail_screen.dart';
+import 'package:test_task/presentation/apartment_detail_screen.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/custom_text_field_with_gradient_button.dart';
 import 'package:provider/provider.dart';

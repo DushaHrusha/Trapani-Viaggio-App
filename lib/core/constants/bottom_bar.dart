@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:test_task/bookmarks.dart';
+import 'package:test_task/presentation/bookmarks.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/presentation/main_menu_screen.dart';
@@ -13,14 +13,14 @@ class BottomBar extends StatefulWidget {
   const BottomBar({super.key, required this.currentScreen});
 
   @override
-  _BottomBarState createState() => _BottomBarState();
+  createState() => _BottomBarState();
 }
 
 class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: context.adaptiveSize(64),
+      // height: context.adaptiveSize(64),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(context.adaptiveSize(20)),
@@ -125,7 +125,7 @@ class _BottomBarState extends State<BottomBar> {
   ) {
     return BottomNavigationBarItem(
       icon: Padding(
-        padding: EdgeInsets.only(top: context.adaptiveSize(20)),
+        padding: EdgeInsets.only(top: context.adaptiveSize(0)), //20
         child: SvgPicture.asset(
           icon,
           width: context.adaptiveSize(24),

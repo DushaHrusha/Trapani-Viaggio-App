@@ -1,6 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task/bloc/state/chat_state.dart';
-import 'package:test_task/presentation/chat_screen.dart';
 import 'package:test_task/data/models/chat_message.dart';
 import 'package:test_task/data/repositories/chat_repository.dart';
 

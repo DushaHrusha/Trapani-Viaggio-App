@@ -14,9 +14,7 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen>
     with SingleTickerProviderStateMixin {
-  final ScrollController _scrollController = ScrollController();
   late AnimationController _animationController;
-  late Animation<double> _appBarOpacityAnimation;
   late Animation<double> _appBarOpacityAnimation1;
   late Animation<double> _appBarOpacityAnimation2;
   late Animation<double> _appBarOpacityAnimation3;
@@ -32,12 +30,6 @@ class _SignUpScreenState extends State<SignUpScreen>
       vsync: this,
     );
 
-    _appBarOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(0, 0.2, curve: Curves.easeInOut),
-      ),
-    );
     _appBarOpacityAnimation1 = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
@@ -101,9 +93,8 @@ class _SignUpScreenState extends State<SignUpScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Back arrow icon
                           FadeTransition(
-                            opacity: _appBarOpacityAnimation,
+                            opacity: _appBarOpacityAnimation1,
                             child: Padding(
                               padding: EdgeInsets.only(
                                 left: context.adaptiveSize(25),

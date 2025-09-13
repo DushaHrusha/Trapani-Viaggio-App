@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:test_task/presentation/car_catalog.dart';
+import 'package:test_task/presentation/splash_screen.dart';
 import 'package:test_task/core/constants/custom_gradient_button.dart';
 
 class DatesGuestsScreen extends StatefulWidget {
@@ -326,7 +326,7 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                 ),
               ),
               const SizedBox(height: 46),
-              CustomGradientButton(text: "Go", path: CarDetailsScreen()),
+              CustomGradientButton(text: "Go", path: SplashScreen()),
               const SizedBox(height: 41),
             ],
           ),

@@ -1,6 +1,6 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:test_task/bookmarks.dart';
+import 'package:test_task/presentation/bookmarks.dart';
 import 'package:test_task/presentation/splash_screen.dart';
 import 'package:provider/provider.dart';
 

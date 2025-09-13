@@ -12,60 +12,18 @@ class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({super.key});
 
   @override
-  State<MainMenuScreen> createState() => _MainMenuScreenState();
+  createState() => _MainMenuScreenState();
 }
 
 class _MainMenuScreenState extends State<MainMenuScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _appBarAnimation;
-  late Animation<double> _searchAnimation;
-  late Animation<double> _textAnimation;
-  late Animation<double> _bottomBarAnimation;
-
   @override
   void initState() {
     super.initState();
-
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 3100),
-    );
-
-    _appBarAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(0.33, 0.5, curve: Curves.easeOut),
-      ),
-    );
-
-    _searchAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(0.5, 0.66, curve: Curves.easeOut),
-      ),
-    );
-
-    _textAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(0.66, 0.83, curve: Curves.easeOut),
-      ),
-    );
-
-    _bottomBarAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(0.66, 0.83, curve: Curves.easeOut),
-      ),
-    );
-
-    _animationController.forward();
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
     super.dispose();
   }
 
@@ -82,163 +40,109 @@ class _MainMenuScreenState extends State<MainMenuScreen>
         ),
         children: [
           SizedBox(height: context.adaptiveSize(38)),
-          AnimatedBuilder(
-            animation: _appBarAnimation,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _appBarAnimation.value,
-                child: Text(
-                  'Hello. Welcome to Trapani!',
-                  textAlign: TextAlign.center,
-                  style: context.adaptiveTextStyle(
-                    fontSize: 22,
-                    fontFamily: 'Berlin Sans FB',
-                    fontWeight: FontWeight.w400,
-                    color: BaseColors.text,
-                  ),
-                ),
-              );
-            },
+          Text(
+            'Hello. Welcome to Trapani!',
+            textAlign: TextAlign.center,
+            style: context.adaptiveTextStyle(
+              fontSize: 22,
+              fontFamily: 'Berlin Sans FB',
+              fontWeight: FontWeight.w400,
+              color: BaseColors.text,
+            ),
           ),
           SizedBox(height: context.adaptiveSize(16)),
-          AnimatedBuilder(
-            animation: _appBarAnimation,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _appBarAnimation.value,
-                child: Container(
-                  margin: context.adaptivePadding(
-                    EdgeInsets.symmetric(horizontal: 30),
-                  ),
-                  child: Text(
-                    'Place with a lively atmosphere due to its position as the capital and its economic activities as a port.',
-                    textAlign: TextAlign.center,
-                    style: context.adaptiveTextStyle(
-                      fontSize: 14,
-                      fontFamily: 'SF Pro Display',
-                      fontWeight: FontWeight.w400,
-                      color: BaseColors.text,
-                    ),
-                  ),
-                ),
-              );
-            },
+          Container(
+            margin: context.adaptivePadding(
+              EdgeInsets.symmetric(horizontal: 30),
+            ),
+            child: Text(
+              'Place with a lively atmosphere due to its position as the capital and its economic activities as a port.',
+              textAlign: TextAlign.center,
+              style: context.adaptiveTextStyle(
+                fontSize: 14,
+                fontFamily: 'SF Pro Display',
+                fontWeight: FontWeight.w400,
+                color: BaseColors.text,
+              ),
+            ),
           ),
           SizedBox(height: context.adaptiveSize(40)),
-          AnimatedBuilder(
-            animation: _searchAnimation,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _searchAnimation.value,
-                child: Padding(
-                  padding: context.adaptivePadding(
-                    EdgeInsets.symmetric(horizontal: 30),
-                  ),
-                  child: const CustomGradientButton(
-                    text: 'Services',
-                    path: CircularMenuScreen(),
-                  ),
-                ),
-              );
-            },
+          Padding(
+            padding: context.adaptivePadding(
+              EdgeInsets.symmetric(horizontal: 30),
+            ),
+            child: const CustomGradientButton(
+              text: 'Services',
+              path: CircularMenuScreen(),
+            ),
+          ),
+
+          SizedBox(height: context.adaptiveSize(32)),
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: context.adaptiveSize(30.0),
+            ),
+            child: GreyLine(),
           ),
           SizedBox(height: context.adaptiveSize(32)),
-          AnimatedBuilder(
-            animation: _textAnimation,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _textAnimation.value,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: context.adaptiveSize(30.0),
-                  ),
-                  child: GreyLine(),
+          GridView.count(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            mainAxisSpacing: context.adaptiveSize(23),
+            crossAxisSpacing: context.adaptiveSize(23),
+            padding: context.adaptivePadding(
+              EdgeInsets.symmetric(horizontal: 30),
+            ),
+            childAspectRatio: 2.6,
+            children: [
+              _buildGridButton(
+                context,
+                icon: SvgPicture.asset(
+                  "assets/file/exclamation.svg",
+                  color: BaseColors.secondary,
+                  width: context.adaptiveSize(24),
+                  height: context.adaptiveSize(24),
                 ),
-              );
-            },
-          ),
-          SizedBox(height: context.adaptiveSize(32)),
-          AnimatedBuilder(
-            animation: _textAnimation,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _textAnimation.value,
-                child: GridView.count(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  crossAxisCount: 2,
-                  mainAxisSpacing: context.adaptiveSize(23),
-                  crossAxisSpacing: context.adaptiveSize(23),
-                  padding: context.adaptivePadding(
-                    EdgeInsets.symmetric(horizontal: 30),
-                  ),
-                  childAspectRatio: 2.6,
-                  children: [
-                    _buildGridButton(
-                      context,
-                      icon: SvgPicture.asset(
-                        "assets/file/exclamation.svg",
-                        color: BaseColors.secondary,
-                        width: context.adaptiveSize(24),
-                        height: context.adaptiveSize(24),
-                      ),
-                      label: 'City info',
-                    ),
-                    _buildGridButton(
-                      context,
-                      icon: SvgPicture.asset(
-                        "assets/file/paths.svg",
-                        color: BaseColors.secondary,
-                        width: context.adaptiveSize(24),
-                        height: context.adaptiveSize(24),
-                      ),
-                      label: 'Places',
-                    ),
-                    _buildGridButton(
-                      context,
-                      icon: SvgPicture.asset(
-                        "assets/file/star.svg",
-                        color: BaseColors.secondary,
-                        width: context.adaptiveSize(24),
-                        height: context.adaptiveSize(24),
-                      ),
-                      label: 'Events',
-                    ),
-                    _buildGridButton(
-                      context,
-                      icon: SvgPicture.asset(
-                        "assets/file/gallery.svg",
-                        color: BaseColors.secondary,
-                        width: context.adaptiveSize(24),
-                        height: context.adaptiveSize(24),
-                      ),
-                      label: 'Gallery',
-                    ),
-                  ],
+                label: 'City info',
+              ),
+              _buildGridButton(
+                context,
+                icon: SvgPicture.asset(
+                  "assets/file/paths.svg",
+                  color: BaseColors.secondary,
+                  width: context.adaptiveSize(24),
+                  height: context.adaptiveSize(24),
                 ),
-              );
-            },
+                label: 'Places',
+              ),
+              _buildGridButton(
+                context,
+                icon: SvgPicture.asset(
+                  "assets/file/star.svg",
+                  color: BaseColors.secondary,
+                  width: context.adaptiveSize(24),
+                  height: context.adaptiveSize(24),
+                ),
+                label: 'Events',
+              ),
+              _buildGridButton(
+                context,
+                icon: SvgPicture.asset(
+                  "assets/file/gallery.svg",
+                  color: BaseColors.secondary,
+                  width: context.adaptiveSize(24),
+                  height: context.adaptiveSize(24),
+                ),
+                label: 'Gallery',
+              ),
+            ],
           ),
+
           SizedBox(height: context.adaptiveSize(30)),
         ],
       ),
-      bottomNavigationBar: AnimatedBuilder(
-        animation: _bottomBarAnimation,
-        builder: (context, child) {
-          return SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 1),
-              end: Offset.zero,
-            ).animate(
-              CurvedAnimation(
-                parent: _bottomBarAnimation,
-                curve: Curves.easeOut,
-              ),
-            ),
-            child: BottomBar(currentScreen: widget),
-          );
-        },
-      ),
+      bottomNavigationBar: BottomBar(currentScreen: widget),
     );
   }
 
