@@ -221,7 +221,6 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
                           hintStyle: TextStyle(
                             fontSize: context.adaptiveSize(14),
                             height: 1.0,
-                            fontFamily: 'SF Pro Display',
                             color: BaseColors.primary,
                             fontStyle: FontStyle.italic,
                           ),
@@ -365,7 +364,6 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
                       _labels[index],
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontFamily: 'San Francisco Pro Display',
                         fontSize: size * 0.13,
                         color: BaseColors.secondary,
                         fontWeight: FontWeight.w400,
@@ -410,7 +408,6 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: size * 0.14,
-                      fontFamily: 'San Francisco Pro Display',
                       color: BaseColors.accent,
                       fontWeight: FontWeight.w500,
                       fontStyle: FontStyle.italic,

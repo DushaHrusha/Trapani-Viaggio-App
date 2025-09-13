@@ -133,7 +133,6 @@ class SecondCard extends StatelessWidget {
                               style: context.adaptiveTextStyle(
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,
-                                fontFamily: 'San Francisco Pro Display',
                                 color: BaseColors.text,
                               ),
                             ),
@@ -157,7 +156,6 @@ class SecondCard extends StatelessWidget {
                       style: context.adaptiveTextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
-                        fontFamily: 'SF Pro Display',
                         color: BaseColors.text,
                       ),
                       textAlign: TextAlign.left,

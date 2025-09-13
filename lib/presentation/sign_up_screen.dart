@@ -19,8 +19,6 @@ class _SignUpScreenState extends State<SignUpScreen>
   late Animation<double> _appBarOpacityAnimation2;
   late Animation<double> _appBarOpacityAnimation3;
 
-  int _currentPage1 = 0;
-
   @override
   void initState() {
     super.initState();
@@ -127,7 +125,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                                 style: context.adaptiveTextStyle(
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700,
-                                  fontFamily: 'San Francisco Pro Display',
                                   color: Color.fromARGB(255, 109, 109, 109),
                                 ),
                               ),
@@ -176,8 +173,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                         style: context.adaptiveTextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
-                                          fontFamily:
-                                              'San Francisco Pro Display',
+
                                           color: BaseColors.text,
                                         ),
                                         items:
@@ -204,8 +200,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w700,
-                                                      fontFamily:
-                                                          'San Francisco Pro Display',
+
                                                       color: BaseColors.text,
                                                     ),
                                                   ),
@@ -324,7 +319,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                                   style: context.adaptiveTextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
-                                    fontFamily: 'San Francisco Pro Display',
                                     color: Color.fromARGB(255, 109, 109, 109),
                                   ),
                                 ),
@@ -335,7 +329,6 @@ class _SignUpScreenState extends State<SignUpScreen>
                                     style: context.adaptiveTextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
-                                      fontFamily: 'San Francisco Pro Display',
                                       color: BaseColors.accent,
                                     ),
                                   ),
@@ -439,7 +432,6 @@ class _PhoneNumberState extends State<PhoneNumber> {
         hintText: '(000) 000-00-00',
         border: InputBorder.none,
         hintStyle: const TextStyle(
-          fontFamily: 'San Francisco Pro Display',
           fontSize: 16,
           color: BaseColors.text,
           fontWeight: FontWeight.w400,

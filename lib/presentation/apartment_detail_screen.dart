@@ -334,7 +334,6 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                                 style: context.adaptiveTextStyle(
                                   fontSize: 19,
                                   fontWeight: FontWeight.w700,
-                                  fontFamily: "San Francisco Pro Display",
                                   color: BaseColors.text,
                                 ),
                               ),
@@ -351,7 +350,6 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                                     style: context.adaptiveTextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w400,
-                                      fontFamily: "San Francisco Pro Display",
                                       color: BaseColors.text,
                                     ),
                                   ),
@@ -362,8 +360,6 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                                         style: context.adaptiveTextStyle(
                                           fontSize: 24,
                                           fontWeight: FontWeight.w700,
-                                          fontFamily:
-                                              "San Francisco Pro Display",
                                           color: BaseColors.accent,
                                         ),
                                       ),
@@ -372,8 +368,6 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                                         style: context.adaptiveTextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.w700,
-                                          fontFamily:
-                                              "San Francisco Pro Display",
                                           color: BaseColors.accent,
                                         ),
                                       ),
@@ -390,7 +384,6 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                           style: context.adaptiveTextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
-                            fontFamily: "San Francisco Pro Display",
                             color: Color.fromARGB(255, 130, 130, 130),
                           ),
                         ),
@@ -467,7 +460,6 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                               style: context.adaptiveTextStyle(
                                 fontSize: 21,
                                 fontWeight: FontWeight.w700,
-                                fontFamily: "San Francisco Pro Display",
                                 color: BaseColors.accent,
                               ),
                             ),
@@ -484,7 +476,6 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                               style: context.adaptiveTextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w400,
-                                fontFamily: "San Francisco Pro Display",
                                 color: Color.fromARGB(255, 130, 130, 130),
                               ),
                             ),
@@ -518,7 +509,6 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                           style: context.adaptiveTextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
-                            fontFamily: "San Francisco Pro Display",
                             color: Color.fromARGB(255, 109, 109, 109),
                           ),
                         ),
@@ -529,7 +519,6 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                             style: context.adaptiveTextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              fontFamily: "San Francisco Pro Display",
                               color: Color.fromARGB(255, 109, 109, 109),
                             ),
                           ),
@@ -542,7 +531,6 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                       style: context.adaptiveTextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
-                        fontFamily: "San Francisco Pro Display",
                         color: BaseColors.text,
                       ),
                     ),

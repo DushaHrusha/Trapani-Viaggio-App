@@ -76,7 +76,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                   style: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.w700,
-                    fontFamily: 'San Francisco Pro Display',
                     color: Color.fromARGB(255, 109, 109, 109),
                   ),
                   textAlign: TextAlign.center,
@@ -99,7 +98,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
-                                  fontFamily: 'San Francisco Pro Display',
                                   color: Color.fromARGB(255, 109, 109, 109),
                                 ),
                               ),
@@ -125,8 +123,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
-                                          fontFamily:
-                                              'San Francisco Pro Display',
+
                                           color: Color.fromARGB(
                                             255,
                                             109,
@@ -160,7 +157,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
-                                  fontFamily: 'San Francisco Pro Display',
                                   color: Color.fromARGB(255, 109, 109, 109),
                                 ),
                               ),
@@ -186,8 +182,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
-                                          fontFamily:
-                                              'San Francisco Pro Display',
                                           color: Color.fromARGB(
                                             255,
                                             109,
@@ -226,7 +220,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
-                              fontFamily: 'San Francisco Pro Display',
                               color: Color.fromARGB(255, 109, 109, 109),
                             ),
                           ),
@@ -235,7 +228,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                             style: TextStyle(
                               fontSize: 23,
                               fontWeight: FontWeight.w700,
-                              fontFamily: 'San Francisco Pro Display',
                               color: Color.fromARGB(255, 109, 109, 109),
                             ),
                           ),

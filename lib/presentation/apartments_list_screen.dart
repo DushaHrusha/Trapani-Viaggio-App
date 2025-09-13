@@ -119,7 +119,6 @@ class _ApartmentsListScreenState extends State<ApartmentsListScreen>
                                 context: context,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w700,
-                                  fontFamily: "SF Pro Display",
                                   color: BaseColors.accent,
                                   fontSize: 21,
                                 ),

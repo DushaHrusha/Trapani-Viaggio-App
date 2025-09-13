@@ -76,7 +76,6 @@ class CustomGradientButton extends StatelessWidget {
               fontSize: 16,
               color: Colors.white,
               fontWeight: FontWeight.w700,
-              fontFamily: 'San Francisco Pro Display',
             ),
           ),
         ),

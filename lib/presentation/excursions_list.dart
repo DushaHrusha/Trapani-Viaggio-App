@@ -118,7 +118,6 @@ class _ExcursionsListState extends State<ExcursionsList>
                                         context: context,
                                         style: TextStyle(
                                           fontWeight: FontWeight.w700,
-                                          fontFamily: "SF Pro Display",
                                           color: BaseColors.accent,
                                           fontSize: 21,
                                         ),
@@ -128,7 +127,6 @@ class _ExcursionsListState extends State<ExcursionsList>
                                         context: context,
                                         style: TextStyle(
                                           fontWeight: FontWeight.w700,
-                                          fontFamily: "SF Pro Display",
                                           color: BaseColors.accent,
                                           fontSize: 21,
                                         ),

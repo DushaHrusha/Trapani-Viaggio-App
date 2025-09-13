@@ -69,7 +69,6 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                 style: TextStyle(
                   fontSize: 19,
                   fontWeight: FontWeight.w700,
-                  fontFamily: "SF Pro Display",
                   color: Color.fromARGB(255, 109, 109, 109),
                 ),
                 textAlign: TextAlign.center,
@@ -97,7 +96,6 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          fontFamily: "SF Pro Display",
                           color: Color.fromARGB(255, 109, 109, 109),
                         ),
                       ),
@@ -124,7 +122,6 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  fontFamily: "SF Pro Display",
                                   color: Color.fromARGB(255, 109, 109, 109),
                                 ),
                               ),
@@ -148,7 +145,6 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          fontFamily: "SF Pro Display",
                           color: Color.fromARGB(255, 109, 109, 109),
                         ),
                       ),
@@ -175,7 +171,6 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  fontFamily: "SF Pro Display",
                                   color: Color.fromARGB(255, 109, 109, 109),
                                 ),
                               ),
@@ -205,7 +200,6 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          fontFamily: "SF Pro Display",
                           color: Color.fromARGB(255, 109, 109, 109),
                         ),
                       ),
@@ -223,7 +217,6 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
-                            fontFamily: "SF Pro Display",
                             color: Color.fromARGB(255, 109, 109, 109),
                           ),
                         ),
@@ -250,7 +243,6 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
-                                fontFamily: "SF Pro Display",
                                 color: Color.fromARGB(255, 109, 109, 109),
                               ),
                             ),
@@ -281,7 +273,6 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w400,
-                        fontFamily: "SF Pro Display",
                         color: Color.fromARGB(255, 109, 109, 109),
                       ),
                     ),
@@ -291,7 +282,6 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                     style: TextStyle(
                       fontSize: 23,
                       fontWeight: FontWeight.w700,
-                      fontFamily: "SF Pro Display",
                       color: Color.fromARGB(255, 109, 109, 109),
                     ),
                   ),

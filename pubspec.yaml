@@ -67,11 +67,6 @@ flutter:
   assets:
     - assets/file/ 
     - assets/file/avatars/ 
-    - assets/file/icons/
-    - assets/file/grand_canyon/   
-    - assets/file/machu_picchu/
-    - assets/file/luxury_sea_view_apartment/
-    - assets/file/cozy_mountain_chalet/
     - assets/file/Logo.svg  
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -92,8 +87,12 @@ flutter:
       fonts:
         - asset: assets/fonts/San Francisco Pro Display/SF-Pro-Display-Medium.otf
         - asset: assets/fonts/San Francisco Pro Display/SF-Pro-Display-Bold.otf
-        - asset: assets/fonts/San Francisco Pro Display/SF-Pro-Display-Light.otf
+        - asset: assets/fonts/San Francisco Pro Display/SF-Pro-Display-Regular.otf
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter/Inter_18pt-Regular.ttf
+        - asset: assets/fonts/Inter/Inter_18pt-Medium.ttf
+        - asset: assets/fonts/Inter/Inter_18pt-Bold.ttf
 
-   
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

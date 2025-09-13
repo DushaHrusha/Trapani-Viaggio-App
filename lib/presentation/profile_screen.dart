@@ -69,7 +69,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                   fontSize: 19,
                   fontWeight: FontWeight.w700,
                   color: BaseColors.text,
-                  fontFamily: "SF Pro Display",
                 ),
               ),
               Text(
@@ -78,7 +77,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                   fontSize: 14,
                   fontWeight: FontWeight.w400,
                   color: BaseColors.text,
-                  fontFamily: "SF Pro Display",
                 ),
               ),
             ],
@@ -123,7 +121,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: BaseColors.text,
-                fontFamily: "SF Pro Display",
               ),
             ),
             trailing:

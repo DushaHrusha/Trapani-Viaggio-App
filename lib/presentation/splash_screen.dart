@@ -169,7 +169,6 @@ class _SplashScreenState extends State<SplashScreen>
                           'tourists assistance',
                           style: context.adaptiveTextStyle(
                             fontSize: 16,
-                            fontFamily: 'San Francisco Pro Display',
                             fontWeight: FontWeight.w400,
                             color: Colors.white,
                           ),

@@ -109,7 +109,6 @@ class _BookmarksPageState extends State<BookmarksPage>
                         'You have no bookmarks yet',
                         style: TextStyle(
                           fontWeight: FontWeight.w700,
-                          fontFamily: "San Francisco Pro Display",
                           color: BaseColors.text,
                           fontSize: 21,
                         ),
@@ -139,7 +138,6 @@ class _BookmarksPageState extends State<BookmarksPage>
                           context: context,
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
-                            fontFamily: "SF Pro Display",
                             color: BaseColors.accent,
                             fontSize: 21,
                           ),

@@ -230,7 +230,6 @@ class _FirstCardState extends State<FirstCard> {
                               style: context.adaptiveTextStyle(
                                 fontSize: 19,
                                 fontWeight: FontWeight.w700,
-                                fontFamily: 'SF Pro Display',
                                 color: BaseColors.text,
                               ),
                             ),
@@ -252,7 +251,6 @@ class _FirstCardState extends State<FirstCard> {
                     style: context.adaptiveTextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
-                      fontFamily: 'SF Pro Display',
                       color: BaseColors.text,
                     ),
                     overflow: TextOverflow.ellipsis,

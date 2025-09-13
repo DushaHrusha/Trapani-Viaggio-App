@@ -59,8 +59,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
               'Place with a lively atmosphere due to its position as the capital and its economic activities as a port.',
               textAlign: TextAlign.center,
               style: context.adaptiveTextStyle(
-                fontSize: 14,
-                fontFamily: 'SF Pro Display',
+                fontSize: 13.5,
                 fontWeight: FontWeight.w400,
                 color: BaseColors.text,
               ),
@@ -169,7 +168,6 @@ class _MainMenuScreenState extends State<MainMenuScreen>
             label,
             style: context.adaptiveTextStyle(
               fontSize: 14,
-              fontFamily: 'San Francisco Pro Display',
               fontWeight: FontWeight.w500,
               color: BaseColors.secondary,
             ),
