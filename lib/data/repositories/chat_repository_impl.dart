@@ -36,8 +36,7 @@ class ChatRepositoryImpl implements ChatRepository {
   ];
 
   @override
-  Future<List<ChatMessage>> getMessages() async {
-    await Future.delayed(Duration(seconds: 1));
+  List<ChatMessage> getMessages() {
     return _messages;
   }
 

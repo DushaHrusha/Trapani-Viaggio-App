@@ -5,39 +5,16 @@ import 'package:test_task/data/repositories/chat_repository.dart';
 import 'package:test_task/data/repositories/chat_repository_impl.dart';
 
 class ChatCubit extends Cubit<ChatState> {
-  final ChatRepository repository = ChatRepositoryImpl();
-
-  ChatCubit() : super(ChatInitial());
+  ChatCubit() : super(ChatInitial()) {
+    final ChatRepository repository = ChatRepositoryImpl();
+    final List<ChatMessage> messages = repository.getMessages();
+    emit(ChatLoaded(messages));
+  }
 
   Future<void> loadMessages() async {
     emit(ChatLoading());
-    try {
-      final messages = await repository.getMessages();
-      emit(ChatLoaded(messages));
-    } catch (e) {
+    try {} catch (e) {
       emit(ChatError(e.toString()));
-    }
-  }
-
-  void sendMessage(String text) {
-    final message = ChatMessage(
-      text: text,
-      timestamp: DateTime.now(),
-      isSentByUser: true,
-    );
-
-    final state = this.state;
-    if (state is ChatLoaded) {
-      repository.addMessage(message);
-      emit(ChatLoaded([...state.messages, message]));
-    }
-  }
-
-  void receiveMessage(ChatMessage message) {
-    final state = this.state;
-    if (state is ChatLoaded) {
-      repository.addMessage(message);
-      emit(ChatLoaded([...state.messages, message]));
     }
   }
 }

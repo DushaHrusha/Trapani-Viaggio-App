@@ -10,62 +10,57 @@ import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/data/models/chat_message.dart';
-import 'package:test_task/presentation/main_menu_screen.dart';
 
 enum MessageStatus { sent, delivered, read }
 
 class ChatScreen extends StatelessWidget {
-  ChatScreen({super.key});
+  const ChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ChatCubit(),
-      child: Scaffold(
-        body: BlocBuilder<ChatCubit, ChatState>(
-          builder: (context, state) {
-            if (state is ChatLoading) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            if (state is ChatLoaded) {
-              return CustomBackgroundWithGradient(
-                child: Column(
-                  children: [
-                    CustomAppBar(label: "online assistance"),
-                    GreyLine(),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: EdgeInsets.symmetric(horizontal: 30),
-                        reverse: false,
-                        itemCount: state.messages.length,
-                        itemBuilder: (context, index) {
-                          final message = state.messages[index];
-                          final previousMessage =
-                              index + 1 < state.messages.length
-                                  ? state.messages[index + 1]
-                                  : null;
-                          return ChatBubble(
-                            message: message,
-                            isMe: message.isSentByUser,
-                            time: DateFormat('HH:mm').format(message.timestamp),
-                            previousMessage: previousMessage,
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-            if (state is ChatError) {
-              return Center(child: Text('Ошибка: ${state.message}'));
-            }
+    return Scaffold(
+      body: BlocBuilder<ChatCubit, ChatState>(
+        builder: (context, state) {
+          if (state is ChatLoading) {
             return Center(child: CircularProgressIndicator());
-          },
-        ),
-        bottomNavigationBar: BottomBar(currentScreen: context.widget),
+          }
+          if (state is ChatLoaded) {
+            return CustomBackgroundWithGradient(
+              child: Column(
+                children: [
+                  CustomAppBar(label: "online assistance"),
+                  GreyLine(),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: 30),
+                      reverse: false,
+                      itemCount: state.messages.length,
+                      itemBuilder: (context, index) {
+                        final message = state.messages[index];
+                        final previousMessage =
+                            index + 1 < state.messages.length
+                                ? state.messages[index + 1]
+                                : null;
+                        return ChatBubble(
+                          message: message,
+                          isMe: message.isSentByUser,
+                          time: DateFormat('HH:mm').format(message.timestamp),
+                          previousMessage: previousMessage,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+          if (state is ChatError) {
+            return Center(child: Text('Ошибка: ${state.message}'));
+          }
+          return Center(child: CircularProgressIndicator());
+        },
       ),
+      bottomNavigationBar: BottomBar(currentScreen: context.widget),
     );
   }
 }
