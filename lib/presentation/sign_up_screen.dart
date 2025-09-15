@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/custom_gradient_button.dart';
@@ -101,8 +102,10 @@ class _SignUpScreenState extends State<SignUpScreen>
                               ),
                               child: GestureDetector(
                                 onTap: () {
-                                  if (Navigator.canPop(context)) {
-                                    Navigator.pop(context);
+                                  if (context.canPop()) {
+                                    context.pop();
+                                  } else {
+                                    context.go("/home");
                                   }
                                 },
                                 child: Icon(

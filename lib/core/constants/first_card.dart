@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task/bloc/cubits/bookmarks_cubit.dart';
 import 'package:test_task/data/models/bookmark.dart';
-import 'package:test_task/main.dart';
-import 'package:test_task/presentation/bookmarks.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/data/models/card_data.dart';
 import 'package:test_task/presentation/apartment_detail_screen.dart';

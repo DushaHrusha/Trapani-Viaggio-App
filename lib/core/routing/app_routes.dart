@@ -15,6 +15,7 @@ import 'package:test_task/presentation/excursion_detail_screen.dart';
 import 'package:test_task/presentation/excursions_list.dart';
 import 'package:test_task/presentation/main_menu_screen.dart';
 import 'package:test_task/presentation/profile_screen.dart';
+import 'package:test_task/presentation/sign_up_screen.dart';
 import 'package:test_task/presentation/splash_screen.dart';
 import 'package:test_task/presentation/vehicle_details_screen.dart';
 
@@ -89,7 +90,10 @@ class AppRouter {
         ],
       ),
 
-      // Bookmarks
+      GoRoute(
+        path: '/sign-up',
+        builder: (context, state) => const SignUpScreen(),
+      ),
       GoRoute(
         path: '/bookmarks',
         builder: (context, state) => BookmarksScreen(),

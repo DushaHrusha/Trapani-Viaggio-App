@@ -189,8 +189,9 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                                   child: Text(
                                     "19 -21 Aug `20",
                                     style: context.adaptiveTextStyle(
+                                      fontWeight: FontWeight.w700,
                                       fontSize: 12,
-                                      color: Colors.black,
+                                      color: BaseColors.text,
                                     ),
                                   ),
                                 ),
@@ -217,8 +218,9 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                                   child: Text(
                                     "2 adualts + 1 child",
                                     style: context.adaptiveTextStyle(
+                                      fontWeight: FontWeight.w700,
                                       fontSize: 12,
-                                      color: Colors.black,
+                                      color: BaseColors.text,
                                     ),
                                   ),
                                 ),
@@ -330,18 +332,21 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                         ),
                         SizedBox(height: context.adaptiveSize(12)),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Expanded(
                               child: Text(
                                 _apartment.title,
                                 softWrap: true,
-                                style: context.adaptiveTextStyle(
-                                  fontSize: 19,
-                                  fontWeight: FontWeight.w700,
-                                  color: BaseColors.text,
-                                ),
+                                style: context
+                                    .adaptiveTextStyle(
+                                      fontSize: 19,
+                                      fontWeight: FontWeight.w700,
+                                      color: BaseColors.text,
+                                    )
+                                    .copyWith(height: 1.4),
                               ),
                             ),
                             Padding(
@@ -349,33 +354,46 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                                 left: context.adaptiveSize(24),
                               ),
                               child: Column(
+                                mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
                                     "Per night:",
-                                    style: context.adaptiveTextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      color: BaseColors.text,
-                                    ),
+                                    style: context
+                                        .adaptiveTextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400,
+                                          color: BaseColors.text,
+                                        )
+                                        .copyWith(height: 1),
                                   ),
+                                  SizedBox(height: context.adaptiveSize(5)),
                                   Row(
+                                    mainAxisSize:
+                                        MainAxisSize.min, // Важное изменение
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.baseline,
+                                    textBaseline: TextBaseline.alphabetic,
                                     children: [
                                       Text(
                                         _apartment.price.toStringAsFixed(0),
-                                        style: context.adaptiveTextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.w700,
-                                          color: BaseColors.accent,
-                                        ),
+                                        style: context
+                                            .adaptiveTextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.w700,
+                                              color: BaseColors.accent,
+                                            )
+                                            .copyWith(height: 1),
                                       ),
                                       Text(
                                         " €",
-                                        style: context.adaptiveTextStyle(
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w700,
-                                          color: BaseColors.accent,
-                                        ),
+                                        style: context
+                                            .adaptiveTextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w700,
+                                              color: BaseColors.accent,
+                                            )
+                                            .copyWith(height: 1),
                                       ),
                                     ],
                                   ),

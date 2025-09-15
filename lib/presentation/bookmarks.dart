@@ -11,7 +11,6 @@ import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/core/constants/second_card.dart';
 import 'package:test_task/data/models/bookmark.dart';
-import 'package:test_task/main.dart';
 
 class BookmarksScreen extends StatefulWidget {
   @override

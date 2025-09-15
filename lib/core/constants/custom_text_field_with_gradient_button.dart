@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/presentation/sign_up_screen.dart';
 
@@ -96,14 +97,18 @@ class CustomTextFieldWithGradientButton extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'Book now',
-                        style: context.adaptiveTextStyle(
-                          fontSize: 16,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20.0),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Book now',
+                          style: context.adaptiveTextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
@@ -115,7 +120,10 @@ class CustomTextFieldWithGradientButton extends StatelessWidget {
                   ),
                   SizedBox(
                     width: context.adaptiveSize(60),
-                    child: Icon(Icons.arrow_forward, color: Colors.white),
+                    child: SvgPicture.asset(
+                      "assets/file/Vector(1).svg",
+                      color: Colors.white,
+                    ),
                   ),
                 ],
               ),

@@ -270,7 +270,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                         ),
                       ),
                       const SizedBox(height: 126),
-                      CustomGradientButton(text: "Go", path: ""),
+                      CustomGradientButton(text: "Go", path: "/sign-up"),
                       const SizedBox(height: 41),
                     ],
                   ),
