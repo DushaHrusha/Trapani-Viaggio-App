@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/custom_gradient_button.dart';
+import 'package:test_task/core/routing/app_routes.dart';
 import 'package:test_task/presentation/splash_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -304,7 +305,7 @@ class _SignUpScreenState extends State<SignUpScreen>
                               opacity: _appBarOpacityAnimation3,
                               child: CustomGradientButton(
                                 text: "Sign up",
-                                path: SplashScreen(),
+                                path: "",
                               ),
                             ),
                           ),

@@ -10,21 +10,17 @@ import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/data/models/chat_message.dart';
-import 'package:test_task/data/repositories/chat_repository.dart';
-import 'package:test_task/data/repositories/chat_repository_impl.dart';
 import 'package:test_task/presentation/main_menu_screen.dart';
 
 enum MessageStatus { sent, delivered, read }
 
 class ChatScreen extends StatelessWidget {
-  final ChatRepository repository = ChatRepositoryImpl();
-
   ChatScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ChatCubit(repository)..loadMessages(),
+      create: (context) => ChatCubit(),
       child: Scaffold(
         body: BlocBuilder<ChatCubit, ChatState>(
           builder: (context, state) {
@@ -36,10 +32,7 @@ class ChatScreen extends StatelessWidget {
               return CustomBackgroundWithGradient(
                 child: Column(
                   children: [
-                    CustomAppBar(
-                      label: "online assistance",
-                      returnPage: MainMenuScreen(),
-                    ),
+                    CustomAppBar(label: "online assistance"),
                     GreyLine(),
                     Expanded(
                       child: ListView.builder(

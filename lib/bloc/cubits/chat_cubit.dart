@@ -2,11 +2,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task/bloc/state/chat_state.dart';
 import 'package:test_task/data/models/chat_message.dart';
 import 'package:test_task/data/repositories/chat_repository.dart';
+import 'package:test_task/data/repositories/chat_repository_impl.dart';
 
 class ChatCubit extends Cubit<ChatState> {
-  final ChatRepository repository;
+  final ChatRepository repository = ChatRepositoryImpl();
 
-  ChatCubit(this.repository) : super(ChatInitial());
+  ChatCubit() : super(ChatInitial());
 
   Future<void> loadMessages() async {
     emit(ChatLoading());

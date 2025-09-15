@@ -159,6 +159,16 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
     }
   }
 
+  @override
+  void dispose() {
+    _stageController43.dispose();
+    _appBarController23.dispose();
+    _animationTextController32.dispose();
+    _stageController132.dispose();
+    _stageController223.dispose();
+    super.dispose();
+  }
+
   Widget _buildCharacteristicCircle(String carCh, String iconPath) {
     return AnimatedSwitcher(
       duration: Duration(milliseconds: 1000),

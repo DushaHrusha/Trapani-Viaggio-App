@@ -1,52 +1,28 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/grey_line.dart';
-import 'package:test_task/data/repositories/cars_repository.dart';
-import 'package:test_task/data/repositories/motorcycle_repository.dart';
-import 'package:test_task/data/repositories/vespa_repository.dart';
-
-import 'package:test_task/presentation/apartments_list_screen.dart';
+import 'package:test_task/core/routing/app_routes.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/bottom_bar.dart';
-import 'package:test_task/presentation/vehicle_details_screen.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
-import 'package:test_task/presentation/excursions_list.dart';
 
 class CircularMenuScreen extends StatefulWidget {
   const CircularMenuScreen({super.key});
 
   @override
-  _CircularMenuScreenState createState() => _CircularMenuScreenState();
+  createState() => _CircularMenuScreenState();
 }
 
 class _CircularMenuScreenState extends State<CircularMenuScreen>
     with TickerProviderStateMixin {
   late AnimationController _controller;
 
-  late final List<Widget> _cachedPages;
-  final List<StatefulWidget> _pages = [
-    ApartmentsListScreen(),
-    VehicleDetailsScreen(
-      vehicleRepository: CarsRepository(),
-      label: "automobiles",
-    ),
-    VehicleDetailsScreen(
-      vehicleRepository: MotorcycleRepository(),
-      label: "motorcycles",
-    ),
-    VehicleDetailsScreen(
-      vehicleRepository: VespaRepository(),
-      label: "vespa bikes",
-    ),
-    VehicleDetailsScreen(
-      vehicleRepository: VespaRepository(),
-      label: "vespa bikes",
-    ),
-    ExcursionsList(),
-  ];
+  late final List<String> _cachedPages;
+  final List<String> _pages = AppRouter.getAllRoutes();
 
   final List<String> _labels = [
     'Apartment',
@@ -160,7 +136,7 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
               builder: (context, child) {
                 return Opacity(
                   opacity: _appBarController.value,
-                  child: const CustomAppBar(label: "trapani viaggio"),
+                  child: CustomAppBar(label: "trapani viaggio"),
                 );
               },
             ),
@@ -310,25 +286,7 @@ class _CircularMenuScreenState extends State<CircularMenuScreen>
         splashFactory: InkRipple.splashFactory,
         borderRadius: BorderRadius.circular(size / 2),
         onTap: () {
-          Future.delayed(const Duration(milliseconds: 200), () {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder:
-                    (context, animation, secondaryAnimation) =>
-                        _cachedPages[index],
-                transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                ) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-                transitionDuration: const Duration(milliseconds: 300),
-              ),
-            );
-          });
+          context.go(_cachedPages[index]);
         },
         child: Container(
           width: size,

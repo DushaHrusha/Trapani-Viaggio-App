@@ -1,24 +1,33 @@
-import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:test_task/presentation/bookmarks.dart';
-import 'package:test_task/presentation/splash_screen.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_task/bloc/cubits/bookmarks_cubit.dart';
+import 'package:test_task/core/routing/app_routes.dart';
+import 'package:test_task/core/theme/app_theme.dart';
+import 'package:test_task/bloc/cubits/apartments_cubit.dart';
+import 'package:test_task/bloc/cubits/chat_cubit.dart';
+import 'package:test_task/bloc/cubits/vehicle_cubit.dart';
+import 'package:test_task/bloc/cubits/excursion_cubit.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
-    MultiProvider(
+    // DevicePreview(
+    //enabled: true,
+    //  tools: const [...DevicePreview.defaultTools],
+    //  builder: (context) =>
+    MultiBlocProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => BookmarksProvider()),
+        BlocProvider(create: (context) => ApartmentCubit()),
+        BlocProvider(create: (context) => ChatCubit()),
+        BlocProvider(create: (context) => ExcursionCubit()),
+        BlocProvider(create: (context) => VehicleCubit()),
+        BlocProvider(create: (context) => BookmarksCubit()),
       ],
-      child: // DevicePreview(
-          //enabled: true,
-          //  tools: const [...DevicePreview.defaultTools],
-          //  builder: (context) =>
-          const MyApp(),
-      //),
+      child: const MyApp(),
     ),
+
+    //),
   );
 }
 
@@ -27,16 +36,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(
-        fontFamily: 'Inter',
-        textTheme: TextTheme(
-          bodyMedium: TextStyle(fontFamily: 'Inter'),
-          bodyLarge: TextStyle(fontFamily: 'Inter'),
-        ),
-      ),
+    return MaterialApp.router(
+      title: 'Test Task App',
       debugShowCheckedModeBanner: false,
-      home: Scaffold(body: SplashScreen()),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      routerConfig: AppRouter.router,
     );
   }
 }

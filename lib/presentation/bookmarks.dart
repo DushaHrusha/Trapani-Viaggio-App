@@ -1,24 +1,24 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:test_task/bloc/cubits/bookmarks_cubit.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/bottom_bar.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/core/constants/second_card.dart';
-import 'package:test_task/data/models/card_data.dart';
-import 'package:provider/provider.dart';
-import 'package:test_task/presentation/main_menu_screen.dart';
+import 'package:test_task/data/models/bookmark.dart';
+import 'package:test_task/main.dart';
 
-class BookmarksPage extends StatefulWidget {
+class BookmarksScreen extends StatefulWidget {
   @override
-  State<BookmarksPage> createState() => _BookmarksPageState();
+  createState() => _BookmarksScreenState();
 }
 
-class _BookmarksPageState extends State<BookmarksPage>
+class _BookmarksScreenState extends State<BookmarksScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _appBarAnimation;
@@ -56,7 +56,7 @@ class _BookmarksPageState extends State<BookmarksPage>
     _cardsOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animationController,
-        curve: Interval(0.5, 1, curve: Curves.easeInOut),
+        curve: Interval(0.5, 0.7, curve: Curves.easeInOut),
       ),
     );
 
@@ -83,18 +83,15 @@ class _BookmarksPageState extends State<BookmarksPage>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: BaseColors.background,
-      body: Consumer<BookmarksProvider>(
-        builder: (context, bookmarksProvider, child) {
-          if (bookmarksProvider.bookmarks.isEmpty) {
+      body: BlocBuilder<BookmarksCubit, List<Bookmark>>(
+        builder: (context, state) {
+          if (state.isEmpty) {
             return CustomBackgroundWithGradient(
               child: Column(
                 children: [
                   FadeTransition(
                     opacity: _appBarAnimation,
-                    child: CustomAppBar(
-                      label: "bookmarks",
-                      returnPage: MainMenuScreen(),
-                    ),
+                    child: CustomAppBar(label: "bookmarks"),
                   ),
                   FadeTransition(
                     opacity: _greyLineAnimation,
@@ -127,9 +124,9 @@ class _BookmarksPageState extends State<BookmarksPage>
                 Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-                    itemCount: bookmarksProvider.bookmarks.length,
+                    itemCount: state.length,
                     itemBuilder: (context, index) {
-                      final bookmark = bookmarksProvider.bookmarks[index];
+                      final bookmark = state[index];
                       return FadeTransition(
                         opacity: _cardsOpacityAnimation,
                         child: SecondCard(
@@ -185,39 +182,4 @@ class _BookmarksPageState extends State<BookmarksPage>
       ),
     );
   }
-}
-
-class BookmarksProvider extends ChangeNotifier {
-  final List<Bookmark> _bookmarks = [];
-
-  List<Bookmark> get bookmarks => _bookmarks;
-
-  void toggleBookmark(CardData cardData) {
-    Bookmark? existingBookmark;
-    try {
-      existingBookmark = _bookmarks.firstWhere(
-        (bookmark) => bookmark.cardData.id == cardData.id,
-      );
-    } catch (e) {
-      existingBookmark = null;
-    }
-
-    if (existingBookmark != null) {
-      _bookmarks.remove(existingBookmark);
-    } else {
-      _bookmarks.add(Bookmark(cardData: cardData));
-    }
-
-    notifyListeners();
-  }
-
-  bool isBookmarked(CardData cardData) {
-    return _bookmarks.any((bookmark) => bookmark.cardData.id == cardData.id);
-  }
-}
-
-class Bookmark {
-  final CardData cardData;
-
-  Bookmark({required this.cardData});
 }

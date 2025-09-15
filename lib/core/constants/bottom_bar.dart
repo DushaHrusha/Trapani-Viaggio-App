@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:test_task/presentation/bookmarks.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
@@ -51,22 +52,18 @@ class _BottomBarState extends State<BottomBar> {
           items: [
             _buildNavItem(
               'assets/file/home.svg',
-              ProfileScreen(),
               widget.currentScreen is MainMenuScreen,
             ),
             _buildNavItem(
               'assets/file/map.svg',
-              ProfileScreen(),
               widget.currentScreen is SplashScreen,
             ),
             _buildNavItem(
               'assets/file/bookmark.svg',
-              ProfileScreen(),
-              widget.currentScreen is BookmarksPage,
+              widget.currentScreen is BookmarksScreen,
             ),
             _buildNavItem(
               'assets/file/user.svg',
-              ProfileScreen(),
               widget.currentScreen is ProfileScreen,
             ),
           ],
@@ -79,50 +76,28 @@ class _BottomBarState extends State<BottomBar> {
   }
 
   void _navigateToScreen(int index) {
-    Widget targetScreen;
+    String targetScreen;
     switch (index) {
       case 0:
-        targetScreen = MainMenuScreen();
+        targetScreen = "/home";
         break;
       case 1:
-        targetScreen = SplashScreen();
+        targetScreen = "/";
         break;
       case 2:
-        targetScreen = BookmarksPage();
+        targetScreen = "/bookmarks";
         break;
       case 3:
-        targetScreen = ProfileScreen();
+        targetScreen = "/profile";
         break;
       default:
-        targetScreen = SplashScreen();
+        targetScreen = "/";
     }
 
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 800),
-        pageBuilder: (_, __, ___) => targetScreen,
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: FadeTransition(
-              opacity: Tween<double>(
-                begin: 1.0,
-                end: 0.0,
-              ).animate(secondaryAnimation),
-              child: child,
-            ),
-          );
-        },
-      ),
-    );
+    context.go(targetScreen);
   }
 
-  BottomNavigationBarItem _buildNavItem(
-    String icon,
-    Widget path,
-    bool isActive,
-  ) {
+  BottomNavigationBarItem _buildNavItem(String icon, bool isActive) {
     return BottomNavigationBarItem(
       icon: Padding(
         padding: EdgeInsets.only(top: context.adaptiveSize(0)), //20

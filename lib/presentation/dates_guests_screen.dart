@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:test_task/core/routing/app_routes.dart';
 import 'package:test_task/presentation/splash_screen.dart';
 import 'package:test_task/core/constants/custom_gradient_button.dart';
 
@@ -13,8 +14,8 @@ class DatesGuestsScreen extends StatefulWidget {
 class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
   DateTime? selectedDate1;
   DateTime? selectedDate2;
-  String _selectedDateRange1 = '--/--/----'; // Инициализация плейсхолдера
-  String _selectedDateRange2 = '--/--/----'; // Инициализация плейсхолдера
+  String _selectedDateRange1 = '--/--/----';
+  String _selectedDateRange2 = '--/--/----';
   double _minPrice = 40;
   double _maxPrice = 100;
   final double _absoluteMin = 0;
@@ -316,7 +317,7 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                 ),
               ),
               const SizedBox(height: 46),
-              CustomGradientButton(text: "Go", path: SplashScreen()),
+              CustomGradientButton(text: "Go", path: ""),
               const SizedBox(height: 41),
             ],
           ),

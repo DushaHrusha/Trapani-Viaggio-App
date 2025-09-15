@@ -6,7 +6,6 @@ import 'package:test_task/core/constants/bottom_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_image.dart';
 import 'package:test_task/core/constants/custom_gradient_button.dart';
 import 'package:test_task/core/constants/grey_line.dart';
-import 'package:test_task/presentation/circular_menu_screen.dart';
 
 class MainMenuScreen extends StatefulWidget {
   const MainMenuScreen({super.key});
@@ -72,7 +71,7 @@ class _MainMenuScreenState extends State<MainMenuScreen>
             ),
             child: const CustomGradientButton(
               text: 'Services',
-              path: CircularMenuScreen(),
+              path: '/home/main-menu',
             ),
           ),
 

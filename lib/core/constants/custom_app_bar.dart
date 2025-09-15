@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
+import 'package:test_task/core/routing/app_routes.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String label;
-  final Widget? returnPage;
 
-  const CustomAppBar({super.key, required this.label, this.returnPage});
+  const CustomAppBar({super.key, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -34,26 +35,10 @@ class CustomAppBar extends StatelessWidget {
                 maxHeight: context.adaptiveSize(24),
               ),
               onPressed: () {
-                if (returnPage != null) {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder:
-                          (context, animation, secondaryAnimation) =>
-                              returnPage!,
-                      transitionsBuilder: (
-                        context,
-                        animation,
-                        secondaryAnimation,
-                        child,
-                      ) {
-                        return FadeTransition(opacity: animation, child: child);
-                      },
-                      transitionDuration: Duration(milliseconds: 500),
-                    ),
-                  );
+                if (context.canPop()) {
+                  context.pop();
                 } else {
-                  Navigator.pop(context);
+                  context.go("/home");
                 }
               },
             ),

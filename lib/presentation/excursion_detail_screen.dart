@@ -1,6 +1,11 @@
 import 'dart:ui';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:test_task/bloc/cubits/bookmarks_cubit.dart';
+import 'package:test_task/data/models/apartment.dart';
+import 'package:test_task/data/models/bookmark.dart';
+import 'package:test_task/main.dart';
 import 'package:test_task/presentation/bookmarks.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/grey_line.dart';
@@ -177,65 +182,67 @@ class _ExcursionDetailScreenState extends State<ExcursionDetailScreen>
                             Positioned(
                               right: context.adaptiveSize(24),
                               top: context.adaptiveSize(24),
-                              child: Consumer<BookmarksProvider>(
-                                builder: (context, bookmarksProvider, child) {
-                                  final isBookmarked = bookmarksProvider
-                                      .isBookmarked(_excursion);
-                                  return GestureDetector(
-                                    onTap: () {
-                                      bookmarksProvider.toggleBookmark(
-                                        _excursion,
+                              child:
+                                  BlocBuilder<BookmarksCubit, List<Bookmark>>(
+                                    builder: (context, bookmarks) {
+                                      final isBookmarked = context
+                                          .read<BookmarksCubit>()
+                                          .isBookmarked(_excursion);
+                                      return GestureDetector(
+                                        onTap: () {
+                                          context
+                                              .read<BookmarksCubit>()
+                                              .toggleBookmark(_excursion);
+                                        },
+                                        child: Container(
+                                          height: context.adaptiveSize(56),
+                                          width: context.adaptiveSize(56),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                context.adaptiveSize(16),
+                                              ),
+                                            ),
+                                            shape: BoxShape.rectangle,
+                                            color: Color.fromARGB(
+                                              87,
+                                              255,
+                                              255,
+                                              255,
+                                            ),
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.all(
+                                              Radius.circular(
+                                                context.adaptiveSize(16),
+                                              ),
+                                            ),
+                                            child: BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                sigmaX: 5.0,
+                                                sigmaY: 5.0,
+                                              ),
+                                              child: Icon(
+                                                isBookmarked
+                                                    ? Icons.bookmark
+                                                    : Icons.bookmark_outline,
+                                                color:
+                                                    isBookmarked
+                                                        ? BaseColors.accent
+                                                        : Color.fromARGB(
+                                                          255,
+                                                          251,
+                                                          251,
+                                                          253,
+                                                        ),
+                                                size: context.adaptiveSize(25),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       );
                                     },
-                                    child: Container(
-                                      height: context.adaptiveSize(56),
-                                      width: context.adaptiveSize(56),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(
-                                            context.adaptiveSize(16),
-                                          ),
-                                        ),
-                                        shape: BoxShape.rectangle,
-                                        color: Color.fromARGB(
-                                          87,
-                                          255,
-                                          255,
-                                          255,
-                                        ),
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(
-                                            context.adaptiveSize(16),
-                                          ),
-                                        ),
-                                        child: BackdropFilter(
-                                          filter: ImageFilter.blur(
-                                            sigmaX: 5.0,
-                                            sigmaY: 5.0,
-                                          ),
-                                          child: Icon(
-                                            isBookmarked
-                                                ? Icons.bookmark
-                                                : Icons.bookmark_outline,
-                                            color:
-                                                isBookmarked
-                                                    ? BaseColors.accent
-                                                    : Color.fromARGB(
-                                                      255,
-                                                      251,
-                                                      251,
-                                                      253,
-                                                    ),
-                                            size: context.adaptiveSize(25),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                                  ),
                             ),
                             Positioned(
                               bottom: context.adaptiveSize(16),

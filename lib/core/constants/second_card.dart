@@ -1,7 +1,10 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:test_task/presentation/bookmarks.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:test_task/bloc/cubits/bookmarks_cubit.dart';
+import 'package:test_task/data/models/bookmark.dart';
+import 'package:test_task/main.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/data/models/card_data.dart';
@@ -60,14 +63,16 @@ class SecondCard extends StatelessWidget {
                     Positioned(
                       right: context.adaptiveSize(24),
                       top: context.adaptiveSize(24),
-                      child: Consumer<BookmarksProvider>(
-                        builder: (context, bookmarksProvider, child) {
-                          final isBookmarked = bookmarksProvider.isBookmarked(
-                            data,
-                          );
+                      child: BlocBuilder<BookmarksCubit, List<Bookmark>>(
+                        builder: (context, bookmarks) {
+                          final isBookmarked = context
+                              .read<BookmarksCubit>()
+                              .isBookmarked(data);
                           return GestureDetector(
                             onTap: () {
-                              bookmarksProvider.toggleBookmark(data);
+                              context.read<BookmarksCubit>().toggleBookmark(
+                                data,
+                              );
                             },
                             child: Container(
                               height: context.adaptiveSize(56),

@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/custom_gradient_button.dart';
 import 'package:test_task/core/constants/grey_line.dart';
+import 'package:test_task/core/routing/app_routes.dart';
 import 'package:test_task/presentation/sign_up_screen.dart';
 
 class DatePickerWidget extends StatefulWidget {
@@ -269,7 +270,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                         ),
                       ),
                       const SizedBox(height: 126),
-                      CustomGradientButton(text: "Go", path: SignUpScreen()),
+                      CustomGradientButton(text: "Go", path: ""),
                       const SizedBox(height: 41),
                     ],
                   ),

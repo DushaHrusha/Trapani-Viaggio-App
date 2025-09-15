@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
+import 'package:test_task/core/routing/app_routes.dart';
 import 'package:test_task/presentation/main_menu_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -62,25 +64,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   void _navigateToNextScreen() {
-    Navigator.pushReplacement(
-      context,
-      PageRouteBuilder(
-        transitionDuration: const Duration(milliseconds: 800),
-        pageBuilder: (_, __, ___) => MainMenuScreen(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          return FadeTransition(
-            opacity: animation,
-            child: FadeTransition(
-              opacity: Tween<double>(
-                begin: 1.0,
-                end: 0.0,
-              ).animate(secondaryAnimation),
-              child: child,
-            ),
-          );
-        },
-      ),
-    );
+    context.go('/home');
   }
 
   @override

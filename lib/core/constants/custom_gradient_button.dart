@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 
 class CustomGradientButton extends StatelessWidget {
   final String text;
-  final Widget path;
+  final String path;
   const CustomGradientButton({
     super.key,
     required this.text,
@@ -19,23 +20,7 @@ class CustomGradientButton extends StatelessWidget {
         splashColor: Colors.white.withOpacity(0.3),
         highlightColor: Colors.white.withOpacity(0.1),
         onTap: () {
-          Future.delayed(const Duration(milliseconds: 500), () {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                pageBuilder: (context, animation, secondaryAnimation) => path,
-                transitionsBuilder: (
-                  context,
-                  animation,
-                  secondaryAnimation,
-                  child,
-                ) {
-                  return FadeTransition(opacity: animation, child: child);
-                },
-                transitionDuration: const Duration(milliseconds: 300),
-              ),
-            );
-          });
+          context.go(path);
         },
         child: Container(
           height: context.adaptiveSize(56),

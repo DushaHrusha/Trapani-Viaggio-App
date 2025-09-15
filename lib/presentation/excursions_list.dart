@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/bottom_bar.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
@@ -67,111 +68,103 @@ class _ExcursionsListState extends State<ExcursionsList>
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ExcursionCubit()..loadExcursions(),
-      child: Scaffold(
-        backgroundColor: BaseColors.background,
-        body: BlocBuilder<ExcursionCubit, ExcursionState>(
-          builder: (context, state) {
-            if (state is ExcursionInitial) {
-              return Center(child: CircularProgressIndicator());
-            } else if (state is ExcursionLoaded) {
-              return CustomBackgroundWithGradient(
-                child: Column(
-                  children: [
-                    FadeTransition(
-                      opacity: _appBarOpacityAnimation,
-                      child: CustomAppBar(label: "excursions list"),
-                    ),
-                    FadeTransition(
-                      opacity: _appBarOpacityAnimation,
-                      child: GreyLine(),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 32,
-                        ),
-                        itemCount: state.excursions.length,
-                        itemBuilder: (context, index) {
-                          final excursion = state.excursions[index];
-                          return FadeTransition(
-                            opacity: _cardsOpacityAnimation,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder:
-                                        (context) => ExcursionDetailScreen(
-                                          excursion: excursion,
-                                        ),
-                                  ),
-                                );
-                              },
-                              child:
-                                  (index == 0)
-                                      ? FirstCard(
-                                        data: excursion,
-                                        index: index,
-                                        context: context,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          color: BaseColors.accent,
-                                          fontSize: 21,
-                                        ),
-                                      )
-                                      : SecondCard(
-                                        data: excursion,
-                                        context: context,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w700,
-                                          color: BaseColors.accent,
-                                          fontSize: 21,
-                                        ),
-                                        index: index,
-                                      ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-            return Center(child: Text('Error loading excursions'));
-          },
-        ),
-        bottomNavigationBar: SlideTransition(
-          position: _bottomBarSlideAnimation,
-          child: BottomBar(currentScreen: widget),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: SlideTransition(
-          position: _bottomBarSlideAnimation,
-          child: Container(
-            margin: EdgeInsets.only(bottom: 30),
-            width: 72,
-            height: 72,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 1),
-            ),
-            child: ClipOval(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 13, sigmaY: 13),
-                child: FloatingActionButton(
-                  backgroundColor: Colors.transparent,
-                  elevation: 0,
-                  child: SvgPicture.asset(
-                    "assets/file/sliders.svg",
-                    color: BaseColors.accent,
-                    height: 24,
+    return Scaffold(
+      backgroundColor: BaseColors.background,
+      body: BlocBuilder<ExcursionCubit, ExcursionState>(
+        builder: (context, state) {
+          if (state is ExcursionInitial) {
+            return Center(child: CircularProgressIndicator());
+          } else if (state is ExcursionLoaded) {
+            return CustomBackgroundWithGradient(
+              child: Column(
+                children: [
+                  FadeTransition(
+                    opacity: _appBarOpacityAnimation,
+                    child: CustomAppBar(label: "excursions list"),
                   ),
-                  onPressed: () => setState(() {}),
+                  FadeTransition(
+                    opacity: _appBarOpacityAnimation,
+                    child: GreyLine(),
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 30,
+                        vertical: 32,
+                      ),
+                      itemCount: state.excursions.length,
+                      itemBuilder: (context, index) {
+                        final excursion = state.excursions[index];
+                        return FadeTransition(
+                          opacity: _cardsOpacityAnimation,
+                          child: GestureDetector(
+                            onTap: () {
+                              context.go(
+                                '/home/main-menu/excursions-list/excursion-detail',
+                                extra: excursion,
+                              );
+                            },
+                            child:
+                                (index == 0)
+                                    ? FirstCard(
+                                      data: excursion,
+                                      index: index,
+                                      context: context,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: BaseColors.accent,
+                                        fontSize: 21,
+                                      ),
+                                    )
+                                    : SecondCard(
+                                      data: excursion,
+                                      context: context,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: BaseColors.accent,
+                                        fontSize: 21,
+                                      ),
+                                      index: index,
+                                    ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+          return Center(child: Text('Error loading excursions'));
+        },
+      ),
+      bottomNavigationBar: SlideTransition(
+        position: _bottomBarSlideAnimation,
+        child: BottomBar(currentScreen: widget),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      floatingActionButton: SlideTransition(
+        position: _bottomBarSlideAnimation,
+        child: Container(
+          margin: EdgeInsets.only(bottom: 30),
+          width: 72,
+          height: 72,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.white, width: 1),
+          ),
+          child: ClipOval(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 13, sigmaY: 13),
+              child: FloatingActionButton(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: SvgPicture.asset(
+                  "assets/file/sliders.svg",
+                  color: BaseColors.accent,
+                  height: 24,
                 ),
+                onPressed: () => setState(() {}),
               ),
             ),
           ),
