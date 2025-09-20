@@ -11,7 +11,7 @@ import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/data/models/chat_message.dart';
 
-enum MessageStatus { sent, delivered, read }
+enum MessageStatus { sent, delivered, read, sending }
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});

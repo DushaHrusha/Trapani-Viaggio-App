@@ -21,13 +21,12 @@ Future<void> main() async {
         BlocProvider(create: (context) => VehicleCubit()),
         BlocProvider(create: (context) => BookmarksCubit()),
       ],
-      /* child: DevicePreview(
+      child: DevicePreview(
         enabled: true,
         tools: const [...DevicePreview.defaultTools],
-        builder: (context) => */
-      child: const MyApp(),
+        builder: (context) => const MyApp(),
+      ),
     ),
-    //),
   );
 }
 

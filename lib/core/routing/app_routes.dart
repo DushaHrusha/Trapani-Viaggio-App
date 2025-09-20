@@ -20,6 +20,36 @@ import 'package:test_task/presentation/splash_screen.dart';
 import 'package:test_task/presentation/vehicle_details_screen.dart';
 
 class AppRouter {
+  static const String root = '/';
+  static const String splash = '/splash';
+  static const String auth = '/auth';
+  static const String signUp = '/auth/sign-up';
+
+  // Main app routes
+  static const String home = '/home';
+  static const String menu = '/home/main-menu';
+
+  // Feature routes
+  static const String apartments = '/home/main-menu/apartments-list';
+  static const String apartmentDetail = '/home/apartments/:id';
+
+  static const String vehicleDetailsCars =
+      '/home/main-menu/vehicle-details-cars';
+  static const String vehicleDetailsMotorcycles =
+      '/home/main-menu/vehicle-details-motorcycles';
+  static const String vehicleDetailsVespa =
+      '/home/main-menu/vehicle-details-vespa';
+
+  static const String vehiclesByType = '/home/vehicles/:type';
+  static const String vehicleDetail = '/home/vehicles/:type/:id';
+
+  static const String excursions = '/home/main-menu/excursions-list';
+  static const String excursionDetail = '/home/excursions/:id';
+
+  // Profile routes
+  static const String profile = '/profile';
+  static const String bookmarks = '/profile/bookmarks';
+  static const String chat = '/profile/chat';
   static final GoRouter router = GoRouter(
     initialLocation: '/',
     routes: [

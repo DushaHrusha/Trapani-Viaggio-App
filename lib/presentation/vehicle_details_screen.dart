@@ -14,6 +14,89 @@ import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/data/models/vehicle.dart';
 import 'package:test_task/data/repositories/vehicle_repository.dart';
 
+class VehicleAnimationController {
+  final TickerProvider _vsync;
+  late final AnimationController _masterController;
+  late final VehicleAnimationSequence _animations;
+
+  VehicleAnimationController({required TickerProvider vsync}) : _vsync = vsync {
+    _initializeController();
+  }
+
+  void _initializeController() {
+    _masterController = AnimationController(
+      vsync: _vsync,
+      duration: const Duration(milliseconds: 3000),
+    );
+    _animations = VehicleAnimationSequence(_masterController);
+  }
+
+  VehicleAnimationSequence get animations => _animations;
+
+  void startAnimation() => _masterController.forward();
+  void resetAnimation() => _masterController.reset();
+  void dispose() => _masterController.dispose();
+}
+
+class VehicleAnimationSequence {
+  final AnimationController _controller;
+
+  static const _AnimationTiming _appBarTiming = _AnimationTiming(0.17, 0.33);
+  static const _AnimationTiming _headerTiming = _AnimationTiming(0.33, 0.5);
+  static const _AnimationTiming _contentTiming = _AnimationTiming(0.5, 0.67);
+  static const _AnimationTiming _imageTiming = _AnimationTiming(0.5, 0.67);
+  static const _AnimationTiming _bottomTiming = _AnimationTiming(0.33, 0.5);
+
+  VehicleAnimationSequence(this._controller);
+
+  Animation<double> get appBarFade => _createFadeAnimation(_appBarTiming);
+
+  Animation<double> get headerFade => _createFadeAnimation(_headerTiming);
+
+  Animation<double> get contentFade => _createFadeAnimation(_contentTiming);
+
+  Animation<Offset> get imageSlide => _createSlideAnimation(
+    _imageTiming,
+    begin: const Offset(1, 0),
+    end: Offset.zero,
+  );
+
+  Animation<double> get bottomFade => _createFadeAnimation(_bottomTiming);
+  Animation<Offset> get bottomBarSlide => _createSlideAnimation(
+    _bottomTiming,
+    begin: const Offset(0, 1),
+    end: Offset.zero,
+  );
+
+  Animation<double> _createFadeAnimation(_AnimationTiming timing) {
+    return Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Interval(timing.start, timing.end, curve: Curves.easeOut),
+      ),
+    );
+  }
+
+  Animation<Offset> _createSlideAnimation(
+    _AnimationTiming timing, {
+    required Offset begin,
+    required Offset end,
+  }) {
+    return Tween<Offset>(begin: begin, end: end).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: Interval(timing.start, timing.end, curve: Curves.easeOut),
+      ),
+    );
+  }
+}
+
+class _AnimationTiming {
+  final double start;
+  final double end;
+  const _AnimationTiming(this.start, this.end);
+}
+
 class VehicleDetailsScreen extends StatefulWidget {
   final VehicleRepository vehicleRepository;
   final String label;
@@ -28,15 +111,15 @@ class VehicleDetailsScreen extends StatefulWidget {
 
 class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
     with TickerProviderStateMixin {
-  late AnimationController _stageController;
   String _selectedDateRange = '--/--/----';
-  late AnimationController _stageController1;
-  late AnimationController _bottomBarController;
-  late AnimationController _appBarController;
-  late AnimationController _appBarController1;
   late int sumDay = 0;
-
-  int currentIndex43 = 0;
+  late final ScrollController _scrollController;
+  late final PageController _pageController;
+  late final VehicleAnimationController _animationController;
+  late final List<Vehicle> _vehicle;
+  late final VehicleRepository _vehicleRepository;
+  late final String label;
+  int _currentIndex = 0;
   final Map<String, String> _icons43 = {
     'type_transmission': 'assets/file/Automatic.svg',
     'number_seats': 'assets/file/Seats.svg',
@@ -44,106 +127,31 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
     'insurance': 'assets/file/Insurance.svg',
   };
 
-  final ScrollController _scrollController434 = ScrollController();
-
-  late List<Vehicle> vehicle;
-  late PageController _pageController43;
-  late AnimationController _stageController43;
-
-  late AnimationController _appBarController23;
-  late AnimationController _animationTextController32;
-  late AnimationController _stageController132;
-  late AnimationController _stageController223;
-  late VehicleRepository vehicleRepository;
-  late String label;
-
   @override
   void initState() {
     super.initState();
-    vehicleRepository = widget.vehicleRepository;
+
+    _animationController = VehicleAnimationController(vsync: this);
+    _vehicleRepository = widget.vehicleRepository;
     label = widget.label;
-    _pageController43 = PageController(
-      initialPage: currentIndex43,
+    _scrollController = ScrollController();
+    _pageController = PageController(
+      initialPage: _currentIndex,
       viewportFraction: 1,
       keepPage: true,
     );
-    _appBarController23 = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
+    _startAnimation();
+  }
 
-    _stageController132 = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    _stageController223 = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-
-    _stageController43 = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _animationTextController32 = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _stageController43.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        Future.delayed(const Duration(milliseconds: 0), () {
-          _appBarController23.forward().then((_) {
-            _stageController132.forward().then((_) {
-              _stageController223.forward();
-              _animationTextController32.forward();
-            });
-          });
-        });
-      }
+  void _startAnimation() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _animationController.startAnimation();
     });
-
-    _stageController43.forward();
-
-    _appBarController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _appBarController1 = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _stageController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _stageController1 = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _bottomBarController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
-    _stageController.addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-        Future.delayed(const Duration(milliseconds: 0), () {
-          _appBarController.forward().then((_) {
-            _appBarController1.forward().then((_) {
-              _stageController1.forward();
-              _bottomBarController.forward();
-            });
-          });
-        });
-      }
-    });
-
-    _stageController.forward();
   }
 
   void _nextCar() {
-    if (currentIndex43 < vehicle.length - 1) {
-      _pageController43.nextPage(
+    if (_currentIndex < _vehicle.length - 1) {
+      _pageController.nextPage(
         duration: Duration(milliseconds: 500),
         curve: Curves.easeInOut,
       );
@@ -151,8 +159,8 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
   }
 
   void _previousCar() {
-    if (currentIndex43 > 0) {
-      _pageController43.previousPage(
+    if (_currentIndex > 0) {
+      _pageController.previousPage(
         duration: Duration(milliseconds: 500),
         curve: Curves.easeInOut,
       );
@@ -161,11 +169,9 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
 
   @override
   void dispose() {
-    _stageController43.dispose();
-    _appBarController23.dispose();
-    _animationTextController32.dispose();
-    _stageController132.dispose();
-    _stageController223.dispose();
+    _animationController.dispose();
+    _scrollController.dispose();
+    _pageController.dispose();
     super.dispose();
   }
 
@@ -192,7 +198,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
         );
       },
       child: Container(
-        key: ValueKey<String>(vehicle[currentIndex43].year.toString()),
+        key: ValueKey<String>(_vehicle[_currentIndex].year.toString()),
         width: context.adaptiveSize(80),
         height: context.adaptiveSize(80),
         decoration: BoxDecoration(
@@ -220,476 +226,32 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
 
   @override
   Widget build(BuildContext context) => BlocProvider(
-    create: (context) => VehicleCubit()..loadExcursions(vehicleRepository),
+    create: (context) => VehicleCubit()..loadExcursions(_vehicleRepository),
     child: Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: BaseColors.background,
       body: BlocBuilder<VehicleCubit, VehicleState>(
         builder: (context, state) {
           if (state is VehicleInitial) {
             return Center(child: CircularProgressIndicator());
           }
           if (state is VehicleLoaded) {
-            vehicle = state.vehicles;
+            _vehicle = state.vehicles;
             return CustomBackgroundWithGradient(
               child: Column(
                 children: [
-                  AnimatedBuilder(
-                    animation: _appBarController,
-                    builder:
-                        (context, child) => Opacity(
-                          opacity: _appBarController.value,
-                          child: CustomAppBar(label: label),
-                        ),
-                  ),
-                  AnimatedBuilder(
-                    animation: _appBarController,
-                    builder:
-                        (context, child) => Opacity(
-                          opacity: _appBarController.value,
-                          child: GreyLine(),
-                        ),
-                  ),
+                  _AppBar(),
+                  _DiverLine(),
                   Column(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(
-                          top: context.adaptiveSize(20),
-                          left: context.adaptiveSize(10),
-                          right: context.adaptiveSize(10),
-                        ),
-                        child: SizedBox(
-                          height: context.adaptiveSize(26),
-                          child: AnimatedBuilder(
-                            animation: _stageController132,
-                            builder: (context, child) {
-                              return Opacity(
-                                opacity: _stageController132.value,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    IconButton(
-                                      padding: EdgeInsets.zero,
-                                      iconSize: context.adaptiveSize(24),
-                                      icon: Icon(
-                                        Icons.chevron_left,
-                                        size: 28,
-                                        color: Color.fromRGBO(189, 189, 189, 1),
-                                      ),
-                                      onPressed: _nextCar,
-                                    ),
-                                    Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'Select vehicle',
-                                        style: context.adaptiveTextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Color.fromARGB(
-                                            255,
-                                            130,
-                                            130,
-                                            130,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    IconButton(
-                                      padding: EdgeInsets.zero,
-                                      iconSize: context.adaptiveSize(24),
-                                      icon: Icon(
-                                        Icons.chevron_right,
-                                        size: 28,
-                                        color: Color.fromRGBO(189, 189, 189, 1),
-                                      ),
-                                      onPressed: _previousCar,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
+                      _AnimatedVehicleHeader(context),
                       SizedBox(height: context.adaptiveSize(27)),
-                      Column(
-                        children: [
-                          AnimatedBuilder(
-                            animation: _stageController223,
-                            builder: (context, child) {
-                              return Opacity(
-                                opacity: _stageController223.value,
-                                child: Padding(
-                                  padding: EdgeInsets.only(left: 30, right: 30),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      AnimatedSwitcher(
-                                        duration: Duration(milliseconds: 1000),
-                                        transitionBuilder: (
-                                          Widget child,
-                                          Animation<double> animation,
-                                        ) {
-                                          return FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
-                                        },
-                                        child: Text(
-                                          key: ValueKey<String>(
-                                            vehicle[currentIndex43].year
-                                                .toString(),
-                                          ),
-                                          vehicle[currentIndex43].year
-                                              .toString(),
-                                          style: context.adaptiveTextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: Color.fromARGB(
-                                              255,
-                                              130,
-                                              130,
-                                              130,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Text(
-                                        'from:',
-                                        style: context.adaptiveTextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: Color.fromARGB(
-                                            255,
-                                            130,
-                                            130,
-                                            130,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-
-                          SizedBox(height: context.adaptiveSize(7)),
-                          AnimatedBuilder(
-                            animation: _stageController223,
-                            builder: (context, child) {
-                              return Opacity(
-                                opacity: _stageController223.value,
-                                child: AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 1000),
-                                  transitionBuilder: (
-                                    Widget child,
-                                    Animation<double> animation,
-                                  ) {
-                                    return FadeTransition(
-                                      opacity: animation,
-                                      child: child,
-                                    );
-                                  },
-                                  child: Padding(
-                                    key: ValueKey<String>(
-                                      vehicle[currentIndex43].year.toString(),
-                                    ),
-                                    padding: EdgeInsets.only(
-                                      left: context.adaptiveSize(30),
-                                      right: context.adaptiveSize(30),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          vehicle[currentIndex43].brand,
-                                          style: context.adaptiveTextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.w700,
-                                            color: Color.fromARGB(
-                                              255,
-                                              109,
-                                              109,
-                                              109,
-                                            ),
-                                          ),
-                                        ),
-                                        Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            Text(
-                                              vehicle[currentIndex43]
-                                                  .pricePerHour
-                                                  .toString(),
-                                              key: ValueKey<String>(
-                                                'price${vehicle[currentIndex43].pricePerHour}',
-                                              ),
-                                              style: context.adaptiveTextStyle(
-                                                fontSize: 24,
-                                                fontWeight: FontWeight.w700,
-                                                color: Color.fromARGB(
-                                                  255,
-                                                  255,
-                                                  127,
-                                                  80,
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              ' €',
-                                              style: context.adaptiveTextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.w700,
-                                                color: Color.fromARGB(
-                                                  255,
-                                                  255,
-                                                  127,
-                                                  80,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                          SizedBox(height: context.adaptiveSize(8)),
-                          Align(
-                            alignment: Alignment.center,
-                            child: Padding(
-                              padding: EdgeInsets.only(
-                                left: context.adaptiveSize(30),
-                                right: context.adaptiveSize(30),
-                              ),
-                              child: AnimatedBuilder(
-                                animation: _stageController223,
-                                builder: (context, child) {
-                                  return Opacity(
-                                    opacity: _stageController223.value,
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          'Max speed: ',
-                                          style: context.adaptiveTextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                            color: Color.fromARGB(
-                                              255,
-                                              130,
-                                              130,
-                                              130,
-                                            ),
-                                          ),
-                                        ),
-                                        AnimatedSwitcher(
-                                          duration: Duration(
-                                            milliseconds: 1000,
-                                          ),
-                                          transitionBuilder: (
-                                            Widget child,
-                                            Animation<double> animation,
-                                          ) {
-                                            return FadeTransition(
-                                              opacity: animation,
-                                              child: child,
-                                            );
-                                          },
-                                          child: Text(
-                                            key: ValueKey<String>(
-                                              vehicle[currentIndex43].year
-                                                  .toString(),
-                                            ),
-                                            "${vehicle[currentIndex43].maxSpeed.toString()} km/h",
-                                            style: context.adaptiveTextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              color: Color.fromARGB(
-                                                255,
-                                                130,
-                                                130,
-                                                130,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                          AnimatedBuilder(
-                            animation: _animationTextController32,
-                            builder: (context, child) {
-                              return SlideTransition(
-                                position: Tween<Offset>(
-                                  begin: const Offset(1, 0),
-                                  end: Offset.zero,
-                                ).animate(
-                                  CurvedAnimation(
-                                    parent: _animationTextController32,
-                                    curve: Curves.easeOut,
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      width: MediaQuery.widthOf(context),
-                                      height: context.adaptiveSize(212),
-                                      margin: EdgeInsets.symmetric(
-                                        horizontal: context.adaptiveSize(30),
-                                      ),
-                                      child: SvgPicture.asset(
-                                        'assets/file/form-bg.svg',
-                                        fit: BoxFit.contain,
-                                      ),
-                                    ),
-
-                                    // Контейнер для машины по центру
-                                    Positioned.fill(
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: Container(
-                                          height: context.adaptiveSize(210),
-                                          child: AnimatedBuilder(
-                                            animation: _pageController43,
-                                            builder:
-                                                (
-                                                  context,
-                                                  _,
-                                                ) => PageView.builder(
-                                                  controller: _pageController43,
-                                                  itemCount: vehicle.length,
-                                                  onPageChanged: (index) {
-                                                    setState(() {
-                                                      currentIndex43 = index;
-                                                    });
-                                                  },
-                                                  itemBuilder: (
-                                                    context,
-                                                    index,
-                                                  ) {
-                                                    return AnimatedSwitcher(
-                                                      duration: Duration(
-                                                        milliseconds: 500,
-                                                      ),
-                                                      switchInCurve:
-                                                          Curves.easeOut,
-                                                      switchOutCurve:
-                                                          Curves.easeIn,
-                                                      transitionBuilder: (
-                                                        Widget child,
-                                                        Animation<double>
-                                                        animation,
-                                                      ) {
-                                                        return SlideTransition(
-                                                          position: Tween<
-                                                            Offset
-                                                          >(
-                                                            begin: Offset(
-                                                              1.0,
-                                                              0.0,
-                                                            ),
-                                                            end: Offset.zero,
-                                                          ).animate(
-                                                            CurvedAnimation(
-                                                              parent: animation,
-                                                              curve:
-                                                                  Curves
-                                                                      .easeOut,
-                                                            ),
-                                                          ),
-                                                          child: FadeTransition(
-                                                            opacity: animation,
-                                                            child: child,
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: Container(
-                                                        key: ValueKey<int>(
-                                                          index,
-                                                        ),
-                                                        child: Image.asset(
-                                                          vehicle[index].image,
-                                                          fit: BoxFit.contain,
-                                                          height: context
-                                                              .adaptiveSize(
-                                                                210,
-                                                              ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
+                      _YearProduction(),
+                      SizedBox(height: context.adaptiveSize(7)),
+                      _NameAndPricePerDay(),
+                      SizedBox(height: context.adaptiveSize(8)),
+                      _MaxSpeed(context),
+                      _AnimatedVehicleImage(),
                       SizedBox(height: context.adaptiveSize(16)),
-                      AnimatedBuilder(
-                        animation: _animationTextController32,
-                        builder: (context, child) {
-                          return SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(1, 0),
-                              end: Offset.zero,
-                            ).animate(
-                              CurvedAnimation(
-                                parent: _animationTextController32,
-                                curve: Curves.easeOut,
-                              ),
-                            ),
-                            child: SizedBox(
-                              height: context.adaptiveSize(80),
-                              child: ListView(
-                                controller: _scrollController434,
-                                scrollDirection: Axis.horizontal,
-                                physics: BouncingScrollPhysics(),
-                                padding: EdgeInsets.symmetric(horizontal: 30),
-                                children: [
-                                  _buildCharacteristicCircle(
-                                    vehicle[currentIndex43].type_transmission,
-                                    _icons43["type_transmission"]!,
-                                  ),
-                                  SizedBox(width: context.adaptiveSize(24)),
-                                  _buildCharacteristicCircle(
-                                    "${vehicle[currentIndex43].number_seats} Seats",
-                                    _icons43["number_seats"]!,
-                                  ),
-                                  SizedBox(width: context.adaptiveSize(24)),
-                                  _buildCharacteristicCircle(
-                                    vehicle[currentIndex43].type_fuel,
-                                    _icons43["type_fuel"]!,
-                                  ),
-                                  SizedBox(width: context.adaptiveSize(24)),
-                                  _buildCharacteristicCircle(
-                                    vehicle[currentIndex43].insurance,
-                                    _icons43["insurance"]!,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                      _AnimatedVehicleSpecs(),
                     ],
                   ),
                   Spacer(),
@@ -705,7 +267,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
         },
       ),
       bottomNavigationBar: AnimatedBuilder(
-        animation: _bottomBarController,
+        animation: _animationController.animations.bottomBarSlide,
         builder:
             (context, child) => SlideTransition(
               position: Tween<Offset>(
@@ -713,7 +275,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
                 end: Offset.zero,
               ).animate(
                 CurvedAnimation(
-                  parent: _bottomBarController,
+                  parent: _animationController.animations.contentFade,
                   curve: Curves.easeOut,
                 ),
               ),
@@ -722,12 +284,392 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
       ),
     ),
   );
-  Widget _buildDateSelector() {
+
+  Align _MaxSpeed(BuildContext context) {
+    return Align(
+      alignment: Alignment.center,
+      child: Padding(
+        padding: EdgeInsets.only(
+          left: context.adaptiveSize(30),
+          right: context.adaptiveSize(30),
+        ),
+        child: AnimatedBuilder(
+          animation: _animationController.animations.contentFade,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _animationController.animations.contentFade.value,
+              child: Row(
+                children: [
+                  Text(
+                    'Max speed: ',
+                    style: context.adaptiveTextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color.fromARGB(255, 130, 130, 130),
+                    ),
+                  ),
+                  AnimatedSwitcher(
+                    duration: Duration(milliseconds: 1000),
+                    transitionBuilder: (
+                      Widget child,
+                      Animation<double> animation,
+                    ) {
+                      return FadeTransition(opacity: animation, child: child);
+                    },
+                    child: Text(
+                      key: ValueKey<String>(
+                        _vehicle[_currentIndex].year.toString(),
+                      ),
+                      "${_vehicle[_currentIndex].maxSpeed.toString()} km/h",
+                      style: context.adaptiveTextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromARGB(255, 130, 130, 130),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  AnimatedBuilder _NameAndPricePerDay() {
     return AnimatedBuilder(
-      animation: _bottomBarController,
+      animation: _animationController.animations.contentFade,
       builder: (context, child) {
         return Opacity(
-          opacity: _bottomBarController.value,
+          opacity: _animationController.animations.contentFade.value,
+          child: AnimatedSwitcher(
+            duration: Duration(milliseconds: 1000),
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(opacity: animation, child: child);
+            },
+            child: Padding(
+              key: ValueKey<String>(_vehicle[_currentIndex].year.toString()),
+              padding: EdgeInsets.only(
+                left: context.adaptiveSize(30),
+                right: context.adaptiveSize(30),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _vehicle[_currentIndex].brand,
+                    style: context.adaptiveTextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: Color.fromARGB(255, 109, 109, 109),
+                    ),
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        _vehicle[_currentIndex].pricePerHour.toString(),
+                        key: ValueKey<String>(
+                          'price${_vehicle[_currentIndex].pricePerHour}',
+                        ),
+                        style: context.adaptiveTextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromARGB(255, 255, 127, 80),
+                        ),
+                      ),
+                      Text(
+                        ' €',
+                        style: context.adaptiveTextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Color.fromARGB(255, 255, 127, 80),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  AnimatedBuilder _YearProduction() {
+    return AnimatedBuilder(
+      animation: _animationController.animations.contentFade,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _animationController.animations.contentFade.value,
+          child: Padding(
+            padding: EdgeInsets.only(left: 30, right: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                AnimatedSwitcher(
+                  duration: Duration(milliseconds: 1000),
+                  transitionBuilder: (
+                    Widget child,
+                    Animation<double> animation,
+                  ) {
+                    return FadeTransition(opacity: animation, child: child);
+                  },
+                  child: Text(
+                    key: ValueKey<String>(
+                      _vehicle[_currentIndex].year.toString(),
+                    ),
+                    _vehicle[_currentIndex].year.toString(),
+                    style: context.adaptiveTextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: Color.fromARGB(255, 130, 130, 130),
+                    ),
+                  ),
+                ),
+                Text(
+                  'from:',
+                  style: context.adaptiveTextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: Color.fromARGB(255, 130, 130, 130),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  AnimatedBuilder _AnimatedVehicleSpecs() {
+    return AnimatedBuilder(
+      animation: _animationController.animations.imageSlide,
+      builder: (context, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(
+            CurvedAnimation(
+              parent: _animationController.animations.contentFade,
+              curve: Curves.easeOut,
+            ),
+          ),
+          child: SizedBox(
+            height: context.adaptiveSize(80),
+            child: ListView(
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 30),
+              children: [
+                _buildCharacteristicCircle(
+                  _vehicle[_currentIndex].type_transmission,
+                  _icons43["type_transmission"]!,
+                ),
+                SizedBox(width: context.adaptiveSize(24)),
+                _buildCharacteristicCircle(
+                  "${_vehicle[_currentIndex].number_seats} Seats",
+                  _icons43["number_seats"]!,
+                ),
+                SizedBox(width: context.adaptiveSize(24)),
+                _buildCharacteristicCircle(
+                  _vehicle[_currentIndex].type_fuel,
+                  _icons43["type_fuel"]!,
+                ),
+                SizedBox(width: context.adaptiveSize(24)),
+                _buildCharacteristicCircle(
+                  _vehicle[_currentIndex].insurance,
+                  _icons43["insurance"]!,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  AnimatedBuilder _AnimatedVehicleImage() {
+    return AnimatedBuilder(
+      animation: _animationController.animations.imageSlide,
+      builder: (context, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(
+            CurvedAnimation(
+              parent: _animationController.animations.contentFade,
+              curve: Curves.easeOut,
+            ),
+          ),
+          child: Stack(
+            children: [
+              Container(
+                width: MediaQuery.widthOf(context),
+                height: context.adaptiveSize(212),
+                margin: EdgeInsets.symmetric(
+                  horizontal: context.adaptiveSize(30),
+                ),
+                child: SvgPicture.asset(
+                  'assets/file/form-bg.svg',
+                  fit: BoxFit.contain,
+                ),
+              ),
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    height: context.adaptiveSize(210),
+                    child: AnimatedBuilder(
+                      animation: _pageController,
+                      builder:
+                          (context, _) => PageView.builder(
+                            controller: _pageController,
+                            itemCount: _vehicle.length,
+                            onPageChanged: (index) {
+                              setState(() {
+                                _currentIndex = index;
+                              });
+                            },
+                            itemBuilder: (context, index) {
+                              return AnimatedSwitcher(
+                                duration: Duration(milliseconds: 500),
+                                switchInCurve: Curves.easeOut,
+                                switchOutCurve: Curves.easeIn,
+                                transitionBuilder: (
+                                  Widget child,
+                                  Animation<double> animation,
+                                ) {
+                                  return SlideTransition(
+                                    position: Tween<Offset>(
+                                      begin: Offset(1.0, 0.0),
+                                      end: Offset.zero,
+                                    ).animate(
+                                      CurvedAnimation(
+                                        parent: animation,
+                                        curve: Curves.easeOut,
+                                      ),
+                                    ),
+                                    child: FadeTransition(
+                                      opacity: animation,
+                                      child: child,
+                                    ),
+                                  );
+                                },
+                                child: Container(
+                                  key: ValueKey<int>(index),
+                                  child: Image.asset(
+                                    _vehicle[index].image,
+                                    fit: BoxFit.contain,
+                                    height: context.adaptiveSize(210),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Padding _AnimatedVehicleHeader(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        top: context.adaptiveSize(20),
+        left: context.adaptiveSize(10),
+        right: context.adaptiveSize(10),
+      ),
+      child: SizedBox(
+        height: context.adaptiveSize(26),
+        child: AnimatedBuilder(
+          animation: _animationController.animations.headerFade,
+          builder: (context, child) {
+            return Opacity(
+              opacity: _animationController.animations.headerFade.value,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: context.adaptiveSize(24),
+                    icon: Icon(
+                      Icons.chevron_left,
+                      size: 28,
+                      color: Color.fromRGBO(189, 189, 189, 1),
+                    ),
+                    onPressed: _nextCar,
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(
+                      'Select vehicle',
+                      style: context.adaptiveTextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        color: Color.fromARGB(255, 130, 130, 130),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    padding: EdgeInsets.zero,
+                    iconSize: context.adaptiveSize(24),
+                    icon: Icon(
+                      Icons.chevron_right,
+                      size: 28,
+                      color: Color.fromRGBO(189, 189, 189, 1),
+                    ),
+                    onPressed: _previousCar,
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  AnimatedBuilder _DiverLine() {
+    return AnimatedBuilder(
+      animation: _animationController.animations.appBarFade,
+      builder:
+          (context, child) => Opacity(
+            opacity: _animationController.animations.appBarFade.value,
+            child: GreyLine(),
+          ),
+    );
+  }
+
+  AnimatedBuilder _AppBar() {
+    return AnimatedBuilder(
+      animation: _animationController.animations.appBarFade,
+      builder:
+          (context, child) => Opacity(
+            opacity: _animationController.animations.appBarFade.value,
+            child: CustomAppBar(label: label),
+          ),
+    );
+  }
+
+  Widget _buildDateSelector() {
+    return AnimatedBuilder(
+      animation: _animationController.animations.contentFade,
+      builder: (context, child) {
+        return Opacity(
+          opacity: _animationController.animations.contentFade.value,
           child: Container(
             height: context.adaptiveSize(56),
             margin: EdgeInsets.symmetric(horizontal: context.adaptiveSize(30)),
@@ -800,10 +742,10 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen>
 
   Widget _buildBookingPanel() {
     return AnimatedBuilder(
-      animation: _bottomBarController,
+      animation: _animationController.animations.contentFade,
       builder: (context, child) {
         return Opacity(
-          opacity: _bottomBarController.value,
+          opacity: _animationController.animations.contentFade.value,
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: context.adaptiveSize(30)),
             child: CustomTextFieldWithGradientButton(

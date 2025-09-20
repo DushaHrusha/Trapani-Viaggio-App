@@ -44,4 +44,10 @@ class ChatRepositoryImpl implements ChatRepository {
   Future<void> addMessage(ChatMessage message) async {
     _messages.add(message);
   }
+
+  @override
+  Future<void> sendMessage(ChatMessage newMessage) {
+    // TODO: implement sendMessage
+    throw UnimplementedError();
+  }
 }
