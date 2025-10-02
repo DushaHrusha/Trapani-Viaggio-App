@@ -51,19 +51,19 @@ class _BottomBarState extends State<BottomBar> {
           unselectedFontSize: 0,
           items: [
             _buildNavItem(
-              'assets/file/home.svg',
+              'assets/icons/home.svg',
               widget.currentScreen is MainMenuScreen,
             ),
             _buildNavItem(
-              'assets/file/map.svg',
+              'assets/icons/map.svg',
               widget.currentScreen is SplashScreen,
             ),
             _buildNavItem(
-              'assets/file/bookmark.svg',
+              'assets/icons/bookmark.svg',
               widget.currentScreen is BookmarksScreen,
             ),
             _buildNavItem(
-              'assets/file/user.svg',
+              'assets/icons/user.svg',
               widget.currentScreen is ProfileScreen,
             ),
           ],

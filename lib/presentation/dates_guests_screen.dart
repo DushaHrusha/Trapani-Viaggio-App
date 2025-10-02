@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/grey_line.dart';
-import 'package:test_task/core/routing/app_routes.dart';
-import 'package:test_task/presentation/splash_screen.dart';
 import 'package:test_task/core/constants/custom_gradient_button.dart';
 
 class DatesGuestsScreen extends StatefulWidget {
@@ -14,45 +12,102 @@ class DatesGuestsScreen extends StatefulWidget {
 }
 
 class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
-  DateTime? selectedDate1;
-  DateTime? selectedDate2;
-  String _selectedDateRange1 = '--/--/----';
-  String _selectedDateRange2 = '--/--/----';
+  String _checkInDate = '--/--/----';
+  String _checkOutDate = '--/--/----';
   double _minPrice = 40;
   double _maxPrice = 100;
-  final double _absoluteMin = 0;
-  final double _absoluteMax = 200;
-  Future<void> _selectDate(BuildContext context, int selectedDate) async {
-    final DateTime? picked = await showDatePicker(
+  static const double _absoluteMin = 0;
+  static const double _absoluteMax = 200;
+  static const _greyColor = Color.fromARGB(255, 109, 109, 109);
+  static const _lightGreyColor = Color.fromARGB(255, 189, 189, 189);
+
+  Future<void> _selectDate(BuildContext context, bool isCheckIn) async {
+    final picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
-    if (picked != null && picked != selectedDate) {
+
+    if (picked != null) {
       setState(() {
-        if (selectedDate == 1) {
-          _selectedDateRange1 = DateFormat('dd/MM/yyyy').format(picked);
-        }
-        if (selectedDate == 2) {
-          _selectedDateRange2 = DateFormat('dd/MM/yyyy').format(picked);
+        final formattedDate = DateFormat('dd/MM/yyyy').format(picked);
+        if (isCheckIn) {
+          _checkInDate = formattedDate;
+        } else {
+          _checkOutDate = formattedDate;
         }
       });
     }
   }
 
+  Widget _buildDateSelector(String label, String date, VoidCallback onTap) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontSize: 12, color: _greyColor)),
+        const SizedBox(height: 10),
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            height: 40,
+            width: 119,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  date,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: _greyColor,
+                  ),
+                ),
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 16,
+                  color: _lightGreyColor,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGuestContainer(String text) {
+    return Container(
+      height: 40,
+      width: 119,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: _greyColor,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      insetPadding: EdgeInsets.all(0),
-      iconPadding: EdgeInsets.all(0),
-      titlePadding: EdgeInsets.all(0),
-      buttonPadding: EdgeInsets.all(0),
-      actionsPadding: EdgeInsets.all(0),
-      contentPadding: EdgeInsets.all(0),
-      backgroundColor: Color.fromARGB(0, 255, 255, 255),
+      insetPadding: EdgeInsets.zero,
+      contentPadding: EdgeInsets.zero,
+      backgroundColor: Colors.transparent,
       title: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             width: 314,
@@ -62,154 +117,44 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
               child: Icon(Icons.close, size: 32, color: BaseColors.background),
             ),
           ),
-
           Container(
             width: 297,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(30)),
+              borderRadius: BorderRadius.circular(30),
               color: BaseColors.background,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(height: 32),
-
+                const SizedBox(height: 32),
                 Text(
                   'Dates and Guests',
                   style: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.w700,
-                    color: Color.fromARGB(255, 109, 109, 109),
+                    color: _greyColor,
                   ),
-                  textAlign: TextAlign.center,
                 ),
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
                 GreyLine(),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(height: 37),
+                      const SizedBox(height: 37),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Check-in",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color.fromARGB(255, 109, 109, 109),
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              GestureDetector(
-                                onTap: () => _selectDate(context, 1),
-                                child: Container(
-                                  height: 40,
-                                  width: 119,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        selectedDate1 != null
-                                            ? DateFormat(
-                                              'dd/MM/yyyy',
-                                            ).format(selectedDate1!)
-                                            : _selectedDateRange1,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                          color: Color.fromARGB(
-                                            255,
-                                            109,
-                                            109,
-                                            109,
-                                          ),
-                                        ),
-                                      ),
-                                      Icon(
-                                        Icons.calendar_today_outlined,
-                                        size: 16,
-                                        color: Color.fromARGB(
-                                          255,
-                                          189,
-                                          189,
-                                          189,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                          _buildDateSelector(
+                            'Check-in',
+                            _checkInDate,
+                            () => _selectDate(context, true),
                           ),
-                          SizedBox(width: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Check-out",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color.fromARGB(255, 109, 109, 109),
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              GestureDetector(
-                                onTap: () => _selectDate(context, 2),
-                                child: Container(
-                                  height: 40,
-                                  width: 119,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.grey),
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  alignment: Alignment.center,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        selectedDate2 != null
-                                            ? DateFormat(
-                                              'dd/MM/yyyy',
-                                            ).format(selectedDate2!)
-                                            : _selectedDateRange2,
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                          color: Color.fromARGB(
-                                            255,
-                                            109,
-                                            109,
-                                            109,
-                                          ),
-                                        ),
-                                      ),
-                                      Icon(
-                                        Icons.calendar_today_outlined,
-                                        size: 16,
-                                        color: Color.fromARGB(
-                                          255,
-                                          189,
-                                          189,
-                                          189,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                          _buildDateSelector(
+                            'Check-out',
+                            _checkOutDate,
+                            () => _selectDate(context, false),
                           ),
                         ],
                       ),
@@ -222,90 +167,33 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Guests",
+                                'Guests',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: Color.fromARGB(255, 109, 109, 109),
+                                  color: _greyColor,
                                 ),
                               ),
-                              SizedBox(height: 10),
-                              Container(
-                                height: 40,
-                                width: 119,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: Text(
-                                  "2 adults  ",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    color: Color.fromARGB(255, 109, 109, 109),
-                                  ),
-                                ),
-                              ),
+                              const SizedBox(height: 10),
+                              _buildGuestContainer('2 adults  '),
                             ],
                           ),
-                          SizedBox(width: 8),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                height: 40,
-                                width: 119,
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.grey),
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "1 child",
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w700,
-                                        color: Color.fromARGB(
-                                          255,
-                                          109,
-                                          109,
-                                          109,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
+                          _buildGuestContainer('1 child'),
                         ],
                       ),
                       const SizedBox(height: 48),
-
                       Divider(
                         height: 1,
                         color: Color.fromARGB(255, 224, 224, 224),
-                        thickness: 1,
                       ),
                       const SizedBox(height: 22),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Container(
+                          SizedBox(
                             width: 71,
                             child: Text(
                               'Price range per night',
-                              softWrap: true,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: Color.fromARGB(255, 109, 109, 109),
-                              ),
+                              style: TextStyle(fontSize: 12, color: _greyColor),
                             ),
                           ),
                           Text(
@@ -313,44 +201,40 @@ class _DatesGuestsScreenState extends State<DatesGuestsScreen> {
                             style: TextStyle(
                               fontSize: 23,
                               fontWeight: FontWeight.w700,
-                              color: Color.fromARGB(255, 109, 109, 109),
+                              color: _greyColor,
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 22),
+                      const SizedBox(height: 22),
                       SliderTheme(
                         data: SliderThemeData(
                           trackHeight: 1,
                           thumbShape: RoundSliderThumbShape(
                             enabledThumbRadius: 8,
-                            disabledThumbRadius: 8,
                           ),
-                          trackShape: RoundedRectSliderTrackShape(),
                           overlayShape: RoundSliderOverlayShape(
                             overlayRadius: 0,
                           ),
-                          activeTrackColor: Color.fromARGB(255, 189, 189, 189),
+                          activeTrackColor: _lightGreyColor,
                           inactiveTrackColor: Color.fromARGB(
                             255,
                             224,
                             224,
                             224,
                           ),
-                          thumbColor: const Color.fromARGB(221, 224, 224, 224),
+                          thumbColor: Color.fromARGB(221, 224, 224, 224),
                         ),
                         child: RangeSlider(
                           values: RangeValues(_minPrice, _maxPrice),
                           min: _absoluteMin,
                           max: _absoluteMax,
                           divisions: (_absoluteMax - _absoluteMin).toInt(),
-                          onChanged: (RangeValues values) {
-                            setState(() {
-                              _minPrice = values.start;
-                              _maxPrice = values.end;
-                            });
-                          },
-                          labels: null,
+                          onChanged:
+                              (values) => setState(() {
+                                _minPrice = values.start;
+                                _maxPrice = values.end;
+                              }),
                         ),
                       ),
                       const SizedBox(height: 46),

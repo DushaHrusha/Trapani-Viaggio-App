@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:test_task/presentation/chat_screen.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/bottom_bar.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/core/constants/grey_line.dart';
-import 'package:test_task/presentation/main_menu_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -56,7 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             tag: 'profile_avatar',
             child: CircleAvatar(
               radius: context.adaptiveSize(36),
-              backgroundImage: AssetImage('assets/file/avatars/me.jpg'),
+              backgroundImage: AssetImage('assets/images/avatars/me.jpg'),
             ),
           ),
           SizedBox(height: context.adaptiveSize(16)),

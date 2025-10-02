@@ -5,7 +5,7 @@ import 'package:test_task/data/repositories/vehicle_repository.dart';
 class CarsRepository extends VehicleRepository {
   final List<Vehicle> vehicles = [
     Car(
-      image: 'assets/file/car2.png',
+      image: 'assets/images/car2.png',
       model: 'Fiat 500',
       year: 2015,
       price: 49,
@@ -19,7 +19,7 @@ class CarsRepository extends VehicleRepository {
       insurance: 'Insurance',
     ),
     Car(
-      image: 'assets/file/car1.png',
+      image: 'assets/images/car1.png',
       model: 'Alfa Romeo Giulietta',
       year: 2017,
       price: 54,

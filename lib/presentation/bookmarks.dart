@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:test_task/bloc/cubits/bookmarks_cubit.dart';
@@ -19,62 +18,46 @@ class BookmarksScreen extends StatefulWidget {
 
 class _BookmarksScreenState extends State<BookmarksScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _appBarAnimation;
-  late Animation<double> _greyLineAnimation;
-  late Animation<double> _textAnimation;
-  late Animation<Offset> _bottomBarSlideAnimation;
-  late Animation<double> _cardsOpacityAnimation;
+  late final AnimationController _controller;
+  late final Map<String, Animation> _animations;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
-      duration: Duration(milliseconds: 3000),
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 3000),
       vsync: this,
     );
 
-    _appBarAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(0.2, 0.4, curve: Curves.easeInOut),
+    _animations = {
+      'appBar': _createAnimation(0.2, 0.4),
+      'greyLine': _createAnimation(0.4, 0.5),
+      'text': _createAnimation(0.5, 0.6),
+      'cards': _createAnimation(0.5, 0.7),
+      'bottomBar': Tween<Offset>(
+        begin: const Offset(0, 1),
+        end: Offset.zero,
+      ).animate(
+        CurvedAnimation(
+          parent: _controller,
+          curve: const Interval(0.6, 0.8, curve: Curves.easeOutQuad),
+        ),
       ),
-    );
-    _greyLineAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(0.4, 0.5, curve: Curves.easeOut),
-      ),
-    );
-    _textAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(0.5, 0.6, curve: Curves.easeOut),
-      ),
-    );
-    _cardsOpacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(0.5, 0.7, curve: Curves.easeInOut),
-      ),
-    );
+    };
 
-    _bottomBarSlideAnimation = Tween<Offset>(
-      begin: Offset(0, 1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Interval(0.6, 0.8, curve: Curves.easeOutQuad),
-      ),
-    );
+    _controller.forward();
+  }
 
-    _animationController.forward();
+  Animation<double> _createAnimation(double begin, double end) {
+    return CurvedAnimation(
+      parent: _controller,
+      curve: Interval(begin, end, curve: Curves.easeInOut),
+    );
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -83,97 +66,104 @@ class _BookmarksScreenState extends State<BookmarksScreen>
     return Scaffold(
       backgroundColor: BaseColors.background,
       body: BlocBuilder<BookmarksCubit, List<Bookmark>>(
-        builder: (context, state) {
-          if (state.isEmpty) {
-            return CustomBackgroundWithGradient(
+        builder:
+            (context, bookmarks) => CustomBackgroundWithGradient(
               child: Column(
                 children: [
-                  FadeTransition(
-                    opacity: _appBarAnimation,
-                    child: CustomAppBar(label: "bookmarks"),
+                  _buildAnimatedWidget(
+                    _animations['appBar']!,
+                    CustomAppBar(label: "bookmarks"),
                   ),
-                  FadeTransition(
-                    opacity: _greyLineAnimation,
-                    child: GreyLine(),
-                  ),
-                  FadeTransition(
-                    opacity: _textAnimation,
-                    child: Container(
-                      margin: EdgeInsets.only(top: 40),
-                      alignment: Alignment.center,
-                      child: Text(
-                        'You have no bookmarks yet',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: BaseColors.text,
-                          fontSize: 21,
-                        ),
-                      ),
-                    ),
-                  ),
+                  _buildAnimatedWidget(_animations['greyLine']!, GreyLine()),
+                  if (bookmarks.isEmpty)
+                    _buildEmptyState()
+                  else
+                    _buildBookmarksList(bookmarks),
                 ],
               ),
-            );
-          }
-          return CustomBackgroundWithGradient(
-            child: Column(
-              children: [
-                CustomAppBar(label: "bookmarks"),
-                GreyLine(),
-                Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
-                    itemCount: state.length,
-                    itemBuilder: (context, index) {
-                      final bookmark = state[index];
-                      return FadeTransition(
-                        opacity: _cardsOpacityAnimation,
-                        child: SecondCard(
-                          data: bookmark.cardData,
-                          index: index,
-                          context: context,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: BaseColors.accent,
-                            fontSize: 21,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
             ),
-          );
-        },
       ),
-      bottomNavigationBar: SlideTransition(
-        position: _bottomBarSlideAnimation,
-        child: BottomBar(currentScreen: context.widget),
-      ),
+      bottomNavigationBar: _buildBottomBar(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: SlideTransition(
-        position: _bottomBarSlideAnimation,
-        child: Container(
-          margin: EdgeInsets.only(bottom: 30),
-          width: 72,
-          height: 72,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 1),
+      floatingActionButton: _buildFAB(),
+    );
+  }
+
+  Widget _buildAnimatedWidget(Animation animation, Widget child) {
+    return animation is Animation<Offset>
+        ? SlideTransition(position: animation, child: child)
+        : FadeTransition(opacity: animation as Animation<double>, child: child);
+  }
+
+  Widget _buildEmptyState() {
+    return _buildAnimatedWidget(
+      _animations['text']!,
+      Container(
+        margin: const EdgeInsets.only(top: 40),
+        alignment: Alignment.center,
+        child: const Text(
+          'You have no bookmarks yet',
+          style: TextStyle(
+            fontWeight: FontWeight.w700,
+            color: BaseColors.text,
+            fontSize: 21,
           ),
-          child: ClipOval(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 13, sigmaY: 13),
-              child: FloatingActionButton(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                child: SvgPicture.asset(
-                  "assets/file/sliders.svg",
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBookmarksList(List<Bookmark> bookmarks) {
+    return Expanded(
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 30),
+        itemCount: bookmarks.length,
+        itemBuilder:
+            (context, index) => _buildAnimatedWidget(
+              _animations['cards']!,
+              SecondCard(
+                data: bookmarks[index].cardData,
+                index: index,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
                   color: BaseColors.accent,
-                  height: 24,
+                  fontSize: 21,
                 ),
-                onPressed: () => {},
+              ),
+            ),
+      ),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    return _buildAnimatedWidget(
+      _animations['bottomBar']!,
+      BottomBar(currentScreen: widget),
+    );
+  }
+
+  Widget _buildFAB() {
+    return _buildAnimatedWidget(
+      _animations['bottomBar']!,
+      Container(
+        margin: const EdgeInsets.only(bottom: 30),
+        width: 72,
+        height: 72,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white),
+        ),
+        child: ClipOval(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 13, sigmaY: 13),
+            child: FloatingActionButton(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              onPressed: () {},
+              child: SvgPicture.asset(
+                "assets/icons/sliders.svg",
+                color: BaseColors.accent,
+                height: 24,
               ),
             ),
           ),

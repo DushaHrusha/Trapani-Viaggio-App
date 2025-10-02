@@ -121,7 +121,7 @@ class CustomTextFieldWithGradientButton extends StatelessWidget {
                   SizedBox(
                     width: context.adaptiveSize(60),
                     child: SvgPicture.asset(
-                      "assets/file/Vector(1).svg",
+                      "assets/icons/Vector(1).svg",
                       color: Colors.white,
                     ),
                   ),

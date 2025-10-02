@@ -20,64 +20,56 @@ class ChatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocBuilder<ChatCubit, ChatState>(
-        builder: (context, state) {
-          if (state is ChatLoading) {
-            return Center(child: CircularProgressIndicator());
-          }
-          if (state is ChatLoaded) {
-            return CustomBackgroundWithGradient(
-              child: Column(
-                children: [
-                  CustomAppBar(label: "online assistance"),
-                  GreyLine(),
-                  Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.symmetric(horizontal: 30),
-                      reverse: false,
-                      itemCount: state.messages.length,
-                      itemBuilder: (context, index) {
-                        final message = state.messages[index];
-                        final previousMessage =
-                            index + 1 < state.messages.length
-                                ? state.messages[index + 1]
-                                : null;
-                        return ChatBubble(
-                          message: message,
-                          isMe: message.isSentByUser,
-                          time: DateFormat('HH:mm').format(message.timestamp),
-                          previousMessage: previousMessage,
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
-          if (state is ChatError) {
-            return Center(child: Text('Ошибка: ${state.message}'));
-          }
-          return Center(child: CircularProgressIndicator());
-        },
+        builder:
+            (context, state) => switch (state) {
+              ChatLoaded() => _buildChatContent(state),
+              ChatError() => Center(child: Text('Ошибка: ${state.message}')),
+              _ => const Center(child: CircularProgressIndicator()),
+            },
       ),
       bottomNavigationBar: BottomBar(currentScreen: context.widget),
+    );
+  }
+
+  Widget _buildChatContent(ChatLoaded state) {
+    return CustomBackgroundWithGradient(
+      child: Column(
+        children: [
+          const CustomAppBar(label: "online assistance"),
+          const GreyLine(),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              itemCount: state.messages.length,
+              itemBuilder: (context, index) {
+                final message = state.messages[index];
+                final previousMessage =
+                    index + 1 < state.messages.length
+                        ? state.messages[index + 1]
+                        : null;
+                return ChatBubble(
+                  message: message,
+                  previousMessage: previousMessage,
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
 
 class ChatBubble extends StatelessWidget {
   final ChatMessage message;
-  final bool isMe;
-  final String time;
   final ChatMessage? previousMessage;
 
-  const ChatBubble({
-    super.key,
-    required this.message,
-    required this.isMe,
-    required this.time,
-    this.previousMessage,
-  });
+  const ChatBubble({super.key, required this.message, this.previousMessage});
+
+  static final _timeFormat = DateFormat('HH:mm');
+  static final _dateFormat = DateFormat('dd.MM.yyyy \'at\' HH.mm');
+
+  bool get _isMe => message.isSentByUser;
 
   bool _isDifferentDay(DateTime? date1, DateTime date2) {
     if (date1 == null) return true;
@@ -90,81 +82,117 @@ class ChatBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (previousMessage == null ||
-            _isDifferentDay(previousMessage?.timestamp, message.timestamp))
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: context.adaptiveSize(8.0)),
-            child: Text(
-              DateFormat('dd.MM.yyyy \'at\' HH.mm').format(message.timestamp),
-              style: context.adaptiveTextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Color.fromRGBO(151, 151, 151, 1),
-              ),
-            ),
-          ),
+        if (_shouldShowDateSeparator)
+          _DateSeparator(timestamp: message.timestamp),
+        _MessageBubbleRow(message: message, isMe: _isMe),
+      ],
+    );
+  }
 
-        Row(
-          mainAxisAlignment:
-              isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            Container(
-              alignment: Alignment.topRight,
-              margin: EdgeInsets.only(bottom: context.adaptiveSize(28)),
-              child: Stack(
-                alignment: isMe ? Alignment.topRight : Alignment.topLeft,
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    width: context.adaptiveSize(250),
-                    margin:
-                        isMe
-                            ? EdgeInsets.only(
-                              top: context.adaptiveSize(22),
-                              right: context.adaptiveSize(22),
-                            )
-                            : EdgeInsets.only(
-                              top: context.adaptiveSize(22),
-                              left: context.adaptiveSize(22),
-                            ),
-                    padding: EdgeInsets.all(context.adaptiveSize(30)),
-                    decoration: BoxDecoration(
-                      color:
-                          isMe
-                              ? BaseColors.secondary
-                              : BaseColors.backgroundCircles,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(context.adaptiveSize(32)),
-                      ),
-                    ),
-                    child: Text(
-                      message.text,
-                      style: context.adaptiveTextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: isMe ? BaseColors.background : BaseColors.text,
-                      ),
-                    ),
-                  ),
-                  if (!isMe)
-                    CircleAvatar(
-                      radius: context.adaptiveSize(22),
-                      backgroundImage: AssetImage(
-                        'assets/file/avatars/another.jpg',
-                      ),
-                    ),
-                  if (isMe)
-                    CircleAvatar(
-                      radius: context.adaptiveSize(22),
-                      backgroundImage: AssetImage('assets/file/avatars/me.jpg'),
-                    ),
-                ],
-              ),
-            ),
-          ],
+  bool get _shouldShowDateSeparator =>
+      previousMessage == null ||
+      _isDifferentDay(previousMessage?.timestamp, message.timestamp);
+}
+
+class _DateSeparator extends StatelessWidget {
+  final DateTime timestamp;
+
+  const _DateSeparator({required this.timestamp});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: context.adaptiveSize(8.0)),
+      child: Text(
+        DateFormat('dd.MM.yyyy \'at\' HH.mm').format(timestamp),
+        style: context.adaptiveTextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: const Color.fromRGBO(151, 151, 151, 1),
+        ),
+      ),
+    );
+  }
+}
+
+class _MessageBubbleRow extends StatelessWidget {
+  final ChatMessage message;
+  final bool isMe;
+
+  const _MessageBubbleRow({required this.message, required this.isMe});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Container(
+          alignment: Alignment.topRight,
+          margin: EdgeInsets.only(bottom: context.adaptiveSize(28)),
+          child: Stack(
+            alignment: isMe ? Alignment.topRight : Alignment.topLeft,
+            children: [
+              _MessageContainer(message: message, isMe: isMe),
+              _AvatarCircle(isMe: isMe),
+            ],
+          ),
         ),
       ],
+    );
+  }
+}
+
+class _MessageContainer extends StatelessWidget {
+  final ChatMessage message;
+  final bool isMe;
+
+  const _MessageContainer({required this.message, required this.isMe});
+
+  @override
+  Widget build(BuildContext context) {
+    final avatarSize = context.adaptiveSize(22);
+    final horizontalMargin = EdgeInsets.only(
+      top: avatarSize,
+      left: isMe ? 0 : avatarSize,
+      right: isMe ? avatarSize : 0,
+    );
+
+    return Container(
+      alignment: Alignment.center,
+      width: context.adaptiveSize(250),
+      margin: horizontalMargin,
+      padding: EdgeInsets.all(context.adaptiveSize(30)),
+      decoration: BoxDecoration(
+        color: isMe ? BaseColors.secondary : BaseColors.backgroundCircles,
+        borderRadius: BorderRadius.circular(context.adaptiveSize(32)),
+      ),
+      child: Text(
+        message.text,
+        style: context.adaptiveTextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w400,
+          color: isMe ? BaseColors.background : BaseColors.text,
+        ),
+      ),
+    );
+  }
+}
+
+class _AvatarCircle extends StatelessWidget {
+  final bool isMe;
+
+  const _AvatarCircle({required this.isMe});
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      radius: context.adaptiveSize(22),
+      backgroundImage: AssetImage(
+        isMe
+            ? 'assets/images/avatars/me.jpg'
+            : 'assets/images/avatars/another.jpg',
+      ),
     );
   }
 }

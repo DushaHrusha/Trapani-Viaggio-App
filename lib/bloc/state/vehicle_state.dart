@@ -6,5 +6,6 @@ class VehicleInitial extends VehicleState {}
 
 class VehicleLoaded extends VehicleState {
   final List<Vehicle> vehicles;
+
   VehicleLoaded(this.vehicles);
 }

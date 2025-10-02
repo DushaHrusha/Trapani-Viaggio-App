@@ -5,7 +5,12 @@ import 'package:test_task/data/repositories/vehicle_repository.dart';
 class VehicleCubit extends Cubit<VehicleState> {
   VehicleCubit() : super(VehicleInitial());
   void loadExcursions(VehicleRepository repository) {
-    var car = repository.vehicles;
-    emit(VehicleLoaded(car));
+    try {
+      final vehicles = repository.vehicles;
+      print(vehicles.length);
+      emit(new VehicleLoaded(vehicles));
+    } catch (e) {
+      print("Error loading vehicles: $e");
+    }
   }
 }

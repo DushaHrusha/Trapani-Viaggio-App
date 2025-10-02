@@ -8,13 +8,16 @@ import 'package:test_task/core/constants/custom_gradient_button.dart';
 import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/core/routing/app_routes.dart';
 
-class MainMenuScreen extends StatefulWidget {
+class MainMenuScreen extends StatelessWidget {
   const MainMenuScreen({super.key});
-  @override
-  createState() => _MainMenuScreenState();
-}
 
-class _MainMenuScreenState extends State<MainMenuScreen> {
+  static const _menuItems = [
+    _MenuItem(icon: 'exclamation', label: 'City info'),
+    _MenuItem(icon: 'paths', label: 'Places'),
+    _MenuItem(icon: 'star', label: 'Events'),
+    _MenuItem(icon: 'gallery', label: 'Gallery'),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,9 +25,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         image: _buildHeaderImage(context),
         children: [
           SizedBox(height: context.adaptiveSize(38)),
-          _buildWelcomeText(context),
-          SizedBox(height: context.adaptiveSize(16)),
-          _buildDescriptionText(context),
+          _buildWelcomeSection(context),
           SizedBox(height: context.adaptiveSize(40)),
           _buildServicesButton(context),
           SizedBox(height: context.adaptiveSize(32)),
@@ -34,120 +35,87 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
           SizedBox(height: context.adaptiveSize(30)),
         ],
       ),
-      bottomNavigationBar: BottomBar(currentScreen: widget),
-    );
-  }
-
-  GridView _buildMenuGrid(BuildContext context) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      mainAxisSpacing: context.adaptiveSize(23),
-      crossAxisSpacing: context.adaptiveSize(23),
-      padding: context.adaptivePadding(EdgeInsets.symmetric(horizontal: 30)),
-      childAspectRatio: 2.6,
-      children: [
-        _buildGridButton(
-          context,
-          icon: SvgPicture.asset(
-            "assets/file/exclamation.svg",
-            color: BaseColors.secondary,
-            width: context.adaptiveSize(24),
-            height: context.adaptiveSize(24),
-          ),
-          label: 'City info',
-        ),
-        _buildGridButton(
-          context,
-          icon: SvgPicture.asset(
-            "assets/file/paths.svg",
-            color: BaseColors.secondary,
-            width: context.adaptiveSize(24),
-            height: context.adaptiveSize(24),
-          ),
-          label: 'Places',
-        ),
-        _buildGridButton(
-          context,
-          icon: SvgPicture.asset(
-            "assets/file/star.svg",
-            color: BaseColors.secondary,
-            width: context.adaptiveSize(24),
-            height: context.adaptiveSize(24),
-          ),
-          label: 'Events',
-        ),
-        _buildGridButton(
-          context,
-          icon: SvgPicture.asset(
-            "assets/file/gallery.svg",
-            color: BaseColors.secondary,
-            width: context.adaptiveSize(24),
-            height: context.adaptiveSize(24),
-          ),
-          label: 'Gallery',
-        ),
-      ],
-    );
-  }
-
-  Padding _buildDivider(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: context.adaptiveSize(30.0)),
-      child: GreyLine(),
-    );
-  }
-
-  Padding _buildServicesButton(BuildContext context) {
-    return Padding(
-      padding: context.adaptivePadding(EdgeInsets.symmetric(horizontal: 30)),
-      child: const CustomGradientButton(text: 'Services', path: AppRouter.menu),
-    );
-  }
-
-  Container _buildDescriptionText(BuildContext context) {
-    return Container(
-      margin: context.adaptivePadding(EdgeInsets.symmetric(horizontal: 30)),
-      child: Text(
-        'Place with a lively atmosphere due to its position as the capital and its economic activities as a port.',
-        textAlign: TextAlign.center,
-        style: context.adaptiveTextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: BaseColors.text,
-        ),
-      ),
-    );
-  }
-
-  Text _buildWelcomeText(BuildContext context) {
-    return Text(
-      'Hello. Welcome to Trapani!',
-      textAlign: TextAlign.center,
-      style: context.adaptiveTextStyle(
-        fontSize: 22,
-        fontFamily: 'Berlin Sans FB',
-        fontWeight: FontWeight.w400,
-        color: BaseColors.text,
-      ),
+      bottomNavigationBar: BottomBar(currentScreen: this),
     );
   }
 
   Image _buildHeaderImage(BuildContext context) {
     return Image.asset(
-      'assets/file/city_header.jpg',
+      'assets/images/city_header.jpg',
       height: context.adaptiveSize(400),
       width: double.infinity,
       fit: BoxFit.cover,
     );
   }
 
-  Widget _buildGridButton(
-    BuildContext context, {
-    required Widget icon,
-    required String label,
-  }) {
+  Widget _buildWelcomeSection(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          'Hello. Welcome to Trapani!',
+          textAlign: TextAlign.center,
+          style: context.adaptiveTextStyle(
+            fontSize: 22,
+            fontFamily: 'Berlin Sans FB',
+            fontWeight: FontWeight.w400,
+            color: BaseColors.text,
+          ),
+        ),
+        SizedBox(height: context.adaptiveSize(16)),
+        Padding(
+          padding: context.adaptivePadding(
+            const EdgeInsets.symmetric(horizontal: 30),
+          ),
+          child: Text(
+            'Place with a lively atmosphere due to its position as the capital and its economic activities as a port.',
+            textAlign: TextAlign.center,
+            style: context.adaptiveTextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w400,
+              color: BaseColors.text,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildServicesButton(BuildContext context) {
+    return Padding(
+      padding: context.adaptivePadding(
+        const EdgeInsets.symmetric(horizontal: 30),
+      ),
+      child: const CustomGradientButton(text: 'Services', path: AppRouter.menu),
+    );
+  }
+
+  Widget _buildDivider(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: context.adaptiveSize(30)),
+      child: GreyLine(),
+    );
+  }
+
+  Widget _buildMenuGrid(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: context.adaptiveSize(23),
+        crossAxisSpacing: context.adaptiveSize(23),
+        childAspectRatio: 2.6,
+      ),
+      padding: context.adaptivePadding(
+        const EdgeInsets.symmetric(horizontal: 30),
+      ),
+      itemCount: _menuItems.length,
+      itemBuilder:
+          (context, index) => _buildGridButton(context, _menuItems[index]),
+    );
+  }
+
+  Widget _buildGridButton(BuildContext context, _MenuItem item) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
         shadowColor: Colors.transparent,
@@ -160,10 +128,15 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          icon,
+          SvgPicture.asset(
+            "assets/icons/${item.icon}.svg",
+            color: BaseColors.secondary,
+            width: context.adaptiveSize(24),
+            height: context.adaptiveSize(24),
+          ),
           SizedBox(width: context.adaptiveSize(13)),
           Text(
-            label,
+            item.label,
             style: context.adaptiveTextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
@@ -174,4 +147,11 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
       ),
     );
   }
+}
+
+class _MenuItem {
+  final String icon;
+  final String label;
+
+  const _MenuItem({required this.icon, required this.label});
 }

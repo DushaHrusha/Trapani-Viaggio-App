@@ -12,15 +12,13 @@ import 'package:provider/provider.dart';
 
 class FirstCard extends StatefulWidget {
   final CardData data;
-
   final int index;
-  final BuildContext context;
   final TextStyle style;
+
   const FirstCard({
     super.key,
     required this.data,
     required this.index,
-    required this.context,
     required this.style,
   });
 
@@ -29,88 +27,56 @@ class FirstCard extends StatefulWidget {
 }
 
 class _FirstCardState extends State<FirstCard> {
-  final PageController _pageController = PageController();
-  late CardData _data;
-  late List<IconData> icons;
-  int _currentPage = 0;
+  static const _borderColor = Color.fromARGB(255, 224, 224, 224);
+  static const _iconColor = Color.fromARGB(255, 189, 189, 189);
+  static const _bookmarkBgColor = Color.fromARGB(87, 255, 255, 255);
+  static const _bookmarkIconColor = Color.fromARGB(255, 251, 251, 253);
+
+  late final PageController _imageController;
+  late final ScrollController _iconController;
+  late final List<IconData> _icons;
+
+  int _currentImagePage = 0;
+  int _currentIconPage = 0;
 
   @override
   void initState() {
     super.initState();
-    _data = widget.data;
-    icons = _data.iconServices;
-    _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page!.round();
-      });
-    });
+    _imageController =
+        PageController()..addListener(
+          () => setState(() {
+            _currentImagePage = _imageController.page!.round();
+          }),
+        );
+    _iconController = ScrollController();
+    _icons = widget.data.iconServices;
   }
 
-  bool showAllIcons = false;
   @override
   void dispose() {
-    _pageController.dispose();
+    _imageController.dispose();
+    _iconController.dispose();
     super.dispose();
   }
 
-  final ScrollController _scrollController = ScrollController();
-
-  int _currentPage1 = 0;
-
-  // Метод прокрутки вправо
-  void _scrollRight() {
-    setState(() {
-      if (_currentPage1 < icons.length - 5) {
-        _currentPage1++;
-        _scrollController.animateTo(
-          _currentPage1 * 80.0,
-          duration: Duration(milliseconds: 300),
+  void _scrollIcons(bool isRight) {
+    final maxPage = _icons.length - 5;
+    if ((isRight && _currentIconPage < maxPage) ||
+        (!isRight && _currentIconPage > 0)) {
+      setState(() {
+        _currentIconPage += isRight ? 1 : -1;
+        _iconController.animateTo(
+          _currentIconPage * 80.0,
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
-      }
-    });
-  }
-
-  // Метод прокрутки влево
-  void _scrollLeft() {
-    setState(() {
-      if (_currentPage1 > 0) {
-        _currentPage1--;
-        _scrollController.animateTo(
-          _currentPage1 * 80.0,
-          duration: Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-        );
-      }
-    });
-  }
-
-  Widget _buildIndicator(int count) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(count, (index) {
-        return Container(
-          margin: EdgeInsets.symmetric(horizontal: 4),
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color:
-                _currentPage == index
-                    ? BaseColors.accent
-                    : BaseColors.background,
-          ),
-        );
-      }),
-    );
+      });
+    }
   }
 
   String _getFirstSentence(String text) {
-    // Регулярное выражение для поиска первого предложения
-    final sentenceRegex = RegExp(r'^(.*?[.!?])');
-    final match = sentenceRegex.firstMatch(text);
-
-    return match != null ? match.group(1)!.trim() : text.trim();
+    final match = RegExp(r'^(.*?[.!?])').firstMatch(text);
+    return match?.group(1)?.trim() ?? text.trim();
   }
 
   @override
@@ -119,215 +85,222 @@ class _FirstCardState extends State<FirstCard> {
       margin: EdgeInsets.only(bottom: context.adaptiveSize(44)),
       child: Column(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(
-                Radius.circular(context.adaptiveSize(32)),
-              ),
-              border: Border.all(color: Color.fromARGB(255, 224, 224, 224)),
-            ),
-            child: Column(
-              children: [
-                Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(context.adaptiveSize(32)),
-                        topRight: Radius.circular(context.adaptiveSize(32)),
-                      ),
-                      child: SizedBox(
-                        height: context.adaptiveSize(375),
-                        width: MediaQuery.of(context).size.width,
-                        child: PageView.builder(
-                          controller: _pageController,
-                          scrollDirection: Axis.horizontal,
-                          itemCount: _data.imageUrl.length,
-                          itemBuilder: (context, index) {
-                            return Image.asset(
-                              _data.imageUrl[index],
-                              fit: BoxFit.cover,
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      right: context.adaptiveSize(24),
-                      top: context.adaptiveSize(24),
-                      child: BlocBuilder<BookmarksCubit, List<Bookmark>>(
-                        builder: (context, bookmarks) {
-                          final isBookmarked = context
-                              .read<BookmarksCubit>()
-                              .isBookmarked(_data);
-                          return GestureDetector(
-                            onTap: () {
-                              context.read<BookmarksCubit>().toggleBookmark(
-                                _data,
-                              );
-                            },
-                            child: Container(
-                              height: context.adaptiveSize(56),
-                              width: context.adaptiveSize(56),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(context.adaptiveSize(16)),
-                                ),
-                                shape: BoxShape.rectangle,
-                                color: Color.fromARGB(87, 255, 255, 255),
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(context.adaptiveSize(16)),
-                                ),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                    sigmaX: 5.0,
-                                    sigmaY: 5.0,
-                                  ),
-                                  child: Icon(
-                                    isBookmarked
-                                        ? Icons.bookmark
-                                        : Icons.bookmark_outline,
-                                    color:
-                                        isBookmarked
-                                            ? BaseColors.accent
-                                            : Color.fromARGB(
-                                              255,
-                                              251,
-                                              251,
-                                              253,
-                                            ),
-                                    size: context.adaptiveSize(25),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-
-                    Positioned(
-                      bottom: context.adaptiveSize(16),
-                      left: 0,
-                      right: 0,
-                      child: _buildIndicator(_data.imageUrl.length),
-                    ),
-                  ],
-                ),
-                SizedBox(height: context.adaptiveSize(12)),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: context.adaptiveSize(23),
-                    right: context.adaptiveSize(23),
-                  ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Wrap(
-                          alignment: WrapAlignment.start,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Text(
-                              _data.title,
-                              softWrap: true,
-                              style: context.adaptiveTextStyle(
-                                fontSize: 19,
-                                fontWeight: FontWeight.w700,
-                                color: BaseColors.text,
-                              ),
-                            ),
-                            StarRating(rating: _data.rating),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: context.adaptiveSize(12)),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: context.adaptiveSize(23),
-                    right: context.adaptiveSize(23),
-                  ),
-                  child: Text(
-                    _getFirstSentence(_data.description),
-                    style: context.adaptiveTextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: BaseColors.text,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ),
-
-                SizedBox(height: context.adaptiveSize(21)),
-              ],
-            ),
-          ),
+          _buildMainCard(),
           SizedBox(height: context.adaptiveSize(24)),
-          Row(
-            children: [
-              if (_currentPage1 > 0)
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    size: context.adaptiveSize(16),
-                  ),
-                  onPressed: _scrollLeft,
-                ),
-              Expanded(
-                child: SizedBox(
-                  height: context.adaptiveSize(48),
-                  child: ListView.builder(
-                    controller: _scrollController,
-                    scrollDirection: Axis.horizontal,
-                    itemCount: icons.length,
-                    itemBuilder: (context, index) {
-                      return Container(
-                        margin: EdgeInsets.only(
-                          right: context.adaptiveSize(12),
-                        ),
-                        height: context.adaptiveSize(48),
-                        width: context.adaptiveSize(46),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Color.fromARGB(255, 224, 224, 224),
-                            width: 1,
-                          ),
-                        ),
-                        child: CircleAvatar(
-                          backgroundColor: Color.fromARGB(0, 1, 1, 1),
-                          child: Icon(
-                            icons[index],
-                            color: BaseColors.text,
-                            size: context.adaptiveSize(20),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              if (_currentPage1 < icons.length - 5)
-                IconButton(
-                  icon: Icon(
-                    Icons.arrow_forward_ios,
-                    size: context.adaptiveSize(12),
-                    color: Color.fromARGB(255, 189, 189, 189),
-                  ),
-                  onPressed: _scrollRight,
-                ),
-            ],
-          ),
+          _buildIconsRow(),
           SizedBox(height: context.adaptiveSize(24)),
           CustomTextFieldWithGradientButton(
-            text: "${_data.price.toStringAsFixed(0)} €",
+            text: "${widget.data.price.toStringAsFixed(0)} €",
             style: widget.style,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMainCard() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(context.adaptiveSize(32)),
+        border: Border.all(color: _borderColor),
+      ),
+      child: Column(
+        children: [
+          _buildImageCarousel(),
+          SizedBox(height: context.adaptiveSize(12)),
+          _buildCardInfo(),
+          SizedBox(height: context.adaptiveSize(21)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImageCarousel() {
+    return Stack(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(context.adaptiveSize(32)),
+          ),
+          child: SizedBox(
+            height: context.adaptiveSize(375),
+            width: double.infinity,
+            child: PageView.builder(
+              controller: _imageController,
+              itemCount: widget.data.imageUrl.length,
+              itemBuilder:
+                  (context, index) => Image.asset(
+                    widget.data.imageUrl[index],
+                    fit: BoxFit.cover,
+                  ),
+            ),
+          ),
+        ),
+        _buildBookmarkButton(),
+        _buildPageIndicator(),
+      ],
+    );
+  }
+
+  Widget _buildBookmarkButton() {
+    return Positioned(
+      right: context.adaptiveSize(24),
+      top: context.adaptiveSize(24),
+      child: BlocBuilder<BookmarksCubit, List<Bookmark>>(
+        builder: (context, bookmarks) {
+          final cubit = context.read<BookmarksCubit>();
+          final isBookmarked = cubit.isBookmarked(widget.data);
+
+          return GestureDetector(
+            onTap: () => cubit.toggleBookmark(widget.data),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(context.adaptiveSize(16)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                child: Container(
+                  height: context.adaptiveSize(56),
+                  width: context.adaptiveSize(56),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(
+                      context.adaptiveSize(16),
+                    ),
+                    color: _bookmarkBgColor,
+                  ),
+                  child: Icon(
+                    isBookmarked ? Icons.bookmark : Icons.bookmark_outline,
+                    color:
+                        isBookmarked ? BaseColors.accent : _bookmarkIconColor,
+                    size: context.adaptiveSize(25),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPageIndicator() {
+    return Positioned(
+      bottom: context.adaptiveSize(16),
+      left: 0,
+      right: 0,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          widget.data.imageUrl.length,
+          (index) => Container(
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color:
+                  _currentImagePage == index
+                      ? BaseColors.accent
+                      : BaseColors.background,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCardInfo() {
+    final horizontalPadding = EdgeInsets.symmetric(
+      horizontal: context.adaptiveSize(23),
+    );
+
+    return Column(
+      children: [
+        Padding(
+          padding: horizontalPadding,
+          child: Row(
+            children: [
+              Expanded(
+                child: Wrap(
+                  alignment: WrapAlignment.start,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Text(
+                      widget.data.title,
+                      softWrap: true,
+                      style: context.adaptiveTextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w700,
+                        color: BaseColors.text,
+                      ),
+                    ),
+                    StarRating(rating: widget.data.rating),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: context.adaptiveSize(12)),
+        Padding(
+          padding: horizontalPadding,
+          child: Text(
+            _getFirstSentence(widget.data.description),
+            style: context.adaptiveTextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+              color: BaseColors.text,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIconsRow() {
+    return Row(
+      children: [
+        if (_currentIconPage > 0)
+          IconButton(
+            icon: Icon(Icons.arrow_back_ios, size: context.adaptiveSize(16)),
+            onPressed: () => _scrollIcons(false),
+          ),
+        Expanded(child: _buildIconsList()),
+        if (_currentIconPage < _icons.length - 5)
+          IconButton(
+            icon: Icon(
+              Icons.arrow_forward_ios,
+              size: context.adaptiveSize(12),
+              color: _iconColor,
+            ),
+            onPressed: () => _scrollIcons(true),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildIconsList() {
+    return SizedBox(
+      height: context.adaptiveSize(48),
+      child: ListView.builder(
+        controller: _iconController,
+        scrollDirection: Axis.horizontal,
+        itemCount: _icons.length,
+        itemBuilder:
+            (context, index) => Container(
+              margin: EdgeInsets.only(right: context.adaptiveSize(12)),
+              height: context.adaptiveSize(48),
+              width: context.adaptiveSize(46),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: _borderColor),
+              ),
+              child: Icon(
+                _icons[index],
+                color: BaseColors.text,
+                size: context.adaptiveSize(20),
+              ),
+            ),
       ),
     );
   }

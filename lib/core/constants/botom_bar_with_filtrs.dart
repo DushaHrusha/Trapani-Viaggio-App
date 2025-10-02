@@ -2,8 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/presentation/main_menu_screen.dart';
-import 'package:test_task/presentation/profile_screen.dart'
-    show ProfileScreen, AdaptiveSizeExtension;
+import 'package:test_task/presentation/profile_screen.dart';
 import 'package:test_task/presentation/splash_screen.dart';
 
 class BottomBarScreen extends StatefulWidget {

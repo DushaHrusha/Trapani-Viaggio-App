@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
-import 'package:test_task/core/routing/app_routes.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String label;
@@ -26,7 +25,7 @@ class CustomAppBar extends StatelessWidget {
           children: [
             IconButton(
               icon: SvgPicture.asset(
-                'assets/file/left.svg',
+                'assets/icons/left.svg',
                 height: context.adaptiveSize(24),
               ),
               padding: EdgeInsets.zero,
@@ -56,7 +55,7 @@ class CustomAppBar extends StatelessWidget {
             ),
             IconButton(
               icon: SvgPicture.asset(
-                'assets/file/menu.svg',
+                'assets/icons/menu.svg',
                 height: context.adaptiveSize(24),
               ),
               padding: EdgeInsets.zero,
