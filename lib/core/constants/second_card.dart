@@ -1,5 +1,5 @@
 import 'dart:ui';
-
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task/bloc/cubits/bookmarks_cubit.dart';
@@ -9,7 +9,6 @@ import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/data/models/card_data.dart';
 import 'package:test_task/presentation/apartment_detail_screen.dart';
 import 'package:test_task/core/constants/custom_text_field_with_gradient_button.dart';
-import 'package:provider/provider.dart';
 
 class SecondCard extends StatelessWidget {
   final CardData data;
@@ -52,11 +51,13 @@ class SecondCard extends StatelessWidget {
                         topLeft: Radius.circular(context.adaptiveSize(32)),
                         topRight: Radius.circular(context.adaptiveSize(32)),
                       ),
-                      child: Image.asset(
-                        data.imageUrl[0],
-                        height: context.adaptiveSize(177),
-                        width: MediaQuery.of(context).size.width,
+                      child: CachedNetworkImage(
+                        imageUrl: data.imageUrl[0],
                         fit: BoxFit.cover,
+                        placeholder:
+                            (context, url) =>
+                                Center(child: CircularProgressIndicator()),
+                        errorWidget: (context, url, error) => Icon(Icons.error),
                       ),
                     ),
                     Positioned(

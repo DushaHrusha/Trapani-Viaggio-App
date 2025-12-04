@@ -4,6 +4,12 @@ abstract class ExcursionState {}
 
 class ExcursionInitial extends ExcursionState {}
 
+class ExcursionLoading extends ExcursionState {}
+
+class ExcursionError extends ExcursionState {
+  ExcursionError(String string);
+}
+
 class ExcursionLoaded extends ExcursionState {
   final List<Excursion> excursions;
 

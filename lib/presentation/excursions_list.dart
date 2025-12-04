@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_task/bloc/cubits/apartments_cubit.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/bottom_bar.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/bloc/cubits/excursion_cubit.dart';
 import 'package:test_task/core/constants/grey_line.dart';
-import 'package:test_task/presentation/excursion_detail_screen.dart';
 import 'package:test_task/bloc/state/excursion_state.dart';
 import 'package:test_task/core/constants/first_card.dart';
 import 'package:test_task/core/constants/second_card.dart';
@@ -72,7 +72,7 @@ class _ExcursionsListState extends State<ExcursionsList>
       backgroundColor: BaseColors.background,
       body: BlocBuilder<ExcursionCubit, ExcursionState>(
         builder: (context, state) {
-          if (state is ExcursionInitial) {
+          if (state is ExcursionLoading) {
             return Center(child: CircularProgressIndicator());
           } else if (state is ExcursionLoaded) {
             return CustomBackgroundWithGradient(
@@ -86,50 +86,87 @@ class _ExcursionsListState extends State<ExcursionsList>
                     opacity: _appBarOpacityAnimation,
                     child: GreyLine(),
                   ),
+                  // В ExcursionsList замените Flexible на:
                   Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 32,
-                      ),
-                      itemCount: state.excursions.length,
-                      itemBuilder: (context, index) {
-                        final excursion = state.excursions[index];
-                        return FadeTransition(
-                          opacity: _cardsOpacityAnimation,
-                          child: GestureDetector(
-                            onTap: () {
-                              context.go(
-                                '/home/main-menu/excursions-list/excursion-detail',
-                                extra: excursion,
-                              );
-                            },
-                            child:
-                                (index == 0)
-                                    ? FirstCard(
-                                      data: excursion,
-                                      index: index,
-                                      context: context,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        color: BaseColors.accent,
-                                        fontSize: 21,
-                                      ),
-                                    )
-                                    : SecondCard(
-                                      data: excursion,
-                                      context: context,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        color: BaseColors.accent,
-                                        fontSize: 21,
-                                      ),
-                                      index: index,
-                                    ),
-                          ),
-                        );
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        await context
+                            .read<ExcursionCubit>()
+                            .refreshExcursions();
                       },
+                      color: BaseColors.accent,
+                      backgroundColor: Colors.white,
+                      child: ListView.builder(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 32,
+                        ),
+                        itemCount: state.excursions.length,
+                        itemBuilder: (context, index) {
+                          final excursion = state.excursions[index];
+                          return FadeTransition(
+                            opacity: _cardsOpacityAnimation,
+                            child: GestureDetector(
+                              onTap: () {
+                                context.go(
+                                  '/home/main-menu/excursions-list/excursion-detail',
+                                  extra: excursion,
+                                );
+                              },
+                              child:
+                                  (index == 0)
+                                      ? FirstCard(
+                                        data: excursion,
+                                        index: index,
+                                        context: context,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          color: BaseColors.accent,
+                                          fontSize: 21,
+                                        ),
+                                      )
+                                      : SecondCard(
+                                        data: excursion,
+                                        context: context,
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          color: BaseColors.accent,
+                                          fontSize: 21,
+                                        ),
+                                        index: index,
+                                      ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
+                  ),
+                ],
+              ),
+            );
+          } else if (state is ExcursionError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  SizedBox(height: 16),
+                  Text(
+                    'Error loading apartments',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 8),
+                  // Text(
+                  //   state. message,
+                  //   style: TextStyle(color: Colors.grey),
+                  //   textAlign: TextAlign.center,
+                  // ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<ApartmentCubit>().loadApartments();
+                    },
+                    child: Text('Retry'),
                   ),
                 ],
               ),

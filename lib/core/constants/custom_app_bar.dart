@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
-import 'package:test_task/core/routing/app_routes.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String label;

@@ -1,34 +1,58 @@
+import 'package:test_task/api_client.dart';
+import 'package:test_task/api_endpoints.dart';
 import 'package:test_task/data/models/vehicle.dart';
-import 'package:test_task/data/models/vespa_bike.dart';
-import 'package:test_task/data/repositories/vehicle_repository.dart';
+import 'package:test_task/data/repositories/connectivity_service.dart';
+import 'package:test_task/data/repositories/vehicle_repository.dart'
+    hide ServerException;
+import 'package:test_task/data/repositories/vehicles_local_datasource.dart';
 
 class VespaRepository extends VehicleRepository {
-  final List<Vehicle> vehicles = [
-    VespaBike(
-      id: 1,
-      brand: 'Vespa GTS',
-      model: 'Vespa GTS',
-      year: 2018,
-      maxSpeed: 122,
-      pricePerHour: 39,
-      image: 'assets/file/f8eb6b5fc00a14f53d9d89985199567836416c69.png',
-      type_transmission: 'Automatic',
-      number_seats: 2,
-      type_fuel: 'Gasoline',
-      insurance: 'Insurance',
-    ),
-    VespaBike(
-      id: 2,
-      brand: 'Vespa Primavera',
-      model: 'Vespa Primavera',
-      year: 2017,
-      maxSpeed: 120,
-      pricePerHour: 31,
-      image: 'assets/file/ab66fb1b19e15b25fab85ec4603d8e2b855f8a74.png',
-      type_transmission: 'Automatic',
-      number_seats: 2,
-      type_fuel: 'Gasoline',
-      insurance: 'Insurance',
-    ),
-  ];
+  VespaRepository({
+    required ApiClient apiClient,
+    required VehiclesLocalDataSource localDataSource,
+    required ConnectivityService connectivityService,
+  }) : super(
+         apiClient: apiClient,
+         localDataSource: localDataSource,
+         connectivityService: connectivityService,
+       );
+
+  @override
+  String get vehicleType => 'vespa';
+
+  @override
+  Future<List<Vehicle>> fetchFromServer() async {
+    final response = await apiClient.get(ApiEndpoints.vespas);
+
+    if (response.data['success'] == true) {
+      final Map<String, dynamic> data =
+          response.data['data'] as Map<String, dynamic>;
+      final List<dynamic> items = data['items'] as List;
+
+      return items
+          .map((json) => Vehicle.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } else {
+      throw ServerException('Failed to load vespas');
+    }
+  }
+
+  @override
+  Future<Vehicle> fetchByIdFromServer(int id) async {
+    final response = await apiClient.get(ApiEndpoints.vehicleById(id));
+
+    if (response.data['success'] == true) {
+      final Map<String, dynamic> vehicleData =
+          response.data['data'] as Map<String, dynamic>;
+      final vehicle = Vehicle.fromJson(vehicleData);
+
+      if (vehicle.type.toLowerCase() == 'vespa') {
+        return vehicle;
+      } else {
+        throw ServerException('Vehicle is not a vespa');
+      }
+    } else {
+      throw ServerException('Vespa not found');
+    }
+  }
 }

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:test_task/core/constants/base_colors.dart';
-import 'package:test_task/core/constants/custom_gradient_button.dart';
 import 'package:test_task/core/constants/grey_line.dart';
-import 'package:test_task/core/routing/app_routes.dart';
-import 'package:test_task/presentation/sign_up_screen.dart';
 
 class DatePickerWidget extends StatefulWidget {
   const DatePickerWidget({super.key});
@@ -16,28 +13,57 @@ class DatePickerWidget extends StatefulWidget {
 class _DatePickerWidgetState extends State<DatePickerWidget> {
   DateTime? selectedDate1;
   DateTime? selectedDate2;
-  String _selectedDateRange1 = '--/--/----'; // Инициализация плейсхолдера
-  String _selectedDateRange2 = '--/--/----'; // Инициализация плейсхолдера
+  String _selectedDateRange1 = '--/--/----';
+  String _selectedDateRange2 = '--/--/----';
   double _minPrice = 40;
   double _maxPrice = 100;
   final double _absoluteMin = 0;
   final double _absoluteMax = 200;
+
   Future<void> _selectDate(BuildContext context, int selectedDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
+      firstDate: DateTime.now(), // ← Изменил на now() вместо 2000
       lastDate: DateTime(2100),
     );
-    if (picked != null && picked != selectedDate) {
+
+    if (picked != null) {
       setState(() {
         if (selectedDate == 1) {
+          selectedDate1 = picked;
           _selectedDateRange1 = DateFormat('dd/MM/yyyy').format(picked);
+          // Если дата окончания раньше начала - сбросить
+          if (selectedDate2 != null && selectedDate2!.isBefore(picked)) {
+            selectedDate2 = null;
+            _selectedDateRange2 = '--/--/----';
+          }
         }
         if (selectedDate == 2) {
+          selectedDate2 = picked;
           _selectedDateRange2 = DateFormat('dd/MM/yyyy').format(picked);
         }
       });
+    }
+  }
+
+  void _confirmDates() {
+    if (selectedDate1 != null && selectedDate2 != null) {
+      // Возвращаем выбранные даты
+      Navigator.pop(context, {
+        'pickup': selectedDate1!,
+        'return': selectedDate2!,
+        'minPrice': _minPrice,
+        'maxPrice': _maxPrice,
+      });
+    } else {
+      // Показываем ошибку
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please select both start and finish dates'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -124,7 +150,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.w700,
-
                                           color: Color.fromARGB(
                                             255,
                                             109,
@@ -133,6 +158,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                                           ),
                                         ),
                                       ),
+                                      SizedBox(width: 4),
                                       Icon(
                                         Icons.calendar_today_outlined,
                                         size: 16,
@@ -154,7 +180,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Finish ",
+                                "Finish",
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w400,
@@ -191,6 +217,7 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                                           ),
                                         ),
                                       ),
+                                      SizedBox(width: 4),
                                       Icon(
                                         Icons.calendar_today_outlined,
                                         size: 16,
@@ -237,7 +264,6 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                       SliderTheme(
                         data: SliderThemeData(
                           trackHeight: 1,
-                          //  trackGap: 5,
                           thumbShape: RoundSliderThumbShape(
                             enabledThumbRadius: 8,
                             disabledThumbRadius: 8,
@@ -270,7 +296,34 @@ class _DatePickerWidgetState extends State<DatePickerWidget> {
                         ),
                       ),
                       const SizedBox(height: 126),
-                      CustomGradientButton(text: "Go", path: "/sign-up"),
+                      // ← Замените CustomGradientButton на это:
+                      Container(
+                        width: double.infinity,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [BaseColors.accent, BaseColors.primary],
+                          ),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _confirmDates,
+                            borderRadius: BorderRadius.circular(25),
+                            child: Center(
+                              child: Text(
+                                'Go',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 41),
                     ],
                   ),

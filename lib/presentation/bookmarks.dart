@@ -13,6 +13,8 @@ import 'package:test_task/core/constants/second_card.dart';
 import 'package:test_task/data/models/bookmark.dart';
 
 class BookmarksScreen extends StatefulWidget {
+  const BookmarksScreen({super.key});
+
   @override
   createState() => _BookmarksScreenState();
 }

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task/bloc/cubits/bookmarks_cubit.dart';
@@ -11,6 +12,8 @@ import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/core/constants/custom_text_field_with_gradient_button.dart';
 import 'package:test_task/core/constants/grey_line.dart';
 import 'package:test_task/data/models/apartment.dart';
+import 'package:test_task/data/models/card_data.dart';
+import 'package:test_task/presentation/booking_cubit.dart';
 import 'package:test_task/presentation/dates_guests_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -40,9 +43,10 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
   @override
   void initState() {
     super.initState();
+    icons = widget.apartment.iconDataList;
     displayedIconsCount = showAllIcons ? icons.length : 5;
     _apartment = widget.apartment;
-    icons = _apartment.iconServices;
+    //  icons = _apartment.iconServices;
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page!.round();
@@ -154,7 +158,24 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                       onTap: () {
                         showDialog(
                           context: context,
-                          builder: (context) => DatesGuestsScreen(),
+                          builder:
+                              (context) => BlocProvider.value(
+                                value: context.read<ApartmentBookingCubit>(),
+                                child: DatesGuestsScreen(
+                                  apartment: _apartment,
+                                  onConfirm: (
+                                    checkIn,
+                                    checkOut,
+                                    adults,
+                                    children,
+                                  ) {
+                                    // Обновляем отображаемые даты
+                                    setState(() {
+                                      // Можете сохранить выбранные даты
+                                    });
+                                  },
+                                ),
+                              ),
                         );
                       },
                       child: Container(
@@ -247,8 +268,14 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                                   scrollDirection: Axis.horizontal,
                                   itemCount: _apartment.imageUrl.length,
                                   itemBuilder: (context, index) {
-                                    return Image.asset(
-                                      _apartment.imageUrl[index],
+                                    return CachedNetworkImage(
+                                      imageUrl: _apartment.imageUrl[index],
+                                      placeholder:
+                                          (context, url) =>
+                                              CircularProgressIndicator(),
+                                      errorWidget:
+                                          (context, url, error) =>
+                                              Icon(Icons.error),
                                       fit: BoxFit.cover,
                                     );
                                   },
@@ -263,12 +290,14 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                                     builder: (context, bookmarks) {
                                       final isBookmarked = context
                                           .read<BookmarksCubit>()
-                                          .isBookmarked(_apartment);
+                                          .isBookmarked(_apartment as CardData);
                                       return GestureDetector(
                                         onTap: () {
                                           context
                                               .read<BookmarksCubit>()
-                                              .toggleBookmark(_apartment);
+                                              .toggleBookmark(
+                                                _apartment as CardData,
+                                              );
                                         },
                                         child: Container(
                                           height: context.adaptiveSize(56),
@@ -536,7 +565,7 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                             color: Color.fromARGB(255, 109, 109, 109),
                           ),
                         ),
-                        Container(
+                        SizedBox(
                           width: context.adaptiveSize(167),
                           child: Text(
                             _apartment.address,
@@ -551,7 +580,7 @@ class _ApartmentDetailScreenState extends State<ApartmentDetailScreen>
                     ),
                     SizedBox(height: context.adaptiveSize(40)),
                     CustomTextFieldWithGradientButton(
-                      text: "278 € / 2 days",
+                      text: _apartment.price.toStringAsFixed(0) + " €",
                       style: context.adaptiveTextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:test_task/bloc/cubits/bookmarks_cubit.dart';
@@ -8,7 +9,6 @@ import 'package:test_task/data/models/card_data.dart';
 import 'package:test_task/presentation/apartment_detail_screen.dart';
 import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/custom_text_field_with_gradient_button.dart';
-import 'package:provider/provider.dart';
 
 class FirstCard extends StatefulWidget {
   final CardData data;
@@ -38,7 +38,8 @@ class _FirstCardState extends State<FirstCard> {
   void initState() {
     super.initState();
     _data = widget.data;
-    icons = _data.iconServices;
+
+    icons = _data.iconDataList;
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page!.round();
@@ -143,8 +144,12 @@ class _FirstCardState extends State<FirstCard> {
                           scrollDirection: Axis.horizontal,
                           itemCount: _data.imageUrl.length,
                           itemBuilder: (context, index) {
-                            return Image.asset(
-                              _data.imageUrl[index],
+                            return CachedNetworkImage(
+                              imageUrl: _data.imageUrl[index],
+                              placeholder:
+                                  (context, url) => CircularProgressIndicator(),
+                              errorWidget:
+                                  (context, url, error) => Icon(Icons.error),
                               fit: BoxFit.cover,
                             );
                           },

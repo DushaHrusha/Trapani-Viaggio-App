@@ -1,6 +1,10 @@
-// app_router.dart
+// lib/core/routing/app_routes.dart
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:test_task/auth_guard.dart';
+import 'package:test_task/booking_history_screen.dart';
 import 'package:test_task/data/models/apartment.dart';
 import 'package:test_task/data/models/excursion_model.dart';
 import 'package:test_task/data/repositories/cars_repository.dart';
@@ -19,68 +23,219 @@ import 'package:test_task/presentation/sign_up_screen.dart';
 import 'package:test_task/presentation/splash_screen.dart';
 import 'package:test_task/presentation/vehicle_details_screen.dart';
 
+// =============================================
+// FADE TRANSITION PAGE
+// =============================================
+
+/// Кастомная страница с fade-анимацией
+class FadeTransitionPage<T> extends CustomTransitionPage<T> {
+  FadeTransitionPage({
+    required super.child,
+    super.key,
+    String? name,
+    Duration duration = const Duration(milliseconds: 300),
+    Duration reverseDuration = const Duration(milliseconds: 300),
+    Curve curve = Curves.easeInOut,
+  }) : super(
+         name: name,
+         transitionDuration: duration,
+         reverseTransitionDuration: reverseDuration,
+         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           return FadeTransition(
+             opacity: CurvedAnimation(parent: animation, curve: curve),
+             child: child,
+           );
+         },
+       );
+}
+
+/// Fade + Scale анимация (более эффектная)
+class FadeScaleTransitionPage<T> extends CustomTransitionPage<T> {
+  FadeScaleTransitionPage({
+    required super.child,
+    super.key,
+    String? name,
+    Duration duration = const Duration(milliseconds: 350),
+    Duration reverseDuration = const Duration(milliseconds: 300),
+  }) : super(
+         name: name,
+         transitionDuration: duration,
+         reverseTransitionDuration: reverseDuration,
+         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           final curvedAnimation = CurvedAnimation(
+             parent: animation,
+             curve: Curves.easeOutCubic,
+             reverseCurve: Curves.easeInCubic,
+           );
+
+           return FadeTransition(
+             opacity: curvedAnimation,
+             child: ScaleTransition(
+               scale: Tween<double>(
+                 begin: 0.95,
+                 end: 1.0,
+               ).animate(curvedAnimation),
+               child: child,
+             ),
+           );
+         },
+       );
+}
+
+/// Slide + Fade анимация (как в iOS)
+class SlideUpFadeTransitionPage<T> extends CustomTransitionPage<T> {
+  SlideUpFadeTransitionPage({
+    required super.child,
+    super.key,
+    String? name,
+    Duration duration = const Duration(milliseconds: 350),
+  }) : super(
+         name: name,
+         transitionDuration: duration,
+         reverseTransitionDuration: duration,
+         transitionsBuilder: (context, animation, secondaryAnimation, child) {
+           final curvedAnimation = CurvedAnimation(
+             parent: animation,
+             curve: Curves.easeOutCubic,
+             reverseCurve: Curves.easeInCubic,
+           );
+
+           return SlideTransition(
+             position: Tween<Offset>(
+               begin: const Offset(0, 0.05),
+               end: Offset.zero,
+             ).animate(curvedAnimation),
+             child: FadeTransition(opacity: curvedAnimation, child: child),
+           );
+         },
+       );
+}
+
+// =============================================
+// APP ROUTER
+// =============================================
+
 class AppRouter {
   static final GoRouter router = GoRouter(
     initialLocation: '/',
+    redirect: (context, state) => authRedirect(context, state),
+
     routes: [
-      GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+      // Splash
+      GoRoute(
+        path: '/',
+        pageBuilder:
+            (context, state) => FadeTransitionPage(
+              key: state.pageKey,
+              child: const SplashScreen(),
+            ),
+      ),
+
+      // Home
       GoRoute(
         path: '/home',
-        builder: (context, state) => const MainMenuScreen(),
+        pageBuilder:
+            (context, state) => FadeTransitionPage(
+              key: state.pageKey,
+              child: const MainMenuScreen(),
+            ),
         routes: [
+          // Main Menu (круговое меню)
           GoRoute(
             path: 'main-menu',
-            builder: (context, state) => const CircularMenuScreen(),
+            pageBuilder:
+                (context, state) => FadeScaleTransitionPage(
+                  key: state.pageKey,
+                  child: const CircularMenuScreen(),
+                ),
             routes: [
               // Apartments List
               GoRoute(
                 path: 'apartments-list',
-                builder: (context, state) => ApartmentsListScreen(),
+                pageBuilder:
+                    (context, state) => SlideUpFadeTransitionPage(
+                      key: state.pageKey,
+                      child: ApartmentsListScreen(),
+                    ),
                 routes: [
                   // Apartment Detail
                   GoRoute(
                     path: 'apartment-detail',
-                    builder: (context, state) {
+                    pageBuilder: (context, state) {
                       final apartment = state.extra as Apartment;
-                      return ApartmentDetailScreen(apartment: apartment);
+                      return SlideUpFadeTransitionPage(
+                        key: state.pageKey,
+                        child: ApartmentDetailScreen(apartment: apartment),
+                      );
                     },
                   ),
                 ],
               ),
 
+              // Vehicles - Cars
               GoRoute(
                 path: 'vehicle-details-cars',
-                builder:
-                    (context, state) => VehicleDetailsScreen(
-                      vehicleRepository: CarsRepository(),
+                pageBuilder: (context, state) {
+                  final carRepository = context.read<CarRepository>();
+                  return SlideUpFadeTransitionPage(
+                    key: state.pageKey,
+                    child: VehicleDetailsScreen(
+                      vehicleRepository: carRepository,
                       label: "automobiles",
                     ),
+                  );
+                },
               ),
+
+              // Vehicles - Motorcycles
               GoRoute(
                 path: 'vehicle-details-motorcycles',
-                builder:
-                    (context, state) => VehicleDetailsScreen(
-                      vehicleRepository: MotorcycleRepository(),
+                pageBuilder: (context, state) {
+                  final motorcycleRepository =
+                      context.read<MotorcycleRepository>();
+                  return SlideUpFadeTransitionPage(
+                    key: state.pageKey,
+                    child: VehicleDetailsScreen(
+                      vehicleRepository: motorcycleRepository,
                       label: "motorcycles",
                     ),
+                  );
+                },
               ),
+
+              // Vehicles - Vespa
               GoRoute(
                 path: 'vehicle-details-vespa',
-                builder:
-                    (context, state) => VehicleDetailsScreen(
-                      vehicleRepository: VespaRepository(),
+                pageBuilder: (context, state) {
+                  final vespaRepository = context.read<VespaRepository>();
+                  return SlideUpFadeTransitionPage(
+                    key: state.pageKey,
+                    child: VehicleDetailsScreen(
+                      vehicleRepository: vespaRepository,
                       label: "vespa bikes",
                     ),
+                  );
+                },
               ),
+
+              // Excursions List
               GoRoute(
                 path: 'excursions-list',
-                builder: (context, state) => ExcursionsList(),
+                pageBuilder:
+                    (context, state) => SlideUpFadeTransitionPage(
+                      key: state.pageKey,
+                      child: ExcursionsList(),
+                    ),
                 routes: [
+                  // Excursion Detail
                   GoRoute(
                     path: 'excursion-detail',
-                    builder: (context, state) {
+                    pageBuilder: (context, state) {
                       final excursion = state.extra as Excursion;
-                      return ExcursionDetailScreen(excursion: excursion);
+                      return SlideUpFadeTransitionPage(
+                        key: state.pageKey,
+                        child: ExcursionDetailScreen(excursion: excursion),
+                      );
                     },
                   ),
                 ],
@@ -90,16 +245,54 @@ class AppRouter {
         ],
       ),
 
+      // =============================================
+      // AUTH ROUTES
+      // =============================================
       GoRoute(
         path: '/sign-up',
-        builder: (context, state) => const SignUpScreen(),
+        pageBuilder:
+            (context, state) => FadeTransitionPage(
+              key: state.pageKey,
+              child: const SignUpScreen(),
+            ),
       ),
+
+      // =============================================
+      // BOOKMARKS
+      // =============================================
       GoRoute(
         path: '/bookmarks',
-        builder: (context, state) => BookmarksScreen(),
+        pageBuilder:
+            (context, state) => FadeTransitionPage(
+              key: state.pageKey,
+              child: BookmarksScreen(),
+            ),
       ),
-      GoRoute(path: '/profile', builder: (context, state) => ProfileScreen()),
-      GoRoute(path: '/chat', builder: (context, state) => ChatScreen()),
+
+      // =============================================
+      // PROTECTED ROUTES
+      // =============================================
+      GoRoute(
+        path: '/profile',
+        pageBuilder:
+            (context, state) => FadeTransitionPage(
+              key: state.pageKey,
+              child: AuthGuard(child: ProfileScreen()),
+            ),
+      ),
+      GoRoute(
+        path: '/booking-history',
+        builder: (context, state) => const BookingHistoryScreen(),
+      ),
+
+      GoRoute(
+        path: '/chat',
+        pageBuilder:
+            (context, state) => FadeTransitionPage(
+              key: state.pageKey,
+              child: AuthGuard(child: ChatScreen()),
+            ),
+      ),
     ],
 
     errorBuilder:
@@ -113,7 +306,6 @@ class AppRouter {
     return [
       '/home/main-menu/apartments-list',
       '/home/main-menu/vehicle-details-cars',
-      '/home/main-menu/vehicle-details-motorcycles',
       '/home/main-menu/vehicle-details-motorcycles',
       '/home/main-menu/vehicle-details-vespa',
       '/home/main-menu/excursions-list',

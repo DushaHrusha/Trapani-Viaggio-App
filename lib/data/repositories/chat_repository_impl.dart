@@ -1,47 +1,59 @@
+import 'package:test_task/api_client.dart';
+import 'package:test_task/api_endpoints.dart';
 import 'package:test_task/data/models/chat_message.dart';
 import 'package:test_task/data/repositories/chat_repository.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
-  final List<ChatMessage> _messages = [
-    ChatMessage(
-      text:
-          'Hello! Here you can book apartments, rent a car or bike. Please, check the time zone! The answer may come a little later due to the time difference.',
-      timestamp: DateTime.now().subtract(Duration(minutes: 10)),
-      isSentByUser: false,
-    ),
-    ChatMessage(
-      text:
-          'Hi. Can I contact you if I want to rent a boat or take an excursion to the Favignana? I will arrive in Sicily on July 24 and want to pick up the car that I paid for at Palermo airport. The plane arrives at 16.40 from Moscow.',
-      timestamp: DateTime.now().subtract(Duration(minutes: 5)),
-      isSentByUser: true,
-    ),
-    ChatMessage(
-      text:
-          'Hi. Can I contact you if I want to rent a boat or take an excursion to the Favignana? I will arrive in Sicily on July 24 and want to pick up the car that I paid for at Palermo airport. The plane arrives at 16.40 from Moscow.',
-      timestamp: DateTime.now(),
-      isSentByUser: false,
-    ),
-    ChatMessage(
-      text:
-          'Hi. Can I contact you if I want to rent a boat or take an excursion to the Favignana? I will arrive in Sicily on July 24 and want to pick up the car that I paid for at Palermo airport. The plane arrives at 16.40 from Moscow.',
-      timestamp: DateTime.now().subtract(Duration(minutes: 5)),
-      isSentByUser: true,
-    ),
-    ChatMessage(
-      text:
-          'Hi. Can I contact you if I want to rent a boat or take an excursion to the Favignana? I will arrive in Sicily on July 24 and want to pick up the car that I paid for at Palermo airport. The plane arrives at 16.40 from Moscow.',
-      timestamp: DateTime.now(),
-      isSentByUser: false,
-    ),
-  ];
+  final ApiClient _apiClient;
+
+  ChatRepositoryImpl({required ApiClient apiClient}) : _apiClient = apiClient;
 
   @override
-  List<ChatMessage> getMessages() {
-    return _messages;
+  Future<List<ChatMessage>> getMessages() async {
+    try {
+      final response = await _apiClient.get(ApiEndpoints.chatMessages);
+
+      if (response.data['success'] == true) {
+        final List<dynamic> data = response.data['data'] as List;
+        return data.map((json) => ChatMessage.fromJson(json)).toList();
+      } else {
+        throw ServerException('Failed to load messages');
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
-  Future<void> addMessage(ChatMessage message) async {
-    _messages.add(message);
+  Future<ChatMessage> addMessage(ChatMessage message) async {
+    try {
+      final response = await _apiClient.post(
+        ApiEndpoints.chatMessages,
+        data: message.toJson(),
+      );
+
+      if (response.data['success'] == true) {
+        return ChatMessage.fromJson(response.data['data']);
+      } else {
+        throw ServerException('Failed to send message');
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
+  Future<ChatMessage> getMessageById(int id) async {
+    try {
+      final response = await _apiClient.get(ApiEndpoints.chatMessageById(id));
+
+      if (response.data['success'] == true) {
+        return ChatMessage.fromJson(response.data['data']);
+      } else {
+        throw ServerException('Message not found');
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 }

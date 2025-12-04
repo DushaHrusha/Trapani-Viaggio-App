@@ -3,8 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:test_task/core/adaptive_size_extension.dart';
 import 'package:test_task/core/constants/base_colors.dart';
-import 'package:test_task/core/routing/app_routes.dart';
-import 'package:test_task/presentation/main_menu_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});

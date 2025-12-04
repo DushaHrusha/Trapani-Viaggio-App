@@ -12,6 +12,7 @@ import 'package:test_task/core/constants/base_colors.dart';
 import 'package:test_task/core/constants/custom_app_bar.dart';
 import 'package:test_task/core/constants/custom_background_with_gradient.dart';
 import 'package:test_task/core/constants/second_card.dart';
+import 'package:test_task/data/models/card_data.dart';
 
 class ApartmentsListScreen extends StatefulWidget {
   const ApartmentsListScreen({super.key});
@@ -75,9 +76,15 @@ class _ApartmentsListScreenState extends State<ApartmentsListScreen>
       backgroundColor: BaseColors.background,
       body: BlocBuilder<ApartmentCubit, ApartmentsState>(
         builder: (context, state) {
-          if (state is ApartmentsInitial) {
-            return Center(child: CircularProgressIndicator());
-          } else if (state is ApartmentsLoaded) {
+          // Обработка состояния загрузки
+          if (state is ApartmentsLoading) {
+            return Center(
+              child: CircularProgressIndicator(color: BaseColors.accent),
+            );
+          }
+          // Обработка состояния с данными
+          // В ApartmentsListScreen
+          else if (state is ApartmentsLoaded) {
             return CustomBackgroundWithGradient(
               child: Column(
                 children: [
@@ -90,44 +97,83 @@ class _ApartmentsListScreenState extends State<ApartmentsListScreen>
                     child: GreyLine(),
                   ),
                   Expanded(
-                    child: ListView.builder(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 32,
-                      ),
-                      itemCount: state.apartments.length,
-                      itemBuilder: (context, index) {
-                        final apartment = state.apartments[index];
-                        return FadeTransition(
-                          opacity: _cardsOpacityAnimation,
-                          child: GestureDetector(
-                            onTap: () {
-                              context.go(
-                                '/home/main-menu/apartments-list/apartment-detail',
-                                extra:
-                                    apartment, // Передаем сам объект Apartment, а не экран
-                              );
-                            },
-                            child: SecondCard(
-                              index: index,
-                              data: apartment,
-                              context: context,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w700,
-                                color: BaseColors.accent,
-                                fontSize: 21,
+                    child: RefreshIndicator(
+                      onRefresh: () async {
+                        await context
+                            .read<ApartmentCubit>()
+                            .refreshApartments();
+                      },
+                      color: BaseColors.accent,
+                      backgroundColor: Colors.white,
+                      child: ListView.builder(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 32,
+                        ),
+                        itemCount: state.apartments.length,
+                        itemBuilder: (context, index) {
+                          final apartment = state.apartments[index];
+                          return FadeTransition(
+                            opacity: _cardsOpacityAnimation,
+                            child: GestureDetector(
+                              onTap: () {
+                                context.go(
+                                  '/home/main-menu/apartments-list/apartment-detail',
+                                  extra: apartment,
+                                );
+                              },
+                              child: SecondCard(
+                                index: index,
+                                data: apartment,
+                                context: context,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  color: BaseColors.accent,
+                                  fontSize: 21,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                      },
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
               ),
             );
           }
-          return Center(child: Text('Error loading excursions'));
+          // Обработка состояния ошибки
+          else if (state is ApartmentsError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 48, color: Colors.red),
+                  SizedBox(height: 16),
+                  Text(
+                    'Error loading apartments',
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 8),
+                  // Text(
+                  //   state. message,
+                  //   style: TextStyle(color: Colors.grey),
+                  //   textAlign: TextAlign.center,
+                  // ),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<ApartmentCubit>().loadApartments();
+                    },
+                    child: Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          // Начальное состояние (на всякий случай)
+          return Center(child: CircularProgressIndicator());
         },
       ),
       bottomNavigationBar: SlideTransition(
